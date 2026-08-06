@@ -184,6 +184,22 @@
     padding:18px 20px;font-family:var(--mono);font-size:12.5px;line-height:1.85;
     color:var(--well-ink);white-space:pre-wrap;margin-top:6px}
 
+  /* completed lines — one copyable post per bingo */
+  .bingos{display:none;margin-top:13px}
+  .bingos.on{display:block}
+  .bingo{display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+    background:linear-gradient(140deg,rgba(var(--gold-rgb),.16),rgba(var(--card-rgb),.84));
+    border:1px solid rgba(var(--gold-rgb),.45);border-radius:14px;
+    padding:16px 20px;margin-bottom:10px}
+  .bingo .bn{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--ink);flex:none}
+  .bingo .bd{font-size:13.5px;color:var(--ink-dim);flex:1;min-width:150px}
+  .bingo button{flex:none;border:none;border-radius:30px;padding:10px 20px;
+    font-family:var(--sans);font-size:13.5px;font-weight:700;cursor:pointer;
+    background:linear-gradient(135deg,var(--copper),var(--ember));color:var(--on-accent);
+    transition:transform .18s,box-shadow .18s}
+  .bingo button:hover{transform:translateY(-2px);box-shadow:0 8px 22px -8px rgba(var(--ember-rgb),.6)}
+  @media(max-width:520px){.bingo{gap:10px}.bingo button{width:100%}}
+
   /* board tools — clear all + copy my links */
   .boardtools{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:13px}
   .tool{background:none;border:1px solid rgba(var(--copper-rgb),.34);border-radius:30px;
@@ -209,7 +225,7 @@
   .linkwrap .hint{font-size:12px;color:var(--ink-dim);margin-top:8px;opacity:.85}
 
   /* unlocks */
-  .sparklead{font-size:15px;color:var(--ink-dim);margin-bottom:15px;max-width:70ch}
+  .sparklead{font-size:15px;color:var(--ink-dim);margin-bottom:15px}
   .sparklead b{color:var(--ink)}
   .unlocks{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:13px}
   .unlock{background:var(--card);border:1px dashed rgba(var(--copper-rgb),.34);border-radius:14px;
@@ -281,7 +297,7 @@
   <div class="section-label">How it works</div>
   <div class="rules">
     <ol>
-      <li><b>Pick any square.</b> Tap it, copy the prompt, run it in Claude, and make the thing.</li>
+      <li><b>Pick any square.</b> Tap it, copy the prompt, run it in Claude, and make the thing it asks for.</li>
       <li><b>Put it out into the world.</b> Post it, send it, publish it, wherever it belongs. The square counts once the work is visible to somebody besides you.</li>
       <li><b>Share it in the Challenge category</b> in the community, with the square's name as your title. That is what marks it done.</li>
       <li><b>Five in a row is one entry.</b> Any direction, across, down, or corner to corner. The centre square is yours for free, so two of the lines start with a head start.</li>
@@ -296,6 +312,7 @@
 
   <div class="section-label">The board</div>
   <div class="board" id="board"></div>
+  <div class="bingos" id="bingos"></div>
   <div class="boardtools">
     <button class="tool" id="copyLinks">Copy my forged list</button>
     <button class="tool danger" id="clearAll">Clear the board</button>
@@ -778,6 +795,12 @@ const END  = new Date('2026-09-01T00:00:00');
 // grid index -> SQUARES index (centre is free, so everything after it shifts by one)
 function sqIndex(cell){ return cell < FREE ? cell : cell - 1; }
 
+function lineName(i){
+  if(i < 5)  return 'Row ' + (i+1);
+  if(i < 10) return 'Column ' + (i-4);
+  return i === 10 ? 'Corner to corner, top left' : 'Corner to corner, top right';
+}
+
 const LINES = (() => {
   const L = [];
   for(let r=0;r<5;r++) L.push([0,1,2,3,4].map(c=>r*5+c));
@@ -837,8 +860,42 @@ function paint(){
   });
   document.getElementById('sDone').textContent  = done;
   document.getElementById('sLines').textContent = lines.length;
+  paintBingos(lines);
   const days = Math.max(0, Math.ceil((END - new Date()) / 86400000));
   document.getElementById('sLeft').textContent = days;
+}
+
+// ── one copyable post per completed line ─────────────────────
+function bingoPost(li){
+  const rows = LINES[li].map(cell => {
+    if(cell === FREE) return '\u2726  Free Square';
+    const s = SQUARES[sqIndex(cell)];
+    const u = (links[cell] || '').trim();
+    return String(sqIndex(cell)+1).padStart(2,'0') + '  ' + s.n + (u ? '  ' + u : '');
+  });
+  return 'BINGO \u2014 ' + lineName(li) + '\n' +
+         'The Monthly Claude Challenge \u00b7 August: Made Visible\n\n' +
+         rows.join('\n') + '\n\n' +
+         'That is one entry in the draw.';
+}
+
+function paintBingos(lines){
+  const box = document.getElementById('bingos');
+  const idx = lines.map(l => LINES.indexOf(l));
+  box.classList.toggle('on', idx.length > 0);
+  box.innerHTML = idx.map(i => {
+    const withLinks = LINES[i].filter(c => c !== FREE && (links[c]||'').trim()).length;
+    const real = LINES[i].filter(c => c !== FREE).length;
+    return '<div class="bingo">' +
+             '<span class="bn">\ud83d\udd25 ' + lineName(i) + '</span>' +
+             '<span class="bd">' + withLinks + ' of ' + real + ' with links saved</span>' +
+             '<button data-line="' + i + '">Copy my bingo post</button>' +
+           '</div>';
+  }).join('');
+  box.querySelectorAll('button').forEach(b => {
+    b.onclick = () => navigator.clipboard.writeText(bingoPost(+b.dataset.line))
+      .then(() => toast('Your bingo post is copied'));
+  });
 }
 
 const veil  = document.getElementById('veil');
@@ -858,9 +915,9 @@ function open(cell){
       '<button class="btn mark'+(on?' is':'')+'" id="mk">'+(on?'✓ Forged':'Mark it forged')+'</button>' +
     '</div>' +
     '<div class="linkwrap">' +
-      '<label for="lk">Where you posted it · optional</label>' +
-      '<input id="lk" type="url" placeholder="Paste the link">' +
-      '<div class="hint">Only if you want it. Saving links here means you can copy the whole list at the end of the month instead of hunting for them.</div>' +
+      '<label for="lk">Your community post · optional</label>' +
+      '<input id="lk" type="url" placeholder="Paste the link to your post">' +
+      '<div class="hint">Only if you want it. Save your post links as you go and every bingo post below builds itself.</div>' +
     '</div>';
   document.getElementById('pbox').textContent = s.p;
   const lk = document.getElementById('lk');
