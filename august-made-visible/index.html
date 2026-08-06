@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="en" data-mode="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Monthly Claude Challenge — August: Made Visible</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ───────────────────────────────────────────────────────────
+     THE MONTHLY SKIN — change this block, get a new month.
+     Every colour in the file reads from here, so the layout never moves.
+
+     For a dark month, swap these values AND remove data-mode="light"
+     from the <html> tag. For a light month, leave it on.
+
+     AUGUST · MADE VISIBLE — "honey linen"
+     Warm cream, soft bronze, burnt orange. Late summer light on paper.
+     ─────────────────────────────────────────────────────────── */
+  :root{
+    --bg:#FBF3E7; --bg2:#F3E9D9; --ink:#211A12; --ink-dim:#544738;
+    --copper:#9A6B2E; --copper-lt:#7C5320; --ember:#C25A22; --ember-glow:#D96A2C;
+    --forest:#4A6250; --mauve:#7A5A5E; --gold:#9C7C1E;
+    --green:#4A7154;
+    /* same colours as rgb triples, so alpha variants track the skin */
+    --copper-rgb:154,107,46;   --copper-lt-rgb:124,83,32;
+    --ember-rgb:194,90,34;     --ember-glow-rgb:217,106,44;
+    --gold-rgb:156,124,30;     --mauve-rgb:122,90,94;
+    --forest-rgb:74,98,80;     --green-rgb:74,113,84;
+    --card-rgb:255,251,244;
+    --bg-rgb:251,243,231;      --bg2-rgb:243,233,217;
+    --veil-rgb:33,26,18;       --well-rgb:33,26,18;    --sheet-rgb:255,251,244;
+    --serif:'Cormorant Garamond','Hoefler Text',Georgia,serif;
+    --sans:'Hanken Grotesk',system-ui,-apple-system,sans-serif;
+    --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;
+    --card:rgba(var(--card-rgb),0.72); --cardborder:rgba(var(--copper-rgb),0.22);
+    --glow-a:rgba(var(--ember-rgb),0.13);
+    --glow-b:rgba(var(--forest-rgb),0.13);
+    --glow-c:rgba(var(--copper-rgb),0.09);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:var(--sans);color:var(--ink);background:var(--bg);
+    background-image:
+      radial-gradient(900px 520px at 10% -10%, var(--glow-a), transparent 60%),
+      radial-gradient(820px 500px at 100% 0%, var(--glow-b), transparent 55%),
+      radial-gradient(760px 620px at 55% 120%, var(--glow-c), transparent 60%);
+    min-height:100vh;padding:44px 22px 80px;position:relative;overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;line-height:1.65;
+  }
+  .embers{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+  .ember{position:absolute;bottom:-12px;width:3px;height:3px;border-radius:50%;
+    background:var(--ember-glow);box-shadow:0 0 6px 1px rgba(var(--ember-glow-rgb),0.6);
+    opacity:0;animation:rise linear infinite}
+  @keyframes rise{0%{transform:translateY(0) translateX(0);opacity:0}
+    12%{opacity:.7}100%{transform:translateY(-104vh) translateX(26px);opacity:0}}
+  .wrap{max-width:1080px;margin:0 auto;position:relative;z-index:1}
+
+  /* header */
+  header{text-align:center;margin-bottom:34px}
+  .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.34em;text-transform:uppercase;
+    color:var(--copper);opacity:.9;margin-bottom:12px}
+  h1{font-family:var(--serif);font-weight:600;font-size:clamp(46px,8vw,84px);line-height:.95;
+    background:linear-gradient(92deg,var(--copper-lt),var(--ember-glow) 38%,var(--gold) 70%,var(--copper));
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:.5px}
+  .sub{font-family:var(--serif);font-style:italic;font-size:clamp(19px,2.4vw,25px);
+    color:var(--ink-dim);margin-top:10px}
+
+  /* stat strip */
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin:30px 0 34px}
+  .stat{background:var(--card);border:1px solid var(--cardborder);border-radius:16px;
+    padding:19px 16px;text-align:center;backdrop-filter:blur(14px);position:relative;overflow:hidden}
+  .stat::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+    background:linear-gradient(180deg,var(--copper),var(--ember),var(--gold))}
+  .stat .n{font-family:var(--serif);font-size:42px;font-weight:600;line-height:1;color:var(--copper-lt)}
+  .stat.live .n{color:var(--ember-glow)}
+  .stat .l{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--ink-dim);margin-top:8px}
+  @media(max-width:620px){.stats{grid-template-columns:1fr;gap:10px}
+    .stat{display:flex;align-items:center;justify-content:space-between;text-align:left;padding:14px 18px}
+    .stat .n{font-size:30px}.stat .l{margin-top:0}}
+
+  .section-label{font-family:var(--mono);font-size:11px;letter-spacing:.28em;text-transform:uppercase;
+    color:var(--ink-dim);margin:44px 0 16px;display:flex;align-items:center;gap:12px}
+  .section-label::after{content:"";flex:1;height:1px;
+    background:linear-gradient(90deg,rgba(var(--copper-rgb),0.35),transparent)}
+
+  /* rules */
+  .rules{background:var(--card);border:1px solid var(--cardborder);border-radius:16px;
+    padding:24px 26px;backdrop-filter:blur(14px)}
+  .rules ol{list-style:none;counter-reset:r;display:flex;flex-direction:column;gap:13px}
+  .rules li{counter-increment:r;display:flex;gap:14px;align-items:flex-start;
+    font-size:15px;color:var(--ink-dim)}
+  .rules li::before{content:counter(r);font-family:var(--mono);font-size:11px;font-weight:700;
+    color:var(--copper);border:1px solid rgba(var(--copper-rgb),.45);border-radius:50%;
+    width:24px;height:24px;display:grid;place-items:center;flex:none;margin-top:1px}
+  .rules b{color:var(--ink)}
+  .prize{margin-top:22px;padding-top:20px;border-top:1px solid rgba(var(--copper-rgb),.18);
+    display:grid;grid-template-columns:auto 1fr;gap:22px;align-items:center}
+  .prize .amtwrap{text-align:center;padding-right:22px;border-right:1px solid rgba(var(--copper-rgb),.18)}
+  .prize .amt{font-family:var(--serif);font-size:52px;font-weight:600;color:var(--gold);
+    line-height:.9;display:block}
+  .prize .amtlbl{font-family:var(--mono);font-size:8.5px;letter-spacing:.24em;text-transform:uppercase;
+    color:var(--ink-dim);display:block;margin-top:7px}
+  .prize p{font-size:14.5px;color:var(--ink-dim);max-width:none;line-height:1.7}
+  @media(max-width:620px){
+    .prize{grid-template-columns:1fr;gap:14px;text-align:center}
+    .prize .amtwrap{padding-right:0;border-right:none;padding-bottom:14px;
+      border-bottom:1px solid rgba(var(--copper-rgb),.18)}
+  }
+
+  /* board */
+  .board{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+  .sq{position:relative;aspect-ratio:1;background:var(--card);border:1px solid var(--cardborder);
+    border-radius:13px;padding:14px 11px;cursor:pointer;backdrop-filter:blur(12px);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;
+    text-align:center;overflow:hidden;
+    transition:transform .18s,border-color .18s,box-shadow .18s,background .25s}
+  /* inset hairline, the bit that makes it read as a pressed tile */
+  .sq::before{content:"";position:absolute;inset:5px;border-radius:9px;
+    border:1px solid rgba(var(--copper-rgb),.13);pointer-events:none;transition:border-color .2s}
+  .sq:hover{transform:translateY(-3px);border-color:rgba(var(--copper-lt-rgb),.6);
+    box-shadow:0 14px 34px -18px rgba(var(--ember-rgb),.7)}
+  .sq:hover::before{border-color:rgba(var(--copper-rgb),.3)}
+  .sq .num{font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.18em;
+    color:var(--copper);opacity:.7;position:relative;z-index:1}
+  .sq .nm{font-family:var(--serif);font-size:clamp(13px,1.5vw,19px);font-weight:600;
+    line-height:1.16;color:var(--ink);position:relative;z-index:1;max-width:94%}
+  /* hairline rule under the number, a small piece of metalwork */
+  .sq .num::after{content:"";display:block;width:16px;height:1px;margin:6px auto 0;
+    background:linear-gradient(90deg,transparent,var(--copper),transparent);opacity:.55}
+  .sq.done{background:linear-gradient(155deg,rgba(var(--copper-rgb),.28),rgba(var(--card-rgb),.84));
+    border-color:rgba(var(--copper-lt-rgb),.62)}
+  .sq.done::before{border-color:rgba(var(--copper-lt-rgb),.28)}
+  .sq.done .nm{color:var(--copper-lt)}
+  .sq.done .num{opacity:.9}
+  .sq .mark{position:absolute;top:9px;right:10px;width:16px;height:16px;border-radius:50%;
+    border:1.5px solid rgba(var(--copper-rgb),.4);display:grid;place-items:center;
+    font-size:9px;color:var(--on-accent);font-weight:700;z-index:2;transition:all .2s}
+  .sq.done .mark{background:var(--copper);border-color:var(--copper);
+    box-shadow:0 0 10px rgba(var(--copper-rgb),.55)}
+  .sq.done .mark::after{content:"\2713"}
+  .sq.free{background:linear-gradient(150deg,rgba(var(--ember-rgb),.22),rgba(var(--card-rgb),.82));
+    border-color:rgba(var(--ember-rgb),.5);cursor:default;align-items:center;justify-content:center;text-align:center}
+  .sq.free:hover{transform:none;box-shadow:none}
+  .sq.free .nm{font-size:clamp(12px,1.5vw,17px);color:var(--ember-glow)}
+  .sq.free .glyph{font-size:26px;line-height:1;margin-bottom:5px}
+  .sq.inline{outline:1.5px solid rgba(var(--gold-rgb),.75);outline-offset:-1.5px}
+  @media(max-width:560px){.sq{padding:8px 7px;border-radius:10px}.board{gap:6px}}
+
+  /* detail modal */
+  .veil{position:fixed;inset:0;background:rgba(var(--veil-rgb),.82);backdrop-filter:blur(7px);
+    z-index:60;display:none;align-items:flex-start;justify-content:center;padding:34px 18px;overflow-y:auto}
+  .veil.on{display:flex}
+  .sheet{background:linear-gradient(150deg,rgba(var(--sheet-rgb),.97),rgba(var(--bg-rgb),.99));
+    border:1px solid rgba(var(--copper-rgb),.36);border-radius:18px;max-width:660px;width:100%;
+    padding:30px 30px 26px;position:relative;box-shadow:0 30px 90px -30px #000}
+  .sheet .num{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--copper)}
+  .sheet h3{font-family:var(--serif);font-size:33px;font-weight:600;line-height:1.1;margin:7px 0 5px}
+  .sheet .job{font-size:14.5px;color:var(--ink-dim);margin-bottom:20px}
+  .close{position:absolute;top:15px;right:17px;background:none;border:none;color:var(--ink-dim);
+    font-size:25px;cursor:pointer;line-height:1;padding:4px 8px}
+  .close:hover{color:var(--ember-glow)}
+  .pbox{background:rgba(var(--well-rgb),.72);border:1px solid rgba(var(--copper-rgb),.2);border-radius:12px;
+    padding:19px 20px;font-family:var(--mono);font-size:12.5px;line-height:1.78;
+    color:var(--well-ink);white-space:pre-wrap;max-height:44vh;overflow-y:auto}
+  .acts{display:flex;gap:11px;margin-top:17px;flex-wrap:wrap}
+  .btn{border:none;border-radius:30px;padding:12px 24px;font-family:var(--sans);font-size:14px;
+    font-weight:700;cursor:pointer;transition:transform .18s,box-shadow .18s}
+  .btn.copy{background:linear-gradient(135deg,var(--copper),var(--ember));color:var(--on-accent)}
+  .btn.mark{background:transparent;color:var(--copper-lt);border:1.5px solid rgba(var(--copper-rgb),.5)}
+  .btn.mark.is{background:rgba(var(--green-rgb),.16);color:var(--green);border-color:rgba(var(--green-rgb),.5)}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 8px 22px -8px rgba(var(--ember-rgb),.6)}
+  .btn.ok{background:linear-gradient(135deg,var(--forest),var(--green));color:var(--on-accent)}
+
+  /* generic panel */
+  .panel{background:var(--card);border:1px solid var(--cardborder);border-radius:16px;
+    padding:24px 26px;backdrop-filter:blur(14px)}
+  .panel p{font-size:15px;color:var(--ink-dim);margin-bottom:12px;max-width:70ch}
+  .panel p:last-child{margin-bottom:0}
+  .panel b{color:var(--ink)}
+  .tmpl{background:rgba(var(--well-rgb),.72);border:1px solid rgba(var(--copper-rgb),.2);border-radius:12px;
+    padding:18px 20px;font-family:var(--mono);font-size:12.5px;line-height:1.85;
+    color:var(--well-ink);white-space:pre-wrap;margin-top:6px}
+
+  /* board tools — clear all + copy my links */
+  .boardtools{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:13px}
+  .tool{background:none;border:1px solid rgba(var(--copper-rgb),.34);border-radius:30px;
+    padding:8px 17px;font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;
+    text-transform:uppercase;color:var(--ink-dim);cursor:pointer;
+    transition:color .18s,border-color .18s,background .18s}
+  .tool:hover{color:var(--ember-glow);border-color:rgba(var(--ember-rgb),.6);
+    background:rgba(var(--ember-rgb),.07)}
+  .tool.danger:hover{color:var(--mauve);border-color:rgba(var(--mauve-rgb),.6);
+    background:rgba(var(--mauve-rgb),.07)}
+  @media(max-width:520px){.boardtools{justify-content:stretch}.tool{flex:1;text-align:center}}
+
+  /* optional post link, inside the square sheet */
+  .linkwrap{margin-top:16px;padding-top:15px;border-top:1px solid rgba(var(--copper-rgb),.18)}
+  .linkwrap label{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--ink-dim);margin-bottom:8px}
+  .linkwrap input{width:100%;background:rgba(var(--well-rgb),.06);
+    border:1px solid rgba(var(--copper-rgb),.28);border-radius:10px;padding:11px 14px;
+    font-family:var(--mono);font-size:12.5px;color:var(--ink);outline:none;
+    transition:border-color .18s}
+  .linkwrap input:focus{border-color:rgba(var(--ember-rgb),.65)}
+  .linkwrap input::placeholder{color:var(--ink-dim);opacity:.55}
+  .linkwrap .hint{font-size:12px;color:var(--ink-dim);margin-top:8px;opacity:.85}
+
+  /* unlocks */
+  .sparklead{font-size:15px;color:var(--ink-dim);margin-bottom:15px;max-width:70ch}
+  .sparklead b{color:var(--ink)}
+  .unlocks{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:13px}
+  .unlock{background:var(--card);border:1px dashed rgba(var(--copper-rgb),.34);border-radius:14px;
+    padding:19px 18px;backdrop-filter:blur(12px);position:relative}
+  .freetag{position:absolute;top:15px;right:15px;font-family:var(--mono);font-size:8.5px;
+    font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--on-accent);
+    background:linear-gradient(135deg,var(--ember),var(--copper));
+    padding:4px 9px;border-radius:20px;line-height:1}
+  .unlock .u{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--mauve);margin-bottom:9px}
+  .unlock h4{font-family:var(--serif);font-size:20px;font-weight:600;margin-bottom:6px}
+  .unlock p{font-size:12.5px;color:var(--ink-dim);line-height:1.5}
+  .unlock.open{border-style:solid;border-color:rgba(var(--gold-rgb),.55)}
+  .unlock.open .u{color:var(--gold)}
+  .unlock a{color:var(--copper-lt);font-weight:600}
+
+  .keeper{background:linear-gradient(140deg,rgba(var(--gold-rgb),.15),rgba(var(--card-rgb),.84));
+    border:1px solid rgba(var(--gold-rgb),.4);border-radius:16px;padding:30px 30px 28px;
+    backdrop-filter:blur(14px);text-align:center}
+  .keeper .crownrow{display:flex;align-items:center;justify-content:center;gap:13px;margin-bottom:12px}
+  .keeper svg{width:34px;height:34px;flex:none;
+    filter:drop-shadow(0 0 9px rgba(var(--gold-rgb),.45))}
+  .keeper h4{font-family:var(--serif);font-size:31px;font-weight:600;color:var(--ink);line-height:1}
+  .keeper p{font-size:15px;color:var(--ink-dim);max-width:64ch;margin:0 auto 12px;line-height:1.7}
+  .keeper p:last-child{margin-bottom:0}
+  .keeper b{color:var(--gold)}
+  @media(max-width:520px){.keeper h4{font-size:25px}.keeper svg{width:27px;height:27px}}
+
+  footer{margin-top:52px;text-align:center;font-family:var(--mono);font-size:11px;
+    color:var(--ink-dim);opacity:.6;letter-spacing:.06em;line-height:2}
+  footer a{color:var(--copper)}
+  .toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(90px);
+    background:var(--copper);color:var(--on-accent);font-family:var(--mono);font-size:12px;font-weight:600;
+    padding:11px 22px;border-radius:30px;z-index:90;transition:transform .3s;letter-spacing:.05em}
+  .toast.up{transform:translateX(-50%) translateY(0)}
+
+  /* ── light-theme structural overrides (Ember & Bone) ── */
+  :root{ --on-accent:#14100C;            /* text sitting on a copper fill */
+         --well-ink:#E6DCCC; }           /* text inside the dark prompt wells */
+  [data-mode="light"]{ --on-accent:#FFFDFA; }
+  [data-mode="light"] .ember{ opacity:0; animation-name:riseLight;
+    box-shadow:0 0 5px 1px rgba(var(--ember-rgb),.45) }
+  @keyframes riseLight{0%{transform:translateY(0) translateX(0);opacity:0}
+    12%{opacity:.4}100%{transform:translateY(-104vh) translateX(26px);opacity:0}}
+  [data-mode="light"] .stat,[data-mode="light"] .rules,[data-mode="light"] .panel,
+  [data-mode="light"] .sq,[data-mode="light"] .unlock,[data-mode="light"] .keeper{
+    box-shadow:0 2px 14px -8px rgba(var(--copper-rgb),.4)}
+  [data-mode="light"] .sq:hover{box-shadow:0 12px 26px -14px rgba(var(--ember-rgb),.45)}
+  [data-mode="light"] .sheet{box-shadow:0 30px 90px -34px rgba(var(--copper-rgb),.55)}
+  [data-mode="light"] .sq.done .mark{box-shadow:none}
+</style>
+</head>
+<body>
+<div class="embers" id="embers"></div>
+<div class="wrap">
+
+  <header>
+    <div class="kicker">Soul-Forged Founders · The Monthly Claude Challenge</div>
+    <h1>Made Visible</h1>
+    <div class="sub">August · Made Visible</div>
+  </header>
+
+  <div class="stats">
+    <div class="stat"><div class="n" id="sDone">0</div><div class="l">Squares forged</div></div>
+    <div class="stat live"><div class="n" id="sLines">0</div><div class="l">Lines complete · your entries</div></div>
+    <div class="stat"><div class="n" id="sLeft">—</div><div class="l">Days remaining</div></div>
+  </div>
+
+  <div class="section-label">How it works</div>
+  <div class="rules">
+    <ol>
+      <li><b>Pick any square.</b> Tap it, copy the prompt, run it in Claude, and make the thing.</li>
+      <li><b>Put it out into the world.</b> Post it, send it, publish it, wherever it belongs. The square counts once the work is visible to somebody besides you.</li>
+      <li><b>Share it in the Challenge category</b> in the community, with the square's name as your title. That is what marks it done.</li>
+      <li><b>Five in a row is one entry.</b> Any direction, across, down, or corner to corner. The centre square is yours for free, so two of the lines start with a head start.</li>
+      <li><b>Fill more rows, get more entries.</b> Twelve lines exist on this board. Every one you complete is another name in the draw.</li>
+      <li><b>One piece per square.</b> Each thing you make counts for one square only, and it has to be something you made this month.</li>
+    </ol>
+    <div class="prize">
+      <div class="amtwrap"><span class="amt">$50</span><span class="amtlbl">Cash prize</span></div>
+      <p>One winner, drawn on <b>September 1</b>. Every completed line puts your name in once more, so the board rewards finishing a row over collecting scattered squares. Your progress saves on this device, so you can close the tab and pick it back up whenever you have twenty minutes.</p>
+    </div>
+  </div>
+
+  <div class="section-label">The board</div>
+  <div class="board" id="board"></div>
+  <div class="boardtools">
+    <button class="tool" id="copyLinks">Copy my forged list</button>
+    <button class="tool danger" id="clearAll">Clear the board</button>
+  </div>
+
+  <div class="section-label">When you post it</div>
+  <div class="panel">
+    <p>Copy this, fill the three lines, and put it in the <b>Challenge</b> category. Title the post with the square's name so everyone can see which one you took.</p>
+    <div class="tmpl" id="tmpl">Square: [the name of the square]
+
+What I made: [one line on what it is]
+
+Where it lives now: [the link, or where you posted it]
+
+The part that surprised me: [one honest sentence, this is the bit people actually read]</div>
+    <div class="acts"><button class="btn copy" id="copyTmpl">Copy the template</button></div>
+  </div>
+
+  <div class="section-label">Your free Sparks</div>
+  <p class="sparklead"><b>Four free things, one a week, yours just for being here.</b> No square to finish and nothing to buy. Each one opens on its date and stays open, so check back on a Friday.</p>
+  <!-- When a Spark opens: add class "open" to its .unlock, and put the real link in the <p>. -->
+  <div class="unlocks" id="unlocks">
+    <div class="unlock"><span class="freetag">Free</span><div class="u">🔒 Opens Aug 8</div><h4>Spark 01</h4><p>Sealed until it opens. Watch the community.</p></div>
+    <div class="unlock"><span class="freetag">Free</span><div class="u">🔒 Opens Aug 15</div><h4>Spark 02</h4><p>Lands with the Vault Drop.</p></div>
+    <div class="unlock"><span class="freetag">Free</span><div class="u">🔒 Opens Aug 22</div><h4>Spark 03</h4><p>Sealed until it opens.</p></div>
+    <div class="unlock"><span class="freetag">Free</span><div class="u">🔒 Opens Aug 29</div><h4>Spark 04</h4><p>The last one before the draw.</p></div>
+  </div>
+
+  <div class="section-label">The crown</div>
+  <div class="keeper">
+    <div class="crownrow">
+      <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <path d="M4 23.5 L2.6 9.4 L9.4 14.6 L16 4.5 L22.6 14.6 L29.4 9.4 L28 23.5 Z"
+              fill="url(#cg)" stroke="var(--copper)" stroke-width="1.3" stroke-linejoin="round"/>
+        <rect x="4" y="24.8" width="24" height="3.4" rx="1.3" fill="url(#cg)" stroke="var(--copper)" stroke-width="1.1"/>
+        <circle cx="16" cy="18.6" r="1.7" fill="var(--bg)" opacity=".6"/>
+        <defs>
+          <linearGradient id="cg" x1="2" y1="4" x2="30" y2="28" gradientUnits="userSpaceOnUse">
+            <stop stop-color="var(--gold)"/><stop offset=".5" stop-color="var(--copper)"/><stop offset="1" stop-color="var(--ember)"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <h4>The Ember Keeper</h4>
+    </div>
+    <p>It is not for finishing the most squares. It is for being the person everybody is glad is here. She posts her own work, and then she goes and finds yours and tells you it is good.</p>
+    <p>The leaderboard in the community already tracks this, because points come from people appreciating what you put out. <b>Give the most, rise the highest.</b></p>
+    <p>August closes on the <b>31st</b>. The Ember Keeper is crowned <b>September 1</b>.</p>
+    <p><b>What she wins:</b> the crown beside her name all month, and a half hour with me, one to one.</p>
+  </div>
+
+  <footer>
+    The Monthly Claude Challenge · August: Made Visible · Soul-Forged Founders<br>
+    Progress saves on this device. Bookmark it and come back.
+  </footer>
+</div>
+
+<div class="veil" id="veil"><div class="sheet" id="sheet"></div></div>
+<div class="toast" id="toast">Copied</div>
+
+<script>
+const SQUARES = [
+ {n:"The One Liner", job:"One sentence that says what you do.", p:`Write 5 versions of my one liner.
+
+First ask me one question and wait for my answer: which offer is this for? If I run more than one thing, a one liner for the whole business and a one liner for a single offer are different jobs, and you cannot write either one until you know which.
+
+Structure: I help [a specific person in a specific situation] go from [where she is now] to [the change she wants], through [what we do together].
+
+Who I work with: [ ]
+What is different for them afterward: [the actual change]
+What we do together: [what it actually is, by its real name]
+
+Rules:
+- All five versions describe the SAME person. Vary the wording, never the audience.
+- Use the actual name of the thing. If it has a brand name, the brand name goes in the line. A generic word like "community," "program" or "session" is a placeholder, not an answer.
+- Proper nouns do not count against the word budget. Never drop a brand name to save words.
+- Name a person, not a category. "Women who feel stuck" is a category. "Bookkeepers who have not raised their rates in nine years" is a person.
+- The change has to be something she would say out loud to a friend. No "aligned," no "empowered," no "stepping into."
+- Leave my modality out of the sentence unless my clients come to me asking for it by name.
+- Bad: "I help women step into their power through intuitive healing."
+- Good: "I help women who carry everyone else stop asking three people before they decide anything."
+- Do not invent anything about my business. Mark [FILL IN] where you would be guessing.
+- Aim for 25 words or fewer. If a version needs 30 to stay clear, take the 30 and tell me which slot forced it.
+
+Then tell me which one a stranger would understand fastest, and which one only I would understand.`},
+
+ {n:"The Bio", job:"Four lines, under 150 characters.", p:`Write 3 versions of a short bio using this exact 4-line framework. This is for an Instagram bio so the TOTAL must be under 150 characters including emojis and spaces. Count the characters for each version and confirm each is under 150.
+
+Framework:
+Line 1: Emoji + Who I help and how
+Line 2: Emoji + Credibility or proof (what gives me authority)
+Line 3: Emoji + What makes me different (my method name or unique angle)
+Line 4: Emoji + FREE [name of freebie, lead magnet, or session] 👇
+
+Rules:
+- Every line MUST start with an emoji (✦ 🔮 🌙 💫 🔥 ⚡ 🌿 ✨ 🔑 💎 or similar — match my tone)
+- Each line should be a clear, readable mini-statement that my ideal client would immediately understand. Not cryptic fragments. Not full sentences either. Think the way real Instagram bios read — conversational, scannable, and clear at a glance.
+- Example of TOO compressed (bad): "🔥 Spiritual coaches, clearly named" — this means nothing to a reader
+- Example of JUST RIGHT (good): "🔥 Helping spiritual coaches name their method" — clear, specific, scannable
+- Do NOT start any line with "I" — lead with the value, the client, or the method
+- The CTA line (Line 4) must name a specific free offer and end with 👇 to point to the link
+- Example CTA: "✨ FREE Sacred Vision Activation 👇" or "🔮 Free Tarot Clarity Session 👇"
+- The freebie/session name should sound like a real offer my ideal client would want, not a generic placeholder
+- Make each version feel activated
+
+After writing all 3 versions, list the character count for each one. If any version exceeds 150 characters, rewrite it shorter.`},
+
+ {n:"The Origin Story", job:"How this work found you.", p:`Help me write my origin story as a post. Ask me up to four questions before you write a word.
+
+The moment it began: [dictate this messy, don't tidy it up]
+What I was doing before: [ ]
+Something I believed then that I don't now: [ ]
+Who I want reading it: [ ]
+
+Rules:
+- Open inside one scene, with a time and a place. No "for as long as I can remember."
+- One belief changes across the story. Name it plainly at the turn.
+- Keep my own words wherever my words are good, and mark the lines you took from me verbatim.
+- Do not add scenes, dialogue, numbers, or details I did not give you. If the story has a hole, ask me instead of filling it.
+- No tidy ending. Land it on what I do now because of it.
+
+Then tell me the one line that carries the whole thing, and show me the same post cut by 15%.`},
+
+ {n:"The About Page", job:"The page people read before they book.", p:`Rewrite my about page so the right person feels understood and knows what to do next.
+
+Who lands on this page: [where they came from, what they're wondering]
+What I want them to feel by the end: [ ]
+What I want them to do by the end: [ ]
+The true things about me that matter here: [dictate, no polish]
+
+Structure, in this order:
+1. Her first. What she is dealing with, in her language, before anything about me.
+2. What I do about it. One paragraph.
+3. Who I am, and only the parts that make me the right person for that.
+4. Proof, if I gave you any.
+5. One named next step, with the link.
+
+Rules:
+- Do not invent anything about my business. Anywhere you would be guessing, write [FILL IN] and keep going.
+- My credentials live in section 3 and nowhere else. Nobody reads an about page for a resume.
+- Cut every sentence that would still be true if someone else in my field wrote it.
+
+Give me the page, then tell me which paragraph is doing the least work and what should replace it.`},
+
+ {n:"The Welcome Email", job:"The first thing a new subscriber reads.", p:`Write the welcome email that sends automatically the moment someone joins my list.
+
+What they just signed up for: [freebie, newsletter, waitlist]
+What I want them to know about me first: [one thing only]
+What I want them to do: [read something, reply, book, or nothing this time]
+My link: [paste the real one]
+
+Structure:
+- Deliver the thing they signed up for in the first two lines, with the link. Nothing comes before it.
+- One paragraph on what to expect from me and how often.
+- One question that invites a reply, answerable in a sentence.
+- Sign off.
+
+Rules:
+- One job. Cut anything that wanders off it.
+- No "a little about me" section. This is not the email for it.
+- Under 200 words.
+
+Give me three subject lines and tell me what each one promises the reader.`},
+
+ {n:"The Offer, Described", job:"What they get, in their words.", p:`Describe my offer the way the person who bought it would describe it to a friend.
+
+What it's called: [ ]
+Price and length: [ ]
+What actually happens in it: [ ]
+What is different for them afterward: [ ]
+
+Give me:
+1. Four outcome bullets. Each one names a change she would notice in her own life.
+2. A caption version, 40 words or under.
+3. A sales page version, 150 words or under.
+
+Rules:
+- Lead with what changes for her. The how sits underneath.
+- Feature bullets do not count and get rewritten. Bad: "Four sessions and a workbook." Good: "You leave with the two sentences you say when someone asks what you do, and you stop rewriting them."
+- Do not invent a price, a length, or an inclusion. Mark it [FILL IN].
+
+Then tell me the one question a buyer would still have.`},
+
+ {n:"The Reel Script", job:"Thirty seconds, talking to camera.", p:`Write me a 30 second script I can say out loud to camera. It has to sound like me talking, not like something read.
+
+The one thing I want to say: [dictate this in your own messy words]
+Who I'm saying it to: [ ]
+What I want them to do after: [ or write: nothing, this one is just useful ]
+
+Structure: a first line that earns the next three seconds, one idea, one example, one line at the end.
+
+Rules:
+- Frame the topic around what my ideal client is dealing with, not around my modality. If I read tarot for clients, do not hand me a reel about reading tarot unless I told you I teach it.
+- 90 words maximum, because that is 30 seconds out loud.
+- Short sentences. Nothing I would be embarrassed to say to a person's face.
+- No "hey guys," no "stop scrolling," no question I answer myself in the next breath.
+
+Give me three different opening lines and tell me which one earns the next three seconds.`},
+
+ {n:"The Carousel", job:"One format, four slides.", p:`Build me a carousel using this exact format. Four slides, no more.
+
+Format: Myth to Method
+Slide 1, the cover: name the problem this carousel fixes, in plain literal words. "How to stop [the thing going wrong]." Only use a method name here if I gave you a real one. Never invent a method, and never imply I have one.
+Slide 2: name the outdated advice once, in one sentence, and move on. Say why it stopped working, not why it is stupid.
+Slide 3: the method itself. Three numbered points, and what each one gets her.
+Slide 4: the invitation. Name the free thing and where to get it.
+
+What I'll give you:
+The advice in my field that stopped working: [ ]
+What I do instead: [ ]
+Who this is for: [ ]
+What I'm pointing them toward: [ ]
+
+Rules:
+- One carousel, one problem. If you find yourself writing a cover that could mean two or three different things, you have not picked the problem yet. Stop and ask me which one.
+- Frame it around my ideal client's problem, not around my modality. If I read tarot for clients, do not write me a carousel about reading tarot unless I told you I teach it.
+- Every slide has to be worth a swipe on its own. If a slide only sets up the next one, cut it.
+- No old way / new way split slide, and no "most people do X, I do Y." The weight goes on the method.
+- Slide 3's three points each get a verb. "Name it, price it, say it out loud" beats "clarity, confidence, courage."
+
+Give me the text for each slide, then write the caption that goes under it.`},
+
+ {n:"The Testimonial Ask", job:"The message that gets you words.", p:`Write the message I send to a past client asking for a testimonial.
+
+Who I'm sending it to: [ ]
+What we worked on together: [ ]
+How long ago: [ ]
+
+Rules:
+- Ask three specific questions instead of asking for "a testimonial." A blank page is why people never reply.
+- The three have to dig at where she was before, what changed, and who she would send to me.
+- Tell her how long it will take and where it will be used.
+- Give her an out that costs her nothing.
+- Short enough to read on a phone without scrolling.
+
+Give me one version for someone I know well and one for someone I don't, then tell me which question is most likely to get skipped.`},
+
+ {n:"The Client Win", job:"Proof, told as a story.", p:`Help me write a post about a real client result.
+
+What they came in with: [ ]
+What we did: [ ]
+What changed: [ ]
+Anything I'm not allowed to share: [ ]
+
+Rules:
+- Do not invent any detail, number, or quote. Use only what I gave you. If the story needs something I did not say, ask me for it.
+- Keep the client unnamed and describe her naturally, the way I would mention her in conversation.
+- Open on where she was, in her own situation, before anything about what I did.
+- The result has to be concrete. "She felt more confident" is not a result. "She raised her price and nobody flinched" is.
+
+Write it as a story rather than a case study, then tell me where a reader would recognise herself in it.`},
+
+ {n:"The FAQ", job:"The questions asked before booking.", p:`Help me write the questions people actually ask before they book with me, and my answers.
+
+What I sell: [ ]
+Questions I get over and over: [dictate whatever you remember]
+Things people get wrong about my work: [ ]
+
+First, ask me five questions to surface the ones I have stopped noticing because I answer them so often.
+
+Then give me eight questions with answers, ordered by which one is stopping the most people from booking.
+
+Rules:
+- Write each question in the words a real person would use, including the blunt ones about price and time.
+- Answer in three sentences or fewer.
+- At least two have to be questions I would rather not be asked. Those are the ones doing the work.
+- Cut any question that exists only to advertise. "What makes your work so special?" is not a real question.`},
+
+ {n:"The Objection", job:"Answer the thing that stops them.", p:`There is one thing that stops people from working with me. I want to answer it in public.
+
+The objection: [price, timing, "I could do this myself," "I'm not ready," whatever it really is]
+What is true about it: [because pretending it isn't real makes it louder]
+What I'd say to someone who told me this on a call: [dictate it]
+
+Rules:
+- Grant the objection in the first three lines, in her own words, before answering any of it.
+- Answer with something specific: a number, an example, a boundary, or what actually happens.
+- Name who should not buy because of it. That line is what makes the rest believable.
+- No pressure language, no scarcity, no "if you're ready."
+
+Write it as a post, then tell me what the post is asking the reader to believe.`},
+
+ {n:"The Lead Magnet", job:"The free thing worth an email.", p:`Help me plan a free resource worth someone's email address.
+
+Who it's for: [ ]
+The one problem it solves: [ ]
+What they'll have when they finish it: [an actual thing, not a feeling]
+What it leads to: [the offer it sits in front of]
+
+⚠️ Read this before you suggest anything. Build every idea around the problem my ideal client is trying to solve in her own life, not around my modality. If I read tarot for clients, my clients do not want to learn tarot. They want the thing they came to a reading for. Only give me tarot themed ideas if I told you I teach tarot. Same rule for Reiki, astrology, coaching, breath work, or anything else I do.
+
+Ask me three questions first if the problem is too broad to solve in one sitting.
+
+Rules:
+- Small enough to finish in one sitting.
+- It has to solve the problem, not preview it. A guide that stops at the good part is a broken promise.
+- The free thing and the paid offer solve the same problem at different sizes.
+
+Give me the outline, three title options that name the outcome, and the opt-in page copy.`},
+
+ {n:"The Free Tool", job:"Something they can click.", p:`I want to build a small interactive tool my people can use for free.
+
+Who uses it: [ ]
+The one decision or answer they get from it: [ ]
+What they put in: [a few questions, a date, something they already have]
+Where it points afterward: [my offer, or nothing]
+
+⚠️ Build it around what my ideal client is trying to decide, not around my modality. If I read tarot for clients, do not build me a card pulling tool unless I told you I teach tarot. The tool answers her question. My method works behind the scenes.
+
+Map the logic with me first: the questions, and what each answer leads to. One tool, not three.
+
+Rules:
+- Every question earns its place. If an answer does not change the result, cut the question.
+- The result has to be specific enough that two different people get two different answers.
+- End on one named next step.
+
+Then build it as a single self contained HTML file I can host, and tell me how to change the text later without breaking it.`},
+
+ {n:"The Newsletter", job:"One email to your list.", p:`Write one email to my list.
+
+Who's on it: [how they found me, what they signed up for]
+The job of this email: [teach one small thing / tell them about something / invite them / share what I noticed]
+The one thing I want to say: [dictate, messy is fine]
+What they do at the end: [ ]
+My link: [the real one]
+
+Frame the topic around what my ideal client is dealing with, not around my modality. If I read tarot for clients, an email teaching tarot is the wrong email unless I told you I teach it.
+
+Rules:
+- Open on a specific moment or something that actually happened. No "I've been thinking about..."
+- Real value before any invitation, and the value has to be usable without buying anything.
+- One job only. Cut the second one.
+- Under 400 words.
+
+Three subject lines, and tell me the line most likely to make someone stop reading.`},
+
+ {n:"Behind the Scenes", job:"Show the making, not the finish.", p:`Help me write a post that shows how I actually work.
+
+What I was doing: [the unglamorous middle of something]
+What most people don't realise about it: [ ]
+Why I do it that way: [ ]
+
+Rules:
+- One task, one sitting. A real Tuesday beats a philosophy.
+- Show the tedious part. That is the part that reads as true.
+- Do not invent any detail about what I did. Use only what I gave you.
+- Point it at what my ideal client gets from me working this way. She is not reading it to learn my process, she is reading it to decide about me.
+
+Write it, then tell me what a reader learns about working with me that I never said outright.`},
+
+ {n:"The Myth", job:"Correct one belief your client holds.", p:`There is a belief I want to correct, clearly and kindly.
+
+The belief: [ ]
+Why people hold it: [take it seriously, it came from somewhere]
+What I've seen instead: [my own experience, dictate it]
+What I'd want someone to do differently: [ ]
+
+Rules:
+- Pick a belief my ideal client holds about her own situation, not an argument between people who do what I do. She is not in my field and does not care about our debates.
+- Take the belief seriously in the first paragraph. Naming where it came from is what earns the correction.
+- No strawmen, no naming anyone, no "everyone says."
+- End on one thing she can do differently this week.
+
+Write it as a post, then tell me who would disagree with this and whether I'm okay with that.`},
+
+ {n:"A Day in the Life", job:"Let them picture the work.", p:`Help me write a post walking through a real working day.
+
+What today actually held: [dictate it, including the boring parts]
+The part I liked: [ ]
+The part I'd change: [ ]
+
+Rules:
+- Use real times and real tasks. "9:40, still answering yesterday's messages" beats "mornings are for admin."
+- Include one thing that went wrong or ran long.
+- Do not invent any part of the day. Use only what I gave you.
+- No highlight reel and no complaining.
+- This one is about the shape of my working life, so keep it away from how I do any single task.
+
+Write it, then tell me which moment in it would make the right person want to work with me.`},
+
+ {n:"The Price Talk", job:"Say the number out loud.", p:`Help me talk about what my work costs without flinching.
+
+What it costs: [ ]
+What's included: [ ]
+What someone gets out of it that is worth more than the number: [ ]
+What I usually say when someone asks: [dictate, awkwardness included]
+
+Rules:
+- Name the number in the first three lines. A price post that buries the price is doing the opposite of its job.
+- Say what it buys in outcomes first, then what is included as plain facts.
+- No apologising, no "I know it's an investment," no comparing it to somebody's coffee habit.
+- Do not invent the price or anything included. Mark [FILL IN].
+
+Write me a short post, then tell me the sentence I would be most tempted to soften, and why it should stay.`},
+
+ {n:"The Booking Page", job:"The page where they say yes.", p:`Rewrite my booking page so someone knows exactly what she is saying yes to.
+
+The session: [name, length, price]
+What happens during it: [step by step]
+What she walks away with: [ ]
+Who it's not right for: [say this plainly, it saves both of us]
+What she needs to bring or prepare: [ ]
+
+Structure: what changes for her, then what happens in the room, then the practical facts (length, price, format, what to prepare), then who it is not for, then the button.
+
+Rules:
+- Name one physical thing she leaves with. A recording, written notes, a plan, a practice.
+- Every fact stays a fact. Do not invent a length, a price, or an inclusion.
+- The "not right for" section is not a disclaimer. It is the part that makes the rest believable.
+
+Give me the page, then tell me the one thing still missing that would make someone hesitate.`},
+
+ {n:"The Story Set", job:"A week of stories, planned.", p:`Give me a week of Instagram story ideas that do something besides fill space.
+
+What I'm pointing people toward this week: [ ]
+Who I'm talking to: [ ]
+What I'm happy to show: [my desk, my process, my face, my work]
+
+Build the week around what my ideal client is dealing with, not around my modality. If I read tarot for clients, "pull a card with me" is the wrong idea unless I told you I teach tarot.
+
+Seven days. Mix teaching, asking, and showing. At least two invite a reply, because replies are the point.
+
+Rules:
+- For each day give me what to say, what is on screen, and whether it is a sticker, a question box, or a plain frame.
+- No more than one mentions my offer directly.
+- Every one has to be shootable in under two minutes with what I already have.
+
+Then tell me which day is most likely to get a reply, and which one to skip when I'm busy.`},
+
+ {n:"The Collab Pitch", job:"Ask someone to work together.", p:`Write the message I send to someone I'd like to collaborate with.
+
+Who they are: [ ]
+What they do that I genuinely admire: [be specific, they can tell]
+What I'm proposing: [swap, guest spot, joint thing]
+What's in it for their people: [lead with this]
+What I'd need from them: [ ]
+
+Rules:
+- Under 150 words. It gets read on a phone between other things.
+- The thing I admire has to be something only someone who actually follows them would know.
+- Lead with what their audience gets. My own numbers go near the end, or nowhere.
+- Name exactly what I am asking for and exactly what I will handle.
+- Easy to say yes to, easy to say no to.
+
+Then tell me the line most likely to get it ignored.`},
+
+ {n:"The Podcast Pitch", job:"Put yourself in the room.", p:`Write a pitch to be a guest on a podcast.
+
+The show: [name, and what it's usually about]
+Who listens: [ ]
+What I could talk about that they haven't covered: [ ]
+Why I'm the person to say it: [real experience only, no inflation]
+
+Rules:
+- Reference one specific episode and what I actually took from it.
+- Frame all three topics around the listener's problem, not around my modality and not around what I want to promote.
+- Do not inflate my credentials, my numbers, or my audience. Use only what I gave you and mark anything else [FILL IN].
+- Under 200 words before the topic list.
+
+Give me the email plus three episode topics with a one line hook each, then tell me which topic is strongest and which one to cut.`},
+
+ {n:"The Month, Recapped", job:"Say what you built.", p:`Help me write a post about what I made this month.
+
+What I actually made or finished: [list it, including the small things]
+What surprised me: [ ]
+What I'm carrying into next month: [ ]
+
+Rules:
+- Every item has to be a real thing that exists. Do not round up and do not add anything I did not list.
+- One of them gets a sentence on what it was actually like to make.
+- Write it so someone else can take something from it, rather than as a diary entry.
+- No false modesty and no bragging.
+
+Then tell me what the post says about where my business is heading.`}
+];
+
+const KEY = 'forge-board-2026-08';
+const FREE = 12;               // centre square, index in the 25-cell grid
+const END  = new Date('2026-09-01T00:00:00');
+
+// grid index -> SQUARES index (centre is free, so everything after it shifts by one)
+function sqIndex(cell){ return cell < FREE ? cell : cell - 1; }
+
+const LINES = (() => {
+  const L = [];
+  for(let r=0;r<5;r++) L.push([0,1,2,3,4].map(c=>r*5+c));
+  for(let c=0;c<5;c++) L.push([0,1,2,3,4].map(r=>r*5+c));
+  L.push([0,6,12,18,24]);
+  L.push([4,8,12,16,20]);
+  return L;
+})();
+
+let state = JSON.parse(localStorage.getItem(KEY) || '{}');
+const save = () => localStorage.setItem(KEY, JSON.stringify(state));
+const isDone = cell => cell === FREE || !!state[cell];
+
+// post links live in their own key, so an older saved board still loads fine
+const LKEY = KEY + ':links';
+let links = JSON.parse(localStorage.getItem(LKEY) || '{}');
+const saveLinks = () => localStorage.setItem(LKEY, JSON.stringify(links));
+
+const board = document.getElementById('board');
+for(let cell=0; cell<25; cell++){
+  const el = document.createElement('div');
+  if(cell === FREE){
+    el.className = 'sq free';
+    el.id = 'freeSq';
+    el.innerHTML = '<div><div class="glyph">✦</div><div class="nm">Free<br>Square</div></div>';
+  } else {
+    const s = SQUARES[sqIndex(cell)];
+    el.className = 'sq';
+    el.dataset.cell = cell;
+    el.innerHTML = '<span class="mark"></span><div class="num">'+String(sqIndex(cell)+1).padStart(2,'0')+
+                   '</div><div class="nm">'+s.n+'</div>';
+    el.addEventListener('click', () => open(cell));
+  }
+  board.appendChild(el);
+}
+
+function completedLines(){
+  return LINES.filter(l => l.every(isDone));
+}
+
+function paint(){
+  let done = 0;
+  document.querySelectorAll('.sq[data-cell]').forEach(el => {
+    const cell = +el.dataset.cell;
+    el.classList.toggle('done', isDone(cell));
+    el.classList.remove('inline');
+    if(isDone(cell)) done++;
+  });
+  const lines = completedLines();
+  const hot = new Set();
+  lines.forEach(l => l.forEach(c => hot.add(c)));
+  const freeEl = document.getElementById('freeSq');
+  if(freeEl) freeEl.classList.toggle('inline', hot.has(FREE));
+  hot.forEach(c => {
+    const el = document.querySelector('.sq[data-cell="'+c+'"]');
+    if(el) el.classList.add('inline');
+  });
+  document.getElementById('sDone').textContent  = done;
+  document.getElementById('sLines').textContent = lines.length;
+  const days = Math.max(0, Math.ceil((END - new Date()) / 86400000));
+  document.getElementById('sLeft').textContent = days;
+}
+
+const veil  = document.getElementById('veil');
+const sheet = document.getElementById('sheet');
+
+function open(cell){
+  const s = SQUARES[sqIndex(cell)];
+  const on = isDone(cell);
+  sheet.innerHTML =
+    '<button class="close" aria-label="Close">&times;</button>' +
+    '<div class="num">Square '+String(sqIndex(cell)+1).padStart(2,'0')+'</div>' +
+    '<h3>'+s.n+'</h3>' +
+    '<div class="job">'+s.job+'</div>' +
+    '<div class="pbox" id="pbox"></div>' +
+    '<div class="acts">' +
+      '<button class="btn copy" id="cp">Copy the prompt</button>' +
+      '<button class="btn mark'+(on?' is':'')+'" id="mk">'+(on?'✓ Forged':'Mark it forged')+'</button>' +
+    '</div>' +
+    '<div class="linkwrap">' +
+      '<label for="lk">Where you posted it · optional</label>' +
+      '<input id="lk" type="url" placeholder="Paste the link">' +
+      '<div class="hint">Only if you want it. Saving links here means you can copy the whole list at the end of the month instead of hunting for them.</div>' +
+    '</div>';
+  document.getElementById('pbox').textContent = s.p;
+  const lk = document.getElementById('lk');
+  lk.value = links[cell] || '';
+  lk.addEventListener('input', () => {
+    const v = lk.value.trim();
+    if(v) links[cell] = v; else delete links[cell];
+    saveLinks();
+  });
+  veil.classList.add('on');
+  document.body.style.overflow = 'hidden';
+
+  sheet.querySelector('.close').onclick = close;
+  document.getElementById('cp').onclick = e => {
+    navigator.clipboard.writeText(s.p).then(() => {
+      e.target.textContent = 'Copied';
+      e.target.classList.add('ok');
+      toast('Prompt copied');
+      setTimeout(() => { e.target.textContent = 'Copy the prompt'; e.target.classList.remove('ok'); }, 1800);
+    });
+  };
+  document.getElementById('mk').onclick = e => {
+    const before = completedLines().length;
+    if(state[cell]) delete state[cell]; else state[cell] = 1;
+    save(); paint();
+    const now = completedLines().length;
+    e.target.classList.toggle('is', !!state[cell]);
+    e.target.textContent = state[cell] ? '✓ Forged' : 'Mark it forged';
+    if(now > before) toast(now === 1 ? 'That is a line. One entry in.' : 'Another line. '+now+' entries.');
+  };
+}
+
+function close(){ veil.classList.remove('on'); document.body.style.overflow = ''; }
+veil.addEventListener('click', e => { if(e.target === veil) close(); });
+document.addEventListener('keydown', e => { if(e.key === 'Escape') close(); });
+
+const toastEl = document.getElementById('toast');
+let tid;
+function toast(msg){
+  toastEl.textContent = msg;
+  toastEl.classList.add('up');
+  clearTimeout(tid);
+  tid = setTimeout(() => toastEl.classList.remove('up'), 2400);
+}
+
+document.getElementById('copyTmpl').onclick = e => {
+  navigator.clipboard.writeText(document.getElementById('tmpl').textContent).then(() => {
+    e.target.textContent = 'Copied';
+    e.target.classList.add('ok');
+    toast('Template copied');
+    setTimeout(() => { e.target.textContent = 'Copy the template'; e.target.classList.remove('ok'); }, 1800);
+  });
+};
+
+// ── copy my forged list ──────────────────────────────────────
+document.getElementById('copyLinks').onclick = e => {
+  const rows = [];
+  for(let cell=0; cell<25; cell++){
+    if(cell === FREE || !state[cell]) continue;
+    const s = SQUARES[sqIndex(cell)];
+    const u = (links[cell] || '').trim();
+    rows.push(String(sqIndex(cell)+1).padStart(2,'0') + '  ' + s.n + (u ? '  ' + u : ''));
+  }
+  if(!rows.length){ toast('Nothing forged yet'); return; }
+  const lines = completedLines().length;
+  const head = 'My Made Visible board · ' + rows.length + (rows.length === 1 ? ' square' : ' squares') +
+               ' forged · ' + lines + (lines === 1 ? ' line' : ' lines') + ' complete';
+  navigator.clipboard.writeText(head + '\n\n' + rows.join('\n')).then(() => {
+    toast('Your list is copied');
+  });
+};
+
+// ── clear the board ──────────────────────────────────────────
+document.getElementById('clearAll').onclick = () => {
+  const n = Object.keys(state).length;
+  if(!n){ toast('Nothing to clear'); return; }
+  if(!confirm('Clear all ' + n + ' forged squares and any links you saved?\n\nThis cannot be undone.')) return;
+  state = {}; links = {};
+  save(); saveLinks(); paint();
+  toast('Board cleared');
+};
+
+const em = document.getElementById('embers');
+for(let i=0;i<20;i++){
+  const s = document.createElement('div');
+  s.className = 'ember';
+  s.style.left = Math.random()*100+'%';
+  s.style.animationDuration = (7+Math.random()*9)+'s';
+  s.style.animationDelay = (Math.random()*11)+'s';
+  s.style.transform = 'scale('+(0.6+Math.random()*1.4)+')';
+  em.appendChild(s);
+}
+
+paint();
+</script>
+</body>
+</html>
