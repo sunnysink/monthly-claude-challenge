@@ -3,14 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Visibility Tracker · August: Made Visible</title>
+<title>The Visibility Tracker · The Monthly Claude Challenge</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   /* ============================================================
-     THE SKIN. A new month is this block plus the MONTH block in
-     the script. Nothing else in this file knows what colour it is.
+     THE SKIN. A new month is this block and nothing else.
      August 2026 = Honey Linen, same tokens as the board.
      ============================================================ */
   :root{
@@ -50,7 +49,17 @@
     color:var(--copper);margin-bottom:9px}
   h1{font-family:var(--serif);font-weight:600;font-size:clamp(38px,6.5vw,62px);line-height:1;
     color:var(--copper-lt);letter-spacing:.4px}
-  .sub{font-family:var(--serif);font-style:italic;font-size:20px;color:var(--ink-dim);margin-top:7px;max-width:62ch}
+  .sub{font-size:16.5px;color:var(--ink-dim);margin-top:11px;line-height:1.6}
+  .sub b{color:var(--ink)}
+
+  .monthrow{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:18px}
+  .monthrow select{font-family:var(--serif);font-size:21px;font-weight:600;color:var(--copper-lt);
+    background:rgba(var(--sheet-rgb),0.9);border:1px solid rgba(var(--copper-rgb),0.4);
+    border-radius:11px;padding:9px 14px;cursor:pointer}
+  .monthrow select:focus{outline:none;border-color:var(--ember)}
+  .todaychip{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--copper-lt);
+    background:rgba(var(--ember-rgb),0.13);border:1px solid rgba(var(--ember-rgb),0.4);
+    border-radius:30px;padding:7px 14px}
 
   .label{font-family:var(--mono);font-size:10.5px;letter-spacing:.26em;text-transform:uppercase;
     color:var(--ink-dim);margin:34px 0 13px;display:flex;align-items:center;gap:12px}
@@ -58,7 +67,7 @@
 
   .card{background:var(--card);border:1px solid var(--cardborder);border-radius:15px;padding:18px 20px}
 
-  /* ---- streak row ---- */
+  /* ---- stats ---- */
   .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}
   .stat{background:var(--card);border:1px solid var(--cardborder);border-radius:15px;padding:15px 17px;position:relative;overflow:hidden}
   .stat::before{content:"";position:absolute;left:0;top:0;right:0;height:2px;
@@ -70,9 +79,9 @@
   @media(max-width:860px){.stats{grid-template-columns:repeat(2,1fr)}}
 
   /* ---- the strip ---- */
-  .stripwrap{background:var(--card);border:1px solid var(--cardborder);border-radius:15px;padding:16px 0 14px;overflow:hidden}
+  .stripwrap{background:var(--card);border:1px solid var(--cardborder);border-radius:15px;padding:16px 0 16px;overflow:hidden}
   .stripscroll{overflow-x:auto;padding:0 16px 6px}
-  .strip{display:grid;grid-template-columns:150px repeat(31,44px);gap:3px;min-width:max-content}
+  .strip{display:grid;gap:3px;min-width:max-content}
   .rl{font-size:11.5px;color:var(--ink-dim);display:flex;align-items:center;gap:7px;
     padding-right:10px;position:sticky;left:0;background:var(--bg2);z-index:2;
     border-radius:6px;padding-left:9px;height:34px}
@@ -82,7 +91,8 @@
     cursor:pointer;border-radius:6px;padding:5px 0 4px;line-height:1.25;border:1px solid transparent}
   .dh:hover{background:rgba(var(--copper-rgb),0.12);border-color:rgba(var(--copper-rgb),0.3)}
   .dh .dow{display:block;font-size:8.5px;opacity:.6;letter-spacing:.06em}
-  .dh.sel{background:rgba(var(--ember-rgb),0.18);border-color:rgba(var(--ember-rgb),0.5);color:var(--copper-lt);font-weight:600}
+  .dh.today{border-color:rgba(var(--copper-rgb),0.55);background:rgba(var(--gold-rgb),0.14)}
+  .dh.sel{background:rgba(var(--ember-rgb),0.2);border-color:rgba(var(--ember-rgb),0.6);color:var(--copper-lt);font-weight:600}
   .dh.wknd .dow{color:var(--mauve);opacity:.9}
 
   .cell{height:34px;border-radius:6px;border:1px solid rgba(var(--copper-rgb),0.18);
@@ -90,25 +100,24 @@
     display:grid;place-items:center;font-family:var(--mono);font-size:12px;font-weight:600;color:var(--on-accent)}
   .cell:hover{transform:translateY(-1px)}
   .cell.on{border-color:transparent}
-  .cell.r{cursor:default}
-  .cell.r:hover{transform:none}
+  .cell.today{box-shadow:inset 0 0 0 1px rgba(var(--copper-rgb),0.5)}
   .divider{grid-column:1 / -1;height:1px;background:linear-gradient(90deg,rgba(var(--copper-rgb),0.45),rgba(var(--copper-rgb),0.12));margin:9px 0 4px}
   .bandlab{grid-column:1 / -1;font-family:var(--mono);font-size:9.5px;letter-spacing:.22em;
     text-transform:uppercase;color:var(--copper);margin:2px 0 7px;padding-left:9px}
 
-  .readnote{font-size:12.5px;color:var(--ink-dim);line-height:1.55;padding:12px 20px 0;max-width:78ch}
+  .readnote{font-size:13px;color:var(--ink-dim);line-height:1.6;padding:14px 20px 0}
   .readnote b{color:var(--ink)}
 
   /* ---- day panel ---- */
   .day{margin-top:14px;background:linear-gradient(135deg,rgba(var(--ember-rgb),0.10),rgba(var(--card-rgb),0.8));
     border:1px solid rgba(var(--ember-rgb),0.34);border-radius:15px;padding:17px 19px}
   .day h3{font-family:var(--serif);font-weight:600;font-size:23px;margin-bottom:3px}
-  .day .hint{font-size:12px;color:var(--ink-dim);margin-bottom:14px}
+  .day .hint{font-size:12.5px;color:var(--ink-dim);margin-bottom:14px;line-height:1.55}
   .toggles{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:15px}
   .tg{font-size:12.5px;padding:8px 14px;border-radius:30px;cursor:pointer;user-select:none;
     border:1px solid rgba(var(--copper-rgb),0.35);background:rgba(var(--sheet-rgb),0.6);color:var(--ink-dim)}
   .tg.on{background:var(--ember);border-color:var(--ember);color:#FFF6EC;font-weight:600}
-  .fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+  .fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
   .f label{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;
     text-transform:uppercase;color:var(--ink-dim);margin-bottom:5px}
   .f input{width:100%;font-family:var(--sans);font-size:14px;color:var(--ink);
@@ -130,21 +139,37 @@
     border:1px solid rgba(var(--copper-rgb),0.3);color:var(--ink-dim);background:rgba(var(--sheet-rgb),0.55)}
   .wk.on{background:var(--copper);border-color:var(--copper);color:#FFF6EC;font-weight:600}
 
-  /* ---- sources ---- */
+  /* ---- tables ---- */
   table{width:100%;border-collapse:collapse;font-size:13px}
   th{font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;
-    color:var(--ink-dim);text-align:left;padding:0 8px 9px;font-weight:500}
-  td{padding:9px 8px;border-top:1px solid rgba(var(--copper-rgb),0.14);color:var(--ink-dim)}
+    color:var(--ink-dim);text-align:left;padding:0 8px 9px;font-weight:500;white-space:nowrap}
+  td{padding:8px;border-top:1px solid rgba(var(--copper-rgb),0.14);color:var(--ink-dim)}
   td b{color:var(--ink)}
   .srcbar{height:7px;border-radius:20px;background:linear-gradient(90deg,var(--gold),var(--ember));min-width:3px}
-  .empty{font-family:var(--serif);font-style:italic;font-size:15px;color:var(--ink-dim);opacity:.7;padding:6px 2px}
+  .empty{font-size:13.5px;color:var(--ink-dim);line-height:1.6;padding:6px 2px}
+  .scrollx{overflow-x:auto}
+  .folin{width:76px;font-family:var(--mono);font-size:12px;text-align:center;color:var(--ink);
+    background:rgba(var(--sheet-rgb),0.9);border:1px solid rgba(var(--copper-rgb),0.26);
+    border-radius:7px;padding:6px 4px}
+  .folin:focus{outline:none;border-color:var(--ember)}
+  .folname{width:112px;font-family:var(--sans);font-size:13px;font-weight:600;color:var(--ink);
+    background:transparent;border:1px solid transparent;border-radius:7px;padding:6px 6px}
+  .folname:hover{border-color:rgba(var(--copper-rgb),0.28)}
+  .folname:focus{outline:none;background:rgba(var(--sheet-rgb),0.9);border-color:var(--ember)}
+  .up{color:var(--green);font-family:var(--mono);font-size:12px}
+  .down{color:var(--ember);font-family:var(--mono);font-size:12px}
 
-  /* ---- recap ---- */
-  .recap{background:linear-gradient(135deg,rgba(var(--forest-rgb),0.14),rgba(var(--card-rgb),0.8));
+  /* ---- copy blocks ---- */
+  .copyblock{background:linear-gradient(135deg,rgba(var(--forest-rgb),0.13),rgba(var(--card-rgb),0.82));
     border:1px solid rgba(var(--forest-rgb),0.4);border-radius:15px;padding:18px 20px}
-  .recap pre{font-family:var(--mono);font-size:12px;line-height:1.75;color:var(--ink);
-    white-space:pre-wrap;background:rgba(var(--sheet-rgb),0.8);border:1px solid rgba(var(--copper-rgb),0.2);
-    border-radius:11px;padding:14px 15px;margin:12px 0}
+  .copyblock + .copyblock{margin-top:14px}
+  .copyblock h3{font-family:var(--serif);font-weight:600;font-size:22px;margin-bottom:5px}
+  .copyblock .why{font-size:13px;color:var(--ink-dim);line-height:1.6}
+  .copyblock pre{font-family:var(--mono);font-size:11.5px;line-height:1.7;color:var(--ink);
+    white-space:pre;overflow-x:auto;background:rgba(var(--sheet-rgb),0.85);
+    border:1px solid rgba(var(--copper-rgb),0.2);border-radius:11px;padding:14px 15px;margin:13px 0;
+    max-height:280px}
+  .copyblock pre.wrap{white-space:pre-wrap;font-size:12.5px}
   .btn{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
     background:var(--copper);color:#FFF6EC;border:none;border-radius:30px;padding:10px 20px;cursor:pointer}
   .btn:hover{background:var(--copper-lt)}
@@ -152,9 +177,9 @@
   .btn.ghost:hover{background:rgba(var(--copper-rgb),0.1);color:var(--ink)}
   .btnrow{display:flex;flex-wrap:wrap;gap:9px;align-items:center}
 
-  .note{margin-top:16px;font-size:12.5px;color:var(--ink-dim);line-height:1.6;
+  .note{margin-top:16px;font-size:13px;color:var(--ink-dim);line-height:1.65;
     background:rgba(var(--sheet-rgb),0.6);border:1px dashed rgba(var(--copper-rgb),0.35);
-    border-radius:12px;padding:13px 15px}
+    border-radius:12px;padding:14px 16px}
   .note b{color:var(--ink)}
   footer{margin-top:38px;text-align:center;font-family:var(--mono);font-size:10.5px;
     color:var(--ink-dim);opacity:.7;letter-spacing:.06em}
@@ -166,12 +191,17 @@
 
   <div class="kicker">The Monthly Claude Challenge · Spark 01</div>
   <h1>The Visibility Tracker</h1>
-  <div class="sub">Showing up on the top row. What came back on the bottom. The gap between them is the whole point.</div>
+  <div class="sub"><b>Tick what you did each day. Log what came back on the day it lands.</b> By the end of the month you can see which one led to the other, and copy the whole thing out to keep.</div>
+
+  <div class="monthrow">
+    <select id="monthsel" aria-label="Month"></select>
+    <span class="todaychip" id="todaychip"></span>
+  </div>
 
   <div class="label">This month so far</div>
   <div class="stats">
     <div class="stat"><div class="sl">Days visible</div><div class="sv" id="s-days">0</div><div class="sn" id="s-days-n">out of 31</div></div>
-    <div class="stat"><div class="sl">Longest streak</div><div class="sv" id="s-streak">0</div><div class="sn" id="s-streak-n">days in a row</div></div>
+    <div class="stat"><div class="sl">Longest streak</div><div class="sv" id="s-streak">0</div><div class="sn">days in a row</div></div>
     <div class="stat g"><div class="sl">Booked</div><div class="sv" id="s-calls">0</div><div class="sn">calls and readings</div></div>
     <div class="stat g"><div class="sl">New leads</div><div class="sv" id="s-leads">0</div><div class="sn" id="s-money">and $0 in</div></div>
   </div>
@@ -179,7 +209,7 @@
   <div class="label">The strip · click a date to log what came back</div>
   <div class="stripwrap">
     <div class="stripscroll"><div class="strip" id="strip"></div></div>
-    <div class="readnote"><b>Read it left to right, not top to bottom.</b> Results almost never land on the day you did the work. When a run of filled squares on the top is followed a few days later by something on the bottom, that gap is the answer to the question this whole challenge is really asking.</div>
+    <div class="readnote"><b>Results rarely land on the day you did the work.</b> Someone sees a post on Tuesday and books on Friday. The days run left to right, so once you have a few weeks in here you can see how long your own lag usually is, and which weeks were worth the effort.</div>
   </div>
 
   <div id="daypanel"></div>
@@ -194,47 +224,54 @@
       <thead><tr><th style="width:34%">Source</th><th style="width:16%">Leads</th><th>Share</th></tr></thead>
       <tbody id="srcbody"></tbody>
     </table>
-    <div class="empty" id="srcempty">Nothing logged yet. Add a source when you log a lead and this table starts answering the question.</div>
+    <div class="empty" id="srcempty">Nothing here yet. Fill in "where they came from" when you log a lead and this table starts telling you which posts are worth repeating.</div>
   </div>
 
-  <div class="label">Followers · optional, once a week</div>
+  <div class="label">Followers · optional, end of each week</div>
   <div class="card">
-    <div class="targets" id="folwrap"></div>
-    <div class="note" style="margin-top:14px"><b>This row is deliberately weekly.</b> Follower counts move slowly enough that checking daily reads as failure in a month that actually worked. Fill it on a Sunday or leave it empty all month, it changes nothing else on this page.</div>
+    <div class="scrollx"><table id="foltable"></table></div>
+    <div class="note" style="margin-top:15px"><b>Weekly on purpose.</b> Follower counts move slowly, so checking them daily makes a good month look like a bad one. Fill in the platforms you actually use and leave the rest empty. Rename any row by clicking on it.</div>
   </div>
 
-  <div class="label">The month, recapped</div>
-  <div class="recap">
-    <div style="font-family:var(--serif);font-size:21px;font-weight:600;margin-bottom:4px">Square 24 writes itself</div>
-    <div style="font-size:13px;color:var(--ink-dim);line-height:1.55">The last square on the board is <b>The Month, Recapped</b>. This is your numbers, already in a sentence. Copy it, put it in your own words, post it.</div>
-    <pre id="recap">Log a day or two and this fills in.</pre>
+  <div class="label">Copy your month out</div>
+
+  <div class="copyblock">
+    <h3>Your recap, ready to post</h3>
+    <div class="why">One of the squares on the board is <b>The Month, Recapped</b>. This is your numbers already written as a short post. Copy it, put it in your own words, and post it.</div>
+    <pre class="wrap" id="recap">Log a day or two and this fills in.</pre>
+    <div class="btnrow"><button class="btn" id="copyrecap">Copy the recap</button></div>
+  </div>
+
+  <div class="copyblock">
+    <h3>Your full month, day by day</h3>
+    <div class="why">Every day in one block. <b>Paste it into a Google Doc and you have the month on record</b>, which is the part this page cannot keep for you. Paste it into a spreadsheet and it lands in proper columns.</div>
+    <pre id="export">Log a day or two and this fills in.</pre>
     <div class="btnrow">
-      <button class="btn" id="copy">Copy the recap</button>
-      <button class="btn ghost" id="reset">Clear the month</button>
+      <button class="btn" id="copymonth">Copy the whole month</button>
+      <button class="btn ghost" id="reset">Clear this month</button>
     </div>
   </div>
 
   <div class="note">
-    <b>This saves to this device and nowhere else.</b> Nothing is sent anywhere, nobody can see it, and there is no account. The trade is that your phone and your laptop keep separate copies, so pick one and stay on it. Clearing your browser data clears this too.
+    <b>This saves to this device and nowhere else.</b> Nothing is sent anywhere, nobody can see it, and there is no account. The trade is that your phone and your laptop keep separate copies, so pick one and stay on it. Clearing your browser data clears this too, which is the real reason to copy your month out at the end of it.
   </div>
 
-  <footer>The Monthly Claude Challenge · August: Made Visible · <a href="../">back to the board</a></footer>
+  <footer>The Monthly Claude Challenge · <a href="../">back to the board</a></footer>
 </div>
 
 <script>
 /* ==============================================================
-   THE MONTH BLOCK. A new month is this plus the :root skin above.
-   ⚠️ KEY must change every month or the new tracker loads last
-   month's saved data. Same rule as the board.
+   The month is chosen in the dropdown and each month saves under
+   its own key, so nothing has to be edited here when August ends.
+   A new month is the :root skin block above, and nothing else.
    ============================================================== */
-const MONTH = {
-  key:   'forge-tracker-2026-08',
-  name:  'August',
-  theme: 'Made Visible',
-  year:  2026,
-  monthIndex: 7,   // 0 = January
-  days:  31
-};
+const KEY_PREFIX = 'forge-tracker-';   // board uses forge-board-, keep these apart
+const FIRST = {y:2026, m:7};           // August 2026, m is 0-based
+const LAST  = {y:2027, m:11};
+
+const MONTH_NAMES = ['January','February','March','April','May','June',
+                     'July','August','September','October','November','December'];
+const DOW = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
 const ROWS_DID = [
   {k:'post',    label:'Post published',   colour:'var(--ember)'},
@@ -247,65 +284,124 @@ const ROWS_BACK = [
   {k:'leads', label:'New leads',        colour:'var(--gold)'},
   {k:'money', label:'Money in',         colour:'var(--green)', money:true}
 ];
+const PLATFORMS = ['Instagram','Facebook','TikTok','YouTube','Substack','Skool'];
 
-const BLANK = () => ({days:{}, targets:{post:5, video:2, story:3, reach:5}, followers:{}, week:1});
-let D = load();
-let selected = todayInMonth() || 1;
+let Y, M, D, selected;
+
+const daysIn   = (y,m) => new Date(y, m+1, 0).getDate();
+const keyFor   = (y,m) => KEY_PREFIX + y + '-' + String(m+1).padStart(2,'0');
+const dowOf    = n => new Date(Y, M, n).getDay();
+const money    = v => '$' + Math.round(v).toLocaleString();
+const BLANK    = () => ({days:{}, targets:{post:5, video:2, story:3, reach:5},
+                         followers:{}, names:PLATFORMS.slice(), week:1});
 
 function load(){
   try{
-    const raw = localStorage.getItem(MONTH.key);
+    const raw = localStorage.getItem(keyFor(Y,M));
     if(!raw) return BLANK();
     const p = JSON.parse(raw);
-    return Object.assign(BLANK(), p);
+    const base = BLANK();
+    const out = Object.assign(base, p);
+    out.targets = Object.assign(base.targets, p.targets || {});
+    if(!Array.isArray(out.names) || out.names.length !== PLATFORMS.length) out.names = PLATFORMS.slice();
+    return out;
   }catch(e){ return BLANK(); }
 }
-function save(){
-  try{ localStorage.setItem(MONTH.key, JSON.stringify(D)); }catch(e){}
-}
+function save(){ try{ localStorage.setItem(keyFor(Y,M), JSON.stringify(D)); }catch(e){} }
 function day(n){
   if(!D.days[n]) D.days[n] = {post:0,video:0,story:0,reach:0,calls:0,leads:0,money:0,source:''};
   return D.days[n];
-}
-function todayInMonth(){
-  const t = new Date();
-  if(t.getFullYear() === MONTH.year && t.getMonth() === MONTH.monthIndex) return t.getDate();
-  return null;
-}
-function weekOf(n){ return Math.min(5, Math.ceil(n/7)); }
-function daysInWeek(w){
-  const out = [];
-  for(let n = (w-1)*7+1; n <= Math.min(MONTH.days, w*7); n++) out.push(n);
-  return out;
 }
 function isVisible(n){
   const d = D.days[n]; if(!d) return false;
   return ROWS_DID.some(r => d[r.k]);
 }
-const DOW = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-function dowOf(n){ return new Date(MONTH.year, MONTH.monthIndex, n).getDay(); }
-const money = v => '$' + Math.round(v).toLocaleString();
+function isToday(n){
+  const t = new Date();
+  return t.getFullYear() === Y && t.getMonth() === M && t.getDate() === n;
+}
+function weeksInMonth(){ return Math.ceil(daysIn(Y,M) / 7); }
+function daysInWeek(w){
+  const out = [];
+  for(let n = (w-1)*7+1; n <= Math.min(daysIn(Y,M), w*7); n++) out.push(n);
+  return out;
+}
+/* leads on a day split across the sources named that day, so the
+   column adds up to the lead count instead of double counting */
+function sourceTally(){
+  const tally = {};
+  for(let n=1; n<=daysIn(Y,M); n++){
+    const d = D.days[n];
+    if(!d || !d.source) continue;
+    const names = d.source.split(',').map(s => s.trim()).filter(Boolean);
+    if(!names.length) continue;
+    const per = ((+d.leads || 0) || 1) / names.length;
+    names.forEach(s => {
+      const k = s.charAt(0).toUpperCase() + s.slice(1);
+      tally[k] = (tally[k] || 0) + per;
+    });
+  }
+  return Object.entries(tally).sort((a,b) => b[1]-a[1]);
+}
+function totals(){
+  let visible = 0, run = 0, streak = 0, calls = 0, leads = 0, cash = 0;
+  const did = {post:0, video:0, story:0, reach:0};
+  for(let n=1; n<=daysIn(Y,M); n++){
+    if(isVisible(n)){ visible++; run++; streak = Math.max(streak, run); } else run = 0;
+    const d = D.days[n]; if(!d) continue;
+    ROWS_DID.forEach(r => did[r.k] += d[r.k] ? 1 : 0);
+    calls += (+d.calls||0); leads += (+d.leads||0); cash += (+d.money||0);
+  }
+  return {visible, streak, calls, leads, cash, did};
+}
+
+/* ---------- month picker ---------- */
+function drawMonths(){
+  const sel = document.getElementById('monthsel');
+  sel.innerHTML = '';
+  let y = FIRST.y, m = FIRST.m;
+  while(y < LAST.y || (y === LAST.y && m <= LAST.m)){
+    const o = document.createElement('option');
+    o.value = y + '-' + m;
+    o.textContent = MONTH_NAMES[m] + ' ' + y;
+    if(y === Y && m === M) o.selected = true;
+    sel.appendChild(o);
+    m++; if(m > 11){ m = 0; y++; }
+  }
+  sel.onchange = () => {
+    const [ny, nm] = sel.value.split('-').map(Number);
+    Y = ny; M = nm;
+    D = load();
+    selected = isToday(1) || (new Date().getFullYear() === Y && new Date().getMonth() === M)
+      ? new Date().getDate() : 1;
+    drawAll();
+  };
+  const t = new Date();
+  document.getElementById('todaychip').textContent =
+    'Today is ' + DOW[t.getDay()] + ', ' + MONTH_NAMES[t.getMonth()] + ' ' + t.getDate();
+}
 
 /* ---------- the strip ---------- */
 function drawStrip(){
+  const n_days = daysIn(Y,M);
   const s = document.getElementById('strip');
+  s.style.gridTemplateColumns = '150px repeat(' + n_days + ', 44px)';
   s.innerHTML = '';
-  const head = document.createElement('div');
-  head.className = 'rl head';
-  s.appendChild(head);
-  for(let n=1; n<=MONTH.days; n++){
+  s.appendChild(Object.assign(document.createElement('div'), {className:'rl head'}));
+
+  for(let n=1; n<=n_days; n++){
     const w = dowOf(n);
     const h = document.createElement('div');
-    h.className = 'dh' + (n===selected ? ' sel' : '') + ((w===0||w===6) ? ' wknd' : '');
+    h.className = 'dh' + (n===selected ? ' sel' : '') + (isToday(n) ? ' today' : '') +
+                  ((w===0||w===6) ? ' wknd' : '');
     h.innerHTML = '<span class="dow">'+DOW[w][0]+'</span>'+n;
-    h.title = MONTH.name + ' ' + n;
+    h.title = MONTH_NAMES[M] + ' ' + n + (isToday(n) ? ' · today' : '');
     h.onclick = () => { selected = n; drawAll(); };
     s.appendChild(h);
   }
 
   const band = document.createElement('div');
-  band.className = 'bandlab';
-  band.textContent = 'Did I show up';
+  band.className = 'bandlab'; band.textContent = 'Did I show up';
   s.appendChild(band);
 
   ROWS_DID.forEach(r => {
@@ -313,23 +409,20 @@ function drawStrip(){
     l.className = 'rl';
     l.innerHTML = '<span class="sw" style="background:'+r.colour+'"></span>'+r.label;
     s.appendChild(l);
-    for(let n=1; n<=MONTH.days; n++){
-      const c = document.createElement('div');
+    for(let n=1; n<=n_days; n++){
       const on = !!day(n)[r.k];
-      c.className = 'cell' + (on ? ' on' : '');
+      const c = document.createElement('div');
+      c.className = 'cell' + (on ? ' on' : '') + (isToday(n) ? ' today' : '');
       if(on) c.style.background = r.colour;
-      c.title = r.label + ' · ' + MONTH.name + ' ' + n;
+      c.title = r.label + ' · ' + MONTH_NAMES[M] + ' ' + n;
       c.onclick = () => { const d = day(n); d[r.k] = d[r.k] ? 0 : 1; save(); drawAll(); };
       s.appendChild(c);
     }
   });
 
-  const div = document.createElement('div');
-  div.className = 'divider';
-  s.appendChild(div);
+  s.appendChild(Object.assign(document.createElement('div'), {className:'divider'}));
   const band2 = document.createElement('div');
-  band2.className = 'bandlab';
-  band2.textContent = 'What came back';
+  band2.className = 'bandlab'; band2.textContent = 'What came back';
   s.appendChild(band2);
 
   ROWS_BACK.forEach(r => {
@@ -337,35 +430,40 @@ function drawStrip(){
     l.className = 'rl';
     l.innerHTML = '<span class="sw" style="background:'+r.colour+'"></span>'+r.label;
     s.appendChild(l);
-    for(let n=1; n<=MONTH.days; n++){
+    for(let n=1; n<=n_days; n++){
       const v = day(n)[r.k] || 0;
       const c = document.createElement('div');
-      c.className = 'cell r' + (v ? ' on' : '');
+      c.className = 'cell' + (v ? ' on' : '') + (isToday(n) ? ' today' : '');
       if(v){
         c.style.background = r.colour;
         c.style.color = '#FFF6EC';
         c.textContent = r.money ? (v >= 1000 ? Math.round(v/1000)+'k' : Math.round(v)) : v;
       }
-      c.title = r.label + ' · ' + MONTH.name + ' ' + n + (v ? ': ' + (r.money ? money(v) : v) : ' · click the date above to log');
-      c.onclick = () => { selected = n; drawAll(); document.getElementById('daypanel').scrollIntoView({behavior:'smooth', block:'center'}); };
+      c.title = r.label + ' · ' + MONTH_NAMES[M] + ' ' + n +
+                (v ? ': ' + (r.money ? money(v) : v) : ' · click the date above to log it');
+      c.onclick = () => {
+        selected = n; drawAll();
+        document.getElementById('daypanel').scrollIntoView({behavior:'smooth', block:'center'});
+      };
       s.appendChild(c);
     }
   });
 }
 
-/* ---------- the day panel ---------- */
+/* ---------- day panel ---------- */
 function drawDay(){
+  if(selected > daysIn(Y,M)) selected = daysIn(Y,M);
   const d = day(selected);
-  const w = dowOf(selected);
   const p = document.getElementById('daypanel');
   p.innerHTML =
-    '<div class="day"><h3>'+DOW[w]+', '+MONTH.name+' '+selected+'</h3>'+
-    '<div class="hint">Tick what you did. Log what came back, on the day it actually arrived.</div>'+
+    '<div class="day"><h3>'+DOW[dowOf(selected)]+', '+MONTH_NAMES[M]+' '+selected+
+      (isToday(selected) ? ' · today' : '')+'</h3>'+
+    '<div class="hint">Tick what you did. Log what came back on the day it actually arrived, even if the post that caused it went out last week.</div>'+
     '<div class="toggles" id="tg"></div>'+
     '<div class="fields">'+
       '<div class="f"><label>Calls / readings booked</label><input type="number" min="0" id="f-calls" value="'+(d.calls||'')+'" placeholder="0"></div>'+
       '<div class="f"><label>New leads</label><input type="number" min="0" id="f-leads" value="'+(d.leads||'')+'" placeholder="0"></div>'+
-      '<div class="f"><label>Where they came from</label><input type="text" id="f-source" value="'+(d.source||'').replace(/"/g,'&quot;')+'" placeholder="Reels, DMs, newsletter..."></div>'+
+      '<div class="f"><label>Where they came from</label><input type="text" id="f-source" value="'+String(d.source||'').replace(/"/g,'&quot;')+'" placeholder="Instagram, DMs, newsletter"></div>'+
       '<div class="f"><label>Money in</label><input type="number" min="0" id="f-money" value="'+(d.money||'')+'" placeholder="0"></div>'+
     '</div></div>';
 
@@ -383,7 +481,7 @@ function drawDay(){
     el.oninput = () => {
       d[k] = num ? (parseFloat(el.value) || 0) : el.value;
       save();
-      drawStrip(); drawStats(); drawSources(); drawTargets(); drawRecap();
+      drawStrip(); drawStats(); drawSources(); drawTargets(); drawCopy();
     };
   };
   bind('f-calls','calls',true); bind('f-leads','leads',true);
@@ -392,31 +490,26 @@ function drawDay(){
 
 /* ---------- stats ---------- */
 function drawStats(){
-  let visible = 0, streak = 0, best = 0, calls = 0, leads = 0, cash = 0;
-  for(let n=1; n<=MONTH.days; n++){
-    if(isVisible(n)){ visible++; streak++; best = Math.max(best, streak); }
-    else streak = 0;
-    const d = D.days[n];
-    if(d){ calls += (+d.calls||0); leads += (+d.leads||0); cash += (+d.money||0); }
-  }
-  document.getElementById('s-days').textContent = visible;
-  document.getElementById('s-days-n').textContent = 'out of ' + MONTH.days;
-  document.getElementById('s-streak').textContent = best;
-  document.getElementById('s-calls').textContent = calls;
-  document.getElementById('s-leads').textContent = leads;
-  document.getElementById('s-money').textContent = 'and ' + money(cash) + ' in';
+  const t = totals();
+  document.getElementById('s-days').textContent = t.visible;
+  document.getElementById('s-days-n').textContent = 'out of ' + daysIn(Y,M);
+  document.getElementById('s-streak').textContent = t.streak;
+  document.getElementById('s-calls').textContent = t.calls;
+  document.getElementById('s-leads').textContent = t.leads;
+  document.getElementById('s-money').textContent = 'and ' + money(t.cash) + ' in';
 }
 
 /* ---------- weekly targets ---------- */
 function drawTargets(){
   const wp = document.getElementById('weekpick');
   wp.innerHTML = '';
-  for(let w=1; w<=5; w++){
+  if(D.week > weeksInMonth()) D.week = 1;
+  for(let w=1; w<=weeksInMonth(); w++){
     const list = daysInWeek(w);
     if(!list.length) continue;
     const b = document.createElement('div');
     b.className = 'wk' + (w === D.week ? ' on' : '');
-    b.textContent = 'Week ' + w + ' · ' + MONTH.name.slice(0,3) + ' ' + list[0] + '–' + list[list.length-1];
+    b.textContent = 'Week ' + w + ' · ' + MONTH_NAMES[M].slice(0,3) + ' ' + list[0] + '–' + list[list.length-1];
     b.onclick = () => { D.week = w; save(); drawTargets(); };
     wp.appendChild(b);
   }
@@ -439,52 +532,56 @@ function drawTargets(){
   t.querySelectorAll('input').forEach(el => {
     el.oninput = () => { D.targets[el.dataset.k] = parseInt(el.value) || 0; save(); drawTargets(); };
   });
+}
 
-  const f = document.getElementById('folwrap');
-  f.innerHTML = '';
-  for(let w=1; w<=5; w++){
+/* ---------- followers, one row per platform ---------- */
+function drawFollowers(){
+  const wks = weeksInMonth();
+  const tbl = document.getElementById('foltable');
+  let head = '<thead><tr><th style="width:130px">Platform</th>';
+  for(let w=1; w<=wks; w++){
     const list = daysInWeek(w);
-    if(!list.length) continue;
-    const prev = w > 1 ? D.followers[w-1] : null;
-    const now = D.followers[w];
-    let delta = '';
-    if(prev != null && now != null && now !== '' && prev !== ''){
-      const dd = (+now) - (+prev);
-      delta = (dd >= 0 ? '+' : '') + dd + ' on last week';
-    }
-    const c = document.createElement('div');
-    c.className = 'tcard';
-    c.innerHTML =
-      '<div class="tn"><span>End of week '+w+'</span><input type="number" min="0" style="width:88px" value="'+(now == null ? '' : now)+'" data-w="'+w+'" placeholder="—"></div>'+
-      '<div class="tv">'+(delta || 'total followers, any platform you care about')+'</div>';
-    f.appendChild(c);
+    head += '<th>Wk '+w+' <span style="opacity:.6">'+MONTH_NAMES[M].slice(0,3)+' '+list[list.length-1]+'</span></th>';
   }
-  f.querySelectorAll('input').forEach(el => {
+  head += '<th>Month</th></tr></thead>';
+
+  let body = '<tbody>';
+  D.names.forEach((name, i) => {
+    body += '<tr><td><input class="folname" value="'+String(name).replace(/"/g,'&quot;')+'" data-i="'+i+'"></td>';
+    const row = D.followers[i] || {};
+    for(let w=1; w<=wks; w++){
+      const v = row[w];
+      body += '<td><input class="folin" type="number" min="0" placeholder="—" value="'+(v == null ? '' : v)+'" data-i="'+i+'" data-w="'+w+'"></td>';
+    }
+    const vals = [];
+    for(let w=1; w<=wks; w++) if(row[w] != null) vals.push({w, v:+row[w]});
+    let cell = '<span style="opacity:.5">—</span>';
+    if(vals.length > 1){
+      const dd = vals[vals.length-1].v - vals[0].v;
+      cell = '<span class="'+(dd < 0 ? 'down' : 'up')+'">'+(dd >= 0 ? '+' : '')+dd+'</span>';
+    }
+    body += '<td>'+cell+'</td></tr>';
+  });
+  body += '</tbody>';
+  tbl.innerHTML = head + body;
+
+  tbl.querySelectorAll('.folname').forEach(el => {
+    el.oninput = () => { D.names[+el.dataset.i] = el.value; save(); };
+  });
+  tbl.querySelectorAll('.folin').forEach(el => {
     el.oninput = () => {
-      const v = el.value === '' ? null : (parseInt(el.value) || 0);
-      if(v === null) delete D.followers[el.dataset.w]; else D.followers[el.dataset.w] = v;
-      save(); drawTargets();
+      const i = +el.dataset.i, w = +el.dataset.w;
+      if(!D.followers[i]) D.followers[i] = {};
+      if(el.value === '') delete D.followers[i][w];
+      else D.followers[i][w] = parseInt(el.value) || 0;
+      save(); drawFollowers();
     };
   });
 }
 
 /* ---------- sources ---------- */
 function drawSources(){
-  const tally = {};
-  for(let n=1; n<=MONTH.days; n++){
-    const d = D.days[n];
-    if(!d || !d.source) continue;
-    const names = d.source.split(',').map(s => s.trim()).filter(Boolean);
-    if(!names.length) continue;
-    // split the day's leads across the sources named, so the column
-    // adds up to the lead count instead of double counting a shared day
-    const per = ((+d.leads || 0) || 1) / names.length;
-    names.forEach(s => {
-      const k = s.charAt(0).toUpperCase() + s.slice(1);
-      tally[k] = (tally[k] || 0) + per;
-    });
-  }
-  const rows = Object.entries(tally).sort((a,b) => b[1]-a[1]);
+  const rows = sourceTally();
   const body = document.getElementById('srcbody');
   const empty = document.getElementById('srcempty');
   body.innerHTML = '';
@@ -493,72 +590,121 @@ function drawSources(){
   const top = rows[0][1];
   rows.forEach(([name, n]) => {
     const tr = document.createElement('tr');
-    const shown = Math.round(n*10)/10;
-    tr.innerHTML = '<td><b>'+name+'</b></td><td>'+shown+'</td>'+
+    tr.innerHTML = '<td><b>'+name+'</b></td><td>'+(Math.round(n*10)/10)+'</td>'+
       '<td><div class="srcbar" style="width:'+Math.max(4, Math.round(n/top*100))+'%"></div></td>';
     body.appendChild(tr);
   });
 }
 
-/* ---------- recap ---------- */
+/* ---------- copy blocks ---------- */
 function recapText(){
-  let visible = 0, streak = 0, best = 0, calls = 0, leads = 0, cash = 0;
-  const totals = {post:0, video:0, story:0, reach:0};
-  for(let n=1; n<=MONTH.days; n++){
-    if(isVisible(n)){ visible++; streak++; best = Math.max(best, streak); } else streak = 0;
-    const d = D.days[n]; if(!d) continue;
-    ROWS_DID.forEach(r => totals[r.k] += d[r.k] ? 1 : 0);
-    calls += (+d.calls||0); leads += (+d.leads||0); cash += (+d.money||0);
-  }
-  if(!visible && !calls && !leads && !cash) return 'Log a day or two and this fills in.';
-
-  const tally = {};
-  for(let n=1; n<=MONTH.days; n++){
-    const d = D.days[n]; if(!d || !d.source) continue;
-    const names = d.source.split(',').map(s => s.trim()).filter(Boolean);
-    if(!names.length) continue;
-    const per = ((+d.leads || 0) || 1) / names.length;
-    names.forEach(s => {
-      const k = s.charAt(0).toUpperCase() + s.slice(1);
-      tally[k] = (tally[k] || 0) + per;
-    });
-  }
-  const best_src = Object.entries(tally).sort((a,b) => b[1]-a[1])[0];
-
-  const lines = [];
-  lines.push(MONTH.name + ', ' + MONTH.theme + '.');
-  lines.push('');
-  lines.push('I was visible on ' + visible + ' of ' + MONTH.days + ' days. Longest run: ' + best + ' in a row.');
-  lines.push(totals.post + ' posts · ' + totals.video + ' videos · ' + totals.story + ' story sets · ' + totals.reach + ' people reached out to directly.');
-  lines.push('');
+  const t = totals();
+  if(!t.visible && !t.calls && !t.leads && !t.cash) return 'Log a day or two and this fills in.';
+  const src = sourceTally()[0];
+  const L = [];
+  L.push(MONTH_NAMES[M] + ', made visible.');
+  L.push('');
+  L.push('I showed up on ' + t.visible + ' of ' + daysIn(Y,M) + ' days. Longest run: ' + t.streak + ' in a row.');
+  L.push(t.did.post + ' posts · ' + t.did.video + ' videos · ' + t.did.story + ' story sets · ' +
+         t.did.reach + ' people I reached out to directly.');
+  L.push('');
   const back = [];
-  if(calls) back.push(calls + ' call' + (calls === 1 ? '' : 's') + ' booked');
-  if(leads) back.push(leads + ' new lead' + (leads === 1 ? '' : 's'));
-  if(cash)  back.push(money(cash) + ' in');
-  lines.push(back.length ? 'What came back: ' + back.join(' · ') + '.' : 'What came back: still counting.');
-  if(best_src) lines.push('Most of it came from ' + best_src[0] + '.');
-  lines.push('');
-  lines.push('The thing I did not expect: ');
-  return lines.join('\n');
+  if(t.calls) back.push(t.calls + ' call' + (t.calls === 1 ? '' : 's') + ' booked');
+  if(t.leads) back.push(t.leads + ' new lead' + (t.leads === 1 ? '' : 's'));
+  if(t.cash)  back.push(money(t.cash) + ' in');
+  L.push(back.length ? 'What came back: ' + back.join(' · ') + '.' : 'What came back: still counting.');
+  if(src) L.push('Most of it came from ' + src[0] + '.');
+  L.push('');
+  L.push('The thing I did not expect: ');
+  return L.join('\n');
 }
-function drawRecap(){ document.getElementById('recap').textContent = recapText(); }
 
-/* ---------- wire up ---------- */
-document.getElementById('copy').onclick = () => {
-  const t = document.getElementById('recap').textContent;
-  navigator.clipboard.writeText(t).then(() => {
-    const b = document.getElementById('copy');
-    b.textContent = 'Copied';
-    setTimeout(() => b.textContent = 'Copy the recap', 1600);
-  }).catch(() => {});
-};
-document.getElementById('reset').onclick = () => {
-  if(!confirm('Clear every day of ' + MONTH.name + '? This cannot be undone.')) return;
-  D = BLANK(); save(); selected = todayInMonth() || 1; drawAll();
-};
+function exportText(){
+  const n_days = daysIn(Y,M);
+  const t = totals();
+  if(!t.visible && !t.calls && !t.leads && !t.cash) return 'Log a day or two and this fills in.';
+  const yn = v => v ? 'yes' : '';
+  const L = [];
+  L.push('The Visibility Tracker · ' + MONTH_NAMES[M] + ' ' + Y);
+  L.push('');
+  L.push(['Date','Day','Post','Video','Stories','Outreach','Calls','Leads','Where from','Money in'].join('\t'));
+  for(let n=1; n<=n_days; n++){
+    const d = D.days[n];
+    if(!d) continue;
+    const any = ROWS_DID.some(r => d[r.k]) || d.calls || d.leads || d.money || d.source;
+    if(!any) continue;
+    L.push([
+      MONTH_NAMES[M].slice(0,3) + ' ' + n,
+      DOW[dowOf(n)],
+      yn(d.post), yn(d.video), yn(d.story), yn(d.reach),
+      (+d.calls || '') || '', (+d.leads || '') || '',
+      d.source || '',
+      d.money ? money(d.money) : ''
+    ].join('\t'));
+  }
+  L.push('');
+  L.push(['TOTAL','', t.did.post, t.did.video, t.did.story, t.did.reach,
+          t.calls, t.leads, '', money(t.cash)].join('\t'));
+  L.push('');
+  L.push('Days visible: ' + t.visible + ' of ' + n_days + '. Longest run: ' + t.streak + '.');
+  const rows = sourceTally();
+  if(rows.length) L.push('Leads by source: ' + rows.map(([k,v]) => k + ' ' + (Math.round(v*10)/10)).join(' · '));
+  const fol = [];
+  D.names.forEach((name, i) => {
+    const row = D.followers[i] || {};
+    const vals = [];
+    for(let w=1; w<=weeksInMonth(); w++) if(row[w] != null) vals.push(+row[w]);
+    if(vals.length > 1){
+      const dd = vals[vals.length-1] - vals[0];
+      fol.push(name + ' ' + (dd >= 0 ? '+' : '') + dd);
+    }
+  });
+  if(fol.length) L.push('Followers this month: ' + fol.join(' · '));
+  return L.join('\n');
+}
 
-function drawAll(){ drawStrip(); drawDay(); drawStats(); drawTargets(); drawSources(); drawRecap(); }
-drawAll();
+function drawCopy(){
+  document.getElementById('recap').textContent  = recapText();
+  document.getElementById('export').textContent = exportText();
+}
+
+function wireCopy(id, get){
+  const b = document.getElementById(id);
+  const original = b.textContent;
+  b.onclick = () => {
+    navigator.clipboard.writeText(get()).then(() => {
+      b.textContent = 'Copied';
+      setTimeout(() => b.textContent = original, 1600);
+    }).catch(() => { b.textContent = 'Select it and copy'; setTimeout(() => b.textContent = original, 2200); });
+  };
+}
+
+/* ---------- go ---------- */
+function drawAll(){
+  drawStrip(); drawDay(); drawStats(); drawTargets(); drawFollowers(); drawSources(); drawCopy();
+  const sel = document.getElementById('monthsel');
+  if(sel) sel.value = Y + '-' + M;
+}
+
+(function init(){
+  const t = new Date();
+  const inRange = (t.getFullYear() > FIRST.y || (t.getFullYear() === FIRST.y && t.getMonth() >= FIRST.m)) &&
+                  (t.getFullYear() < LAST.y  || (t.getFullYear() === LAST.y  && t.getMonth() <= LAST.m));
+  Y = inRange ? t.getFullYear() : FIRST.y;
+  M = inRange ? t.getMonth()    : FIRST.m;
+  D = load();
+  selected = (t.getFullYear() === Y && t.getMonth() === M) ? t.getDate() : 1;
+  drawMonths();
+  wireCopy('copyrecap', recapText);
+  wireCopy('copymonth', exportText);
+  document.getElementById('reset').onclick = () => {
+    if(!confirm('Clear every day of ' + MONTH_NAMES[M] + ' ' + Y + '? This cannot be undone.')) return;
+    D = BLANK(); save();
+    selected = (new Date().getFullYear() === Y && new Date().getMonth() === M) ? new Date().getDate() : 1;
+    drawAll();
+  };
+  drawAll();
+})();
 </script>
 </body>
 </html>
