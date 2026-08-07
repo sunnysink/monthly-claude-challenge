@@ -166,6 +166,12 @@
     border-radius:8px;padding:7px 9px}
   .leadin:focus{outline:none;border-color:var(--ember)}
   .leadday{width:58px;text-align:center}
+  .leaddate{width:148px;font-family:var(--mono);font-size:12px}
+  .due{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;
+    display:block;margin-top:4px}
+  .due.over{color:var(--ember);font-weight:600}
+  .due.now{color:var(--copper-lt);font-weight:600}
+  .due.soon{color:var(--ink-dim)}
   .st{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;
     padding:6px 11px;border-radius:30px;cursor:pointer;white-space:nowrap;user-select:none;
     border:1px solid rgba(var(--copper-rgb),0.35);color:var(--ink-dim);background:rgba(var(--sheet-rgb),0.6)}
@@ -776,9 +782,10 @@ function exportFooter(){
     D.leads.forEach(l => {
       const bits = [l.name || 'someone'];
       if(l.from) bits.push('from ' + l.from);
-      if(l.day)  bits.push(mName().slice(0,3) + ' ' + l.day);
+      if(l.day)  bits.push('came in ' + mName().slice(0,3) + ' ' + l.day);
       bits.push(STATUSES[l.status || 0]);
       if(l.note) bits.push(l.note);
+      if(l.due)  bits.push('follow up ' + l.due);
       L.push('  ' + bits.join(' \u00b7 '));
     });
   }
@@ -820,12 +827,37 @@ function exportTSV(){
 }
 
 /* ---------- pipeline ---------- */
+/* a follow-up regularly lands in the next month, so this one is a real
+   date rather than a day number like the rest of the page */
+function dueState(l){
+  if(!l.due || (l.status || 0) >= 3) return null;
+  const d = new Date(l.due + 'T00:00:00');
+  if(isNaN(d)) return null;
+  const t = new Date(); t.setHours(0,0,0,0);
+  const days = Math.round((d - t) / 86400000);
+  return {days, date:d};
+}
+function dueFlag(l){
+  const st = dueState(l);
+  if(!st) return '';
+  if(st.days < 0)  return '<span class="due over">' + (-st.days) + (st.days === -1 ? ' day late' : ' days late') + '</span>';
+  if(st.days === 0) return '<span class="due now">today</span>';
+  if(st.days === 1) return '<span class="due soon">tomorrow</span>';
+  return '<span class="due soon">in ' + st.days + ' days</span>';
+}
 function drawPipeline(){
   const tbl = document.getElementById('pipetable');
   const booked = D.leads.filter(l => (l.status || 0) === 3).length;
-  document.getElementById('pipecount').textContent = D.leads.length
-    ? D.leads.length + ' on the list \u00b7 ' + booked + ' booked'
-    : 'nobody yet';
+  const late = D.leads.filter(l => { const st = dueState(l); return st && st.days < 0; }).length;
+  const today = D.leads.filter(l => { const st = dueState(l); return st && st.days === 0; }).length;
+  const bits = [];
+  if(D.leads.length){
+    bits.push(D.leads.length + ' on the list');
+    if(late)  bits.push(late + ' overdue');
+    if(today) bits.push(today + ' due today');
+    bits.push(booked + ' booked');
+  }
+  document.getElementById('pipecount').textContent = bits.length ? bits.join(' \u00b7 ') : 'nobody yet';
 
   if(!D.leads.length){
     tbl.innerHTML = '<tbody><tr><td style="border:none;padding-left:0" class="empty">' +
@@ -833,8 +865,9 @@ function drawPipeline(){
     return;
   }
   const esc = v => String(v == null ? '' : v).replace(/"/g,'&quot;');
-  let html = '<thead><tr><th style="width:24%">Name or number</th><th style="width:20%">Where from</th>' +
-             '<th style="width:70px">Day</th><th style="width:26%">Next step</th><th>Status</th><th></th></tr></thead><tbody>';
+  let html = '<thead><tr><th style="width:20%">Name or number</th><th style="width:16%">Where from</th>' +
+             '<th style="width:70px">Came in</th><th style="width:22%">Next step</th>' +
+             '<th style="width:160px">Follow up</th><th>Status</th><th></th></tr></thead><tbody>';
   D.leads.forEach((l, i) => {
     const st = l.status || 0;
     html += '<tr>' +
@@ -842,24 +875,34 @@ function drawPipeline(){
       '<td><input class="leadin" data-i="'+i+'" data-k="from" value="'+esc(l.from)+'" placeholder="DM, reel"></td>' +
       '<td><input class="leadin leadday" type="number" min="1" max="'+nDays()+'" data-i="'+i+'" data-k="day" value="'+(l.day || '')+'" placeholder="\u2014"></td>' +
       '<td><input class="leadin" data-i="'+i+'" data-k="note" value="'+esc(l.note)+'" placeholder="Send the link"></td>' +
+      '<td><input class="leadin leaddate" type="date" data-i="'+i+'" data-k="due" value="'+esc(l.due)+'">' +
+        '<span id="due-'+i+'">'+dueFlag(l)+'</span></td>' +
       '<td><span class="st s'+st+'" data-i="'+i+'">'+STATUSES[st]+'</span></td>' +
       '<td><span class="del" data-i="'+i+'" title="Remove">\u00d7</span></td>' +
       '</tr>';
   });
   tbl.innerHTML = html + '</tbody>';
 
+  /* same rule as the other tables: update only what changed, so the
+     box being typed in is never replaced mid-keystroke */
   tbl.querySelectorAll('.leadin').forEach(el => {
     el.oninput = () => {
-      const l = D.leads[+el.dataset.i];
-      l[el.dataset.k] = el.dataset.k === 'day' ? (parseInt(el.value) || '') : el.value;
-      save(); drawCopy();
+      const i = +el.dataset.i, k = el.dataset.k;
+      const l = D.leads[i];
+      l[k] = k === 'day' ? (parseInt(el.value) || '') : el.value;
+      save();
+      if(k === 'due'){
+        const flag = document.getElementById('due-' + i);
+        if(flag) flag.innerHTML = dueFlag(l);
+      }
+      drawCopy();
     };
   });
   tbl.querySelectorAll('.st').forEach(el => {
     el.onclick = () => {
       const l = D.leads[+el.dataset.i];
       l.status = ((l.status || 0) + 1) % STATUSES.length;
-      save(); drawPipeline(); drawCopy();
+      save(); drawPipeline(); drawCopy();  // a click, so rebuilding is safe here
     };
   });
   tbl.querySelectorAll('.del').forEach(el => {
@@ -907,7 +950,7 @@ function drawAll(){
   document.getElementById('print').onclick = () => window.print();
   document.getElementById('addlead').onclick = () => {
     const t = new Date();
-    D.leads.push({name:'', from:'', day:(t.getMonth() === M ? t.getDate() : ''), note:'', status:0});
+    D.leads.push({name:'', from:'', day:(t.getMonth() === M ? t.getDate() : ''), note:'', due:'', status:0});
     save(); drawPipeline(); drawCopy();
   };
   document.getElementById('dorestore').onclick = () => {

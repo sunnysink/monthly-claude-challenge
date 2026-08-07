@@ -55,7 +55,8 @@ Then commit and push. GitHub Pages redeploys on its own, usually inside a minute
     bottom, so you can see how long your own lag is. Month dropdown, weekly
     targets the member sets herself, followers per platform, lead sources, a
     recap post, and the full month day by day for pasting into a Google Doc.
-    Also a follow-up pipeline (name or number, where from, next step, status),
+    Also a follow-up pipeline (name or number, where from, came in, next step,
+    a real follow-up date, and a status you click through),
     weekly targets that carry forward between months, and a backup code so a
     member can move a month to a new phone.
     ⚠️ **The month block is space padded, not tab separated.** Tabs collapse to
