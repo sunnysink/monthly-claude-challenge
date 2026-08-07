@@ -611,16 +611,36 @@ function drawTargets(){
     c.className = 'tcard';
     c.innerHTML =
       '<div class="tn"><span>'+r.label+'</span><input type="number" min="0" max="7" value="'+goal+'" data-k="'+r.k+'"></div>'+
-      '<div class="bar"><i style="width:'+pct+'%"></i></div>'+
-      '<div class="tv">'+done+' of '+goal+' this week</div>';
+      '<div class="bar"><i id="tgt-bar-'+r.k+'" style="width:'+pct+'%"></i></div>'+
+      '<div class="tv" id="tgt-txt-'+r.k+'">'+done+' of '+goal+' this week</div>';
     t.appendChild(c);
   });
+  /* same rule as the followers table: update the bar and the caption,
+     never rebuild the card while someone is typing in it */
   t.querySelectorAll('input').forEach(el => {
-    el.oninput = () => { D.targets[el.dataset.k] = parseInt(el.value) || 0; save(); drawTargets(); };
+    el.oninput = () => {
+      const k = el.dataset.k;
+      D.targets[k] = parseInt(el.value) || 0;
+      save();
+      const goal = Math.max(0, +D.targets[k] || 0);
+      const done = daysInWeek(D.week).reduce((a,n) => a + (day(n)[k] ? 1 : 0), 0);
+      const bar = document.getElementById('tgt-bar-' + k);
+      const txt = document.getElementById('tgt-txt-' + k);
+      if(bar) bar.style.width = (goal ? Math.min(100, Math.round(done/goal*100)) : 0) + '%';
+      if(txt) txt.textContent = done + ' of ' + goal + ' this week';
+    };
   });
 }
 
 /* ---------- followers ---------- */
+function folDelta(i){
+  const row = D.followers[i] || {};
+  const vals = [];
+  for(let w=1; w<=weeksInMonth(); w++) if(row[w] != null) vals.push(+row[w]);
+  if(vals.length < 2) return '<span style="opacity:.5">—</span>';
+  const dd = vals[vals.length-1] - vals[0];
+  return '<span class="'+(dd < 0 ? 'down' : 'up')+'">'+(dd >= 0 ? '+' : '')+dd+'</span>';
+}
 function drawFollowers(){
   const wks = weeksInMonth();
   const tbl = document.getElementById('foltable');
@@ -639,20 +659,16 @@ function drawFollowers(){
       const v = row[w];
       body += '<td><input class="folin" type="number" min="0" placeholder="—" value="'+(v == null ? '' : v)+'" data-i="'+i+'" data-w="'+w+'"></td>';
     }
-    const vals = [];
-    for(let w=1; w<=wks; w++) if(row[w] != null) vals.push(+row[w]);
-    let cell = '<span style="opacity:.5">—</span>';
-    if(vals.length > 1){
-      const dd = vals[vals.length-1] - vals[0];
-      cell = '<span class="'+(dd < 0 ? 'down' : 'up')+'">'+(dd >= 0 ? '+' : '')+dd+'</span>';
-    }
-    body += '<td>'+cell+'</td></tr>';
+    body += '<td id="fol-d-'+i+'">'+folDelta(i)+'</td></tr>';
   });
   body += '</tbody>';
   tbl.innerHTML = head + body;
 
+  /* never redraw this table from an input handler. Rebuilding it
+     replaces the box being typed in, which drops focus after every
+     single keystroke. Update only the derived cell. */
   tbl.querySelectorAll('.folname').forEach(el => {
-    el.oninput = () => { D.names[+el.dataset.i] = el.value; save(); };
+    el.oninput = () => { D.names[+el.dataset.i] = el.value; save(); drawCopy(); };
   });
   tbl.querySelectorAll('.folin').forEach(el => {
     el.oninput = () => {
@@ -660,7 +676,10 @@ function drawFollowers(){
       if(!D.followers[i]) D.followers[i] = {};
       if(el.value === '') delete D.followers[i][w];
       else D.followers[i][w] = parseInt(el.value) || 0;
-      save(); drawFollowers(); drawCopy();
+      save();
+      const cell = document.getElementById('fol-d-' + i);
+      if(cell) cell.innerHTML = folDelta(i);
+      drawCopy();
     };
   });
 }
