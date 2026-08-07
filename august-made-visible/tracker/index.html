@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Visibility Tracker · The Monthly Claude Challenge</title>
+<title>The Visibility Tracker</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   /* ============================================================
-     THE SKIN. A new month is this block and nothing else.
-     August 2026 = Honey Linen, same tokens as the board.
+     THE SKIN. A new colour story is this block and nothing else.
+     Honey Linen: warm cream, soft bronze, burnt orange.
      ============================================================ */
   :root{
     --bg:#FBF3E7; --bg2:#F3E9D9; --ink:#211A12; --ink-dim:#544738;
@@ -45,8 +45,6 @@
   }
   .wrap{max-width:1140px;margin:0 auto}
 
-  .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.3em;text-transform:uppercase;
-    color:var(--copper);margin-bottom:9px}
   h1{font-family:var(--serif);font-weight:600;font-size:clamp(38px,6.5vw,62px);line-height:1;
     color:var(--copper-lt);letter-spacing:.4px}
   .sub{font-size:16.5px;color:var(--ink-dim);margin-top:11px;line-height:1.6}
@@ -66,6 +64,9 @@
   .label::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,rgba(var(--copper-rgb),0.34),transparent)}
 
   .card{background:var(--card);border:1px solid var(--cardborder);border-radius:15px;padding:18px 20px}
+  .cardhead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:14px}
+  .cardhead .ch{font-family:var(--serif);font-size:21px;font-weight:600;color:var(--ink)}
+  .cardhead .cn{font-family:var(--mono);font-size:11.5px;color:var(--copper-lt)}
 
   /* ---- stats ---- */
   .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}
@@ -75,7 +76,10 @@
   .stat .sl{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-dim)}
   .stat .sv{font-family:var(--serif);font-size:40px;font-weight:600;line-height:1;margin:6px 0 3px;color:var(--ember)}
   .stat .sn{font-size:11.5px;color:var(--ink-dim);line-height:1.4}
-  .stat.g .sv{color:var(--green)} .stat.g::before{background:linear-gradient(90deg,var(--forest),var(--green))}
+  .stat.money{background:linear-gradient(135deg,rgba(var(--green-rgb),0.18),rgba(var(--card-rgb),0.85));
+    border-color:rgba(var(--green-rgb),0.5)}
+  .stat.money::before{background:linear-gradient(90deg,var(--forest),var(--green))}
+  .stat.money .sv{color:var(--green);font-size:44px}
   @media(max-width:860px){.stats{grid-template-columns:repeat(2,1fr)}}
 
   /* ---- the strip ---- */
@@ -118,6 +122,7 @@
     border:1px solid rgba(var(--copper-rgb),0.35);background:rgba(var(--sheet-rgb),0.6);color:var(--ink-dim)}
   .tg.on{background:var(--ember);border-color:var(--ember);color:#FFF6EC;font-weight:600}
   .fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+  .f.wide{grid-column:1 / -1}
   .f label{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;
     text-transform:uppercase;color:var(--ink-dim);margin-bottom:5px}
   .f input{width:100%;font-family:var(--sans);font-size:14px;color:var(--ink);
@@ -168,7 +173,7 @@
   .copyblock pre{font-family:var(--mono);font-size:11.5px;line-height:1.7;color:var(--ink);
     white-space:pre;overflow-x:auto;background:rgba(var(--sheet-rgb),0.85);
     border:1px solid rgba(var(--copper-rgb),0.2);border-radius:11px;padding:14px 15px;margin:13px 0;
-    max-height:280px}
+    max-height:300px}
   .copyblock pre.wrap{white-space:pre-wrap;font-size:12.5px}
   .btn{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
     background:var(--copper);color:#FFF6EC;border:none;border-radius:30px;padding:10px 20px;cursor:pointer}
@@ -183,15 +188,19 @@
   .note b{color:var(--ink)}
   footer{margin-top:38px;text-align:center;font-family:var(--mono);font-size:10.5px;
     color:var(--ink-dim);opacity:.7;letter-spacing:.06em}
-  footer a{color:var(--copper-lt)}
+
+  @media print{
+    body{background:#fff;padding:0}
+    .copyblock,.note,.day,.weekpick{display:none}
+    .stripscroll{overflow:visible}
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
 
-  <div class="kicker">The Monthly Claude Challenge · Spark 01</div>
   <h1>The Visibility Tracker</h1>
-  <div class="sub"><b>Tick what you did each day. Log what came back on the day it lands.</b> By the end of the month you can see which one led to the other, and copy the whole thing out to keep.</div>
+  <div class="sub"><b>Tick what you did each day. Log what came back on the day it lands.</b> By the end of the month you can see which one led to the other, and pull the whole month out in one click.</div>
 
   <div class="monthrow">
     <select id="monthsel" aria-label="Month"></select>
@@ -202,8 +211,8 @@
   <div class="stats">
     <div class="stat"><div class="sl">Days visible</div><div class="sv" id="s-days">0</div><div class="sn" id="s-days-n">out of 31</div></div>
     <div class="stat"><div class="sl">Longest streak</div><div class="sv" id="s-streak">0</div><div class="sn">days in a row</div></div>
-    <div class="stat g"><div class="sl">Booked</div><div class="sv" id="s-calls">0</div><div class="sn">calls and readings</div></div>
-    <div class="stat g"><div class="sl">New leads</div><div class="sv" id="s-leads">0</div><div class="sn" id="s-money">and $0 in</div></div>
+    <div class="stat"><div class="sl">Booked</div><div class="sv" id="s-calls">0</div><div class="sn">calls and/or readings</div></div>
+    <div class="stat money"><div class="sl">Money in</div><div class="sv" id="s-money">$0</div><div class="sn" id="s-money-n">nothing logged yet</div></div>
   </div>
 
   <div class="label">The strip · click a date to log what came back</div>
@@ -220,6 +229,10 @@
 
   <div class="label">Where it actually came from</div>
   <div class="card">
+    <div class="cardhead">
+      <span class="ch">New leads</span>
+      <span class="cn" id="leadcount">0 this month</span>
+    </div>
     <table>
       <thead><tr><th style="width:34%">Source</th><th style="width:16%">Leads</th><th>Share</th></tr></thead>
       <tbody id="srcbody"></tbody>
@@ -233,21 +246,22 @@
     <div class="note" style="margin-top:15px"><b>Weekly on purpose.</b> Follower counts move slowly, so checking them daily makes a good month look like a bad one. Fill in the platforms you actually use and leave the rest empty. Rename any row by clicking on it.</div>
   </div>
 
-  <div class="label">Copy your month out</div>
+  <div class="label">Take your month with you</div>
 
   <div class="copyblock">
     <h3>Your recap, ready to post</h3>
-    <div class="why">One of the squares on the board is <b>The Month, Recapped</b>. This is your numbers already written as a short post. Copy it, put it in your own words, and post it.</div>
+    <div class="why">Your month written as a short post. Copy it, put it in your own words, and post it. The last line is left open on purpose.</div>
     <pre class="wrap" id="recap">Log a day or two and this fills in.</pre>
     <div class="btnrow"><button class="btn" id="copyrecap">Copy the recap</button></div>
   </div>
 
   <div class="copyblock">
     <h3>Your full month, day by day</h3>
-    <div class="why">Every day in one block. <b>Paste it into a Google Doc and you have the month on record</b>, which is the part this page cannot keep for you. Paste it into a spreadsheet and it lands in proper columns.</div>
+    <div class="why">Every logged day in one block. <b>Paste it into a Google Doc and you have the month on record</b>, which is the part this page cannot keep for you. Paste it into a spreadsheet and it lands in proper columns.</div>
     <pre id="export">Log a day or two and this fills in.</pre>
     <div class="btnrow">
       <button class="btn" id="copymonth">Copy the whole month</button>
+      <button class="btn ghost" id="print">Print this page</button>
       <button class="btn ghost" id="reset">Clear this month</button>
     </div>
   </div>
@@ -256,21 +270,24 @@
     <b>This saves to this device and nowhere else.</b> Nothing is sent anywhere, nobody can see it, and there is no account. The trade is that your phone and your laptop keep separate copies, so pick one and stay on it. Clearing your browser data clears this too, which is the real reason to copy your month out at the end of it.
   </div>
 
-  <footer>The Monthly Claude Challenge · <a href="../">back to the board</a></footer>
+  <footer>The Visibility Tracker</footer>
 </div>
 
 <script>
 /* ==============================================================
-   The month is chosen in the dropdown and each month saves under
-   its own key, so nothing has to be edited here when August ends.
-   A new month is the :root skin block above, and nothing else.
+   Months are months. No year anywhere, because nobody thinks
+   about their posting month by year. February is 29 days so the
+   box is always there. Each month saves under its own key.
+   A new colour story is the :root block above and nothing else.
    ============================================================== */
-const KEY_PREFIX = 'forge-tracker-';   // board uses forge-board-, keep these apart
-const FIRST = {y:2026, m:7};           // August 2026, m is 0-based
-const LAST  = {y:2027, m:11};
+const KEY_PREFIX = 'forge-tracker-';
 
-const MONTH_NAMES = ['January','February','March','April','May','June',
-                     'July','August','September','October','November','December'];
+const MONTHS = [
+  {name:'January',   days:31}, {name:'February', days:29}, {name:'March',    days:31},
+  {name:'April',     days:30}, {name:'May',      days:31}, {name:'June',     days:30},
+  {name:'July',      days:31}, {name:'August',   days:31}, {name:'September',days:30},
+  {name:'October',   days:31}, {name:'November', days:30}, {name:'December', days:31}
+];
 const DOW = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
 const ROWS_DID = [
@@ -286,18 +303,24 @@ const ROWS_BACK = [
 ];
 const PLATFORMS = ['Instagram','Facebook','TikTok','YouTube','Substack','Skool'];
 
-let Y, M, D, selected;
+/* the weekday letters need some year to be computed against, so
+   they use the year the member is actually in. Nothing is stored
+   against it and nothing on the page shows it. */
+const DOW_YEAR = new Date().getFullYear();
 
-const daysIn   = (y,m) => new Date(y, m+1, 0).getDate();
-const keyFor   = (y,m) => KEY_PREFIX + y + '-' + String(m+1).padStart(2,'0');
-const dowOf    = n => new Date(Y, M, n).getDay();
-const money    = v => '$' + Math.round(v).toLocaleString();
-const BLANK    = () => ({days:{}, targets:{post:5, video:2, story:3, reach:5},
-                         followers:{}, names:PLATFORMS.slice(), week:1});
+let M, D, selected;
+
+const nDays  = () => MONTHS[M].days;
+const mName  = () => MONTHS[M].name;
+const keyFor = m => KEY_PREFIX + MONTHS[m].name.toLowerCase();
+const dowOf  = n => new Date(DOW_YEAR, M, n).getDay();
+const money  = v => '$' + Math.round(v).toLocaleString();
+const BLANK  = () => ({days:{}, targets:{post:5, video:2, story:3, reach:5},
+                       followers:{}, names:PLATFORMS.slice(), week:1});
 
 function load(){
   try{
-    const raw = localStorage.getItem(keyFor(Y,M));
+    const raw = localStorage.getItem(keyFor(M));
     if(!raw) return BLANK();
     const p = JSON.parse(raw);
     const base = BLANK();
@@ -307,9 +330,10 @@ function load(){
     return out;
   }catch(e){ return BLANK(); }
 }
-function save(){ try{ localStorage.setItem(keyFor(Y,M), JSON.stringify(D)); }catch(e){} }
+function save(){ try{ localStorage.setItem(keyFor(M), JSON.stringify(D)); }catch(e){} }
 function day(n){
-  if(!D.days[n]) D.days[n] = {post:0,video:0,story:0,reach:0,calls:0,leads:0,money:0,source:''};
+  if(!D.days[n]) D.days[n] = {post:0,video:0,story:0,reach:0,calls:0,leads:0,money:0,source:'',note:''};
+  if(D.days[n].note === undefined) D.days[n].note = '';
   return D.days[n];
 }
 function isVisible(n){
@@ -318,19 +342,19 @@ function isVisible(n){
 }
 function isToday(n){
   const t = new Date();
-  return t.getFullYear() === Y && t.getMonth() === M && t.getDate() === n;
+  return t.getMonth() === M && t.getDate() === n;
 }
-function weeksInMonth(){ return Math.ceil(daysIn(Y,M) / 7); }
+function weeksInMonth(){ return Math.ceil(nDays() / 7); }
 function daysInWeek(w){
   const out = [];
-  for(let n = (w-1)*7+1; n <= Math.min(daysIn(Y,M), w*7); n++) out.push(n);
+  for(let n = (w-1)*7+1; n <= Math.min(nDays(), w*7); n++) out.push(n);
   return out;
 }
 /* leads on a day split across the sources named that day, so the
    column adds up to the lead count instead of double counting */
 function sourceTally(){
   const tally = {};
-  for(let n=1; n<=daysIn(Y,M); n++){
+  for(let n=1; n<=nDays(); n++){
     const d = D.days[n];
     if(!d || !d.source) continue;
     const names = d.source.split(',').map(s => s.trim()).filter(Boolean);
@@ -345,45 +369,46 @@ function sourceTally(){
 }
 function totals(){
   let visible = 0, run = 0, streak = 0, calls = 0, leads = 0, cash = 0;
+  let bestDay = 0, bestAmt = 0, paidDays = 0;
   const did = {post:0, video:0, story:0, reach:0};
-  for(let n=1; n<=daysIn(Y,M); n++){
+  for(let n=1; n<=nDays(); n++){
     if(isVisible(n)){ visible++; run++; streak = Math.max(streak, run); } else run = 0;
     const d = D.days[n]; if(!d) continue;
     ROWS_DID.forEach(r => did[r.k] += d[r.k] ? 1 : 0);
-    calls += (+d.calls||0); leads += (+d.leads||0); cash += (+d.money||0);
+    calls += (+d.calls||0); leads += (+d.leads||0);
+    const m = +d.money || 0;
+    cash += m;
+    if(m > 0){ paidDays++; if(m > bestAmt){ bestAmt = m; bestDay = n; } }
   }
-  return {visible, streak, calls, leads, cash, did};
+  return {visible, streak, calls, leads, cash, did, bestDay, bestAmt, paidDays};
 }
 
 /* ---------- month picker ---------- */
 function drawMonths(){
   const sel = document.getElementById('monthsel');
   sel.innerHTML = '';
-  let y = FIRST.y, m = FIRST.m;
-  while(y < LAST.y || (y === LAST.y && m <= LAST.m)){
+  MONTHS.forEach((mo, i) => {
     const o = document.createElement('option');
-    o.value = y + '-' + m;
-    o.textContent = MONTH_NAMES[m] + ' ' + y;
-    if(y === Y && m === M) o.selected = true;
+    o.value = i;
+    o.textContent = mo.name;
+    if(i === M) o.selected = true;
     sel.appendChild(o);
-    m++; if(m > 11){ m = 0; y++; }
-  }
+  });
   sel.onchange = () => {
-    const [ny, nm] = sel.value.split('-').map(Number);
-    Y = ny; M = nm;
+    M = +sel.value;
     D = load();
-    selected = isToday(1) || (new Date().getFullYear() === Y && new Date().getMonth() === M)
-      ? new Date().getDate() : 1;
+    const t = new Date();
+    selected = (t.getMonth() === M) ? t.getDate() : 1;
     drawAll();
   };
   const t = new Date();
   document.getElementById('todaychip').textContent =
-    'Today is ' + DOW[t.getDay()] + ', ' + MONTH_NAMES[t.getMonth()] + ' ' + t.getDate();
+    'Today is ' + DOW[t.getDay()] + ', ' + MONTHS[t.getMonth()].name + ' ' + t.getDate();
 }
 
 /* ---------- the strip ---------- */
 function drawStrip(){
-  const n_days = daysIn(Y,M);
+  const n_days = nDays();
   const s = document.getElementById('strip');
   s.style.gridTemplateColumns = '150px repeat(' + n_days + ', 44px)';
   s.innerHTML = '';
@@ -395,7 +420,7 @@ function drawStrip(){
     h.className = 'dh' + (n===selected ? ' sel' : '') + (isToday(n) ? ' today' : '') +
                   ((w===0||w===6) ? ' wknd' : '');
     h.innerHTML = '<span class="dow">'+DOW[w][0]+'</span>'+n;
-    h.title = MONTH_NAMES[M] + ' ' + n + (isToday(n) ? ' · today' : '');
+    h.title = mName() + ' ' + n + (isToday(n) ? ' · today' : '');
     h.onclick = () => { selected = n; drawAll(); };
     s.appendChild(h);
   }
@@ -414,7 +439,7 @@ function drawStrip(){
       const c = document.createElement('div');
       c.className = 'cell' + (on ? ' on' : '') + (isToday(n) ? ' today' : '');
       if(on) c.style.background = r.colour;
-      c.title = r.label + ' · ' + MONTH_NAMES[M] + ' ' + n;
+      c.title = r.label + ' · ' + mName() + ' ' + n;
       c.onclick = () => { const d = day(n); d[r.k] = d[r.k] ? 0 : 1; save(); drawAll(); };
       s.appendChild(c);
     }
@@ -439,7 +464,7 @@ function drawStrip(){
         c.style.color = '#FFF6EC';
         c.textContent = r.money ? (v >= 1000 ? Math.round(v/1000)+'k' : Math.round(v)) : v;
       }
-      c.title = r.label + ' · ' + MONTH_NAMES[M] + ' ' + n +
+      c.title = r.label + ' · ' + mName() + ' ' + n +
                 (v ? ': ' + (r.money ? money(v) : v) : ' · click the date above to log it');
       c.onclick = () => {
         selected = n; drawAll();
@@ -452,19 +477,21 @@ function drawStrip(){
 
 /* ---------- day panel ---------- */
 function drawDay(){
-  if(selected > daysIn(Y,M)) selected = daysIn(Y,M);
+  if(selected > nDays()) selected = nDays();
   const d = day(selected);
+  const esc = v => String(v || '').replace(/"/g,'&quot;');
   const p = document.getElementById('daypanel');
   p.innerHTML =
-    '<div class="day"><h3>'+DOW[dowOf(selected)]+', '+MONTH_NAMES[M]+' '+selected+
+    '<div class="day"><h3>'+DOW[dowOf(selected)]+', '+mName()+' '+selected+
       (isToday(selected) ? ' · today' : '')+'</h3>'+
     '<div class="hint">Tick what you did. Log what came back on the day it actually arrived, even if the post that caused it went out last week.</div>'+
     '<div class="toggles" id="tg"></div>'+
     '<div class="fields">'+
       '<div class="f"><label>Calls / readings booked</label><input type="number" min="0" id="f-calls" value="'+(d.calls||'')+'" placeholder="0"></div>'+
       '<div class="f"><label>New leads</label><input type="number" min="0" id="f-leads" value="'+(d.leads||'')+'" placeholder="0"></div>'+
-      '<div class="f"><label>Where they came from</label><input type="text" id="f-source" value="'+String(d.source||'').replace(/"/g,'&quot;')+'" placeholder="Instagram, DMs, newsletter"></div>'+
+      '<div class="f"><label>Where they came from</label><input type="text" id="f-source" value="'+esc(d.source)+'" placeholder="Instagram, DMs, newsletter"></div>'+
       '<div class="f"><label>Money in</label><input type="number" min="0" id="f-money" value="'+(d.money||'')+'" placeholder="0"></div>'+
+      '<div class="f wide"><label>What I actually posted</label><input type="text" id="f-note" value="'+esc(d.note)+'" placeholder="One line, so the month makes sense when you read it back"></div>'+
     '</div></div>';
 
   const tg = document.getElementById('tg');
@@ -486,17 +513,20 @@ function drawDay(){
   };
   bind('f-calls','calls',true); bind('f-leads','leads',true);
   bind('f-money','money',true); bind('f-source','source',false);
+  bind('f-note','note',false);
 }
 
 /* ---------- stats ---------- */
 function drawStats(){
   const t = totals();
   document.getElementById('s-days').textContent = t.visible;
-  document.getElementById('s-days-n').textContent = 'out of ' + daysIn(Y,M);
+  document.getElementById('s-days-n').textContent = 'out of ' + nDays();
   document.getElementById('s-streak').textContent = t.streak;
   document.getElementById('s-calls').textContent = t.calls;
-  document.getElementById('s-leads').textContent = t.leads;
-  document.getElementById('s-money').textContent = 'and ' + money(t.cash) + ' in';
+  document.getElementById('s-money').textContent = money(t.cash);
+  document.getElementById('s-money-n').textContent = t.bestAmt
+    ? 'best day ' + money(t.bestAmt) + ' on ' + mName().slice(0,3) + ' ' + t.bestDay
+    : 'nothing logged yet';
 }
 
 /* ---------- weekly targets ---------- */
@@ -509,7 +539,7 @@ function drawTargets(){
     if(!list.length) continue;
     const b = document.createElement('div');
     b.className = 'wk' + (w === D.week ? ' on' : '');
-    b.textContent = 'Week ' + w + ' · ' + MONTH_NAMES[M].slice(0,3) + ' ' + list[0] + '–' + list[list.length-1];
+    b.textContent = 'Week ' + w + ' · ' + mName().slice(0,3) + ' ' + list[0] + '–' + list[list.length-1];
     b.onclick = () => { D.week = w; save(); drawTargets(); };
     wp.appendChild(b);
   }
@@ -534,14 +564,14 @@ function drawTargets(){
   });
 }
 
-/* ---------- followers, one row per platform ---------- */
+/* ---------- followers ---------- */
 function drawFollowers(){
   const wks = weeksInMonth();
   const tbl = document.getElementById('foltable');
   let head = '<thead><tr><th style="width:130px">Platform</th>';
   for(let w=1; w<=wks; w++){
     const list = daysInWeek(w);
-    head += '<th>Wk '+w+' <span style="opacity:.6">'+MONTH_NAMES[M].slice(0,3)+' '+list[list.length-1]+'</span></th>';
+    head += '<th>Wk '+w+' <span style="opacity:.6">'+mName().slice(0,3)+' '+list[list.length-1]+'</span></th>';
   }
   head += '<th>Month</th></tr></thead>';
 
@@ -554,10 +584,10 @@ function drawFollowers(){
       body += '<td><input class="folin" type="number" min="0" placeholder="—" value="'+(v == null ? '' : v)+'" data-i="'+i+'" data-w="'+w+'"></td>';
     }
     const vals = [];
-    for(let w=1; w<=wks; w++) if(row[w] != null) vals.push({w, v:+row[w]});
+    for(let w=1; w<=wks; w++) if(row[w] != null) vals.push(+row[w]);
     let cell = '<span style="opacity:.5">—</span>';
     if(vals.length > 1){
-      const dd = vals[vals.length-1].v - vals[0].v;
+      const dd = vals[vals.length-1] - vals[0];
       cell = '<span class="'+(dd < 0 ? 'down' : 'up')+'">'+(dd >= 0 ? '+' : '')+dd+'</span>';
     }
     body += '<td>'+cell+'</td></tr>';
@@ -574,7 +604,7 @@ function drawFollowers(){
       if(!D.followers[i]) D.followers[i] = {};
       if(el.value === '') delete D.followers[i][w];
       else D.followers[i][w] = parseInt(el.value) || 0;
-      save(); drawFollowers();
+      save(); drawFollowers(); drawCopy();
     };
   });
 }
@@ -582,6 +612,9 @@ function drawFollowers(){
 /* ---------- sources ---------- */
 function drawSources(){
   const rows = sourceTally();
+  const t = totals();
+  document.getElementById('leadcount').textContent =
+    t.leads + (t.leads === 1 ? ' this month' : ' this month');
   const body = document.getElementById('srcbody');
   const empty = document.getElementById('srcempty');
   body.innerHTML = '';
@@ -602,9 +635,9 @@ function recapText(){
   if(!t.visible && !t.calls && !t.leads && !t.cash) return 'Log a day or two and this fills in.';
   const src = sourceTally()[0];
   const L = [];
-  L.push(MONTH_NAMES[M] + ', made visible.');
+  L.push(mName() + ', in numbers.');
   L.push('');
-  L.push('I showed up on ' + t.visible + ' of ' + daysIn(Y,M) + ' days. Longest run: ' + t.streak + ' in a row.');
+  L.push('I showed up on ' + t.visible + ' of ' + nDays() + ' days. Longest run: ' + t.streak + ' in a row.');
   L.push(t.did.post + ' posts · ' + t.did.video + ' videos · ' + t.did.story + ' story sets · ' +
          t.did.reach + ' people I reached out to directly.');
   L.push('');
@@ -620,33 +653,35 @@ function recapText(){
 }
 
 function exportText(){
-  const n_days = daysIn(Y,M);
   const t = totals();
   if(!t.visible && !t.calls && !t.leads && !t.cash) return 'Log a day or two and this fills in.';
   const yn = v => v ? 'yes' : '';
   const L = [];
-  L.push('The Visibility Tracker · ' + MONTH_NAMES[M] + ' ' + Y);
+  L.push('The Visibility Tracker · ' + mName());
   L.push('');
-  L.push(['Date','Day','Post','Video','Stories','Outreach','Calls','Leads','Where from','Money in'].join('\t'));
-  for(let n=1; n<=n_days; n++){
+  L.push(['Date','Day','Post','Video','Stories','Outreach','Calls','Leads','Where from','Money in','What I posted'].join('\t'));
+  for(let n=1; n<=nDays(); n++){
     const d = D.days[n];
     if(!d) continue;
-    const any = ROWS_DID.some(r => d[r.k]) || d.calls || d.leads || d.money || d.source;
+    const any = ROWS_DID.some(r => d[r.k]) || d.calls || d.leads || d.money || d.source || d.note;
     if(!any) continue;
     L.push([
-      MONTH_NAMES[M].slice(0,3) + ' ' + n,
+      mName().slice(0,3) + ' ' + n,
       DOW[dowOf(n)],
       yn(d.post), yn(d.video), yn(d.story), yn(d.reach),
       (+d.calls || '') || '', (+d.leads || '') || '',
       d.source || '',
-      d.money ? money(d.money) : ''
+      d.money ? money(d.money) : '',
+      (d.note || '').replace(/\t/g,' ')
     ].join('\t'));
   }
   L.push('');
   L.push(['TOTAL','', t.did.post, t.did.video, t.did.story, t.did.reach,
-          t.calls, t.leads, '', money(t.cash)].join('\t'));
+          t.calls, t.leads, '', money(t.cash), ''].join('\t'));
   L.push('');
-  L.push('Days visible: ' + t.visible + ' of ' + n_days + '. Longest run: ' + t.streak + '.');
+  L.push('Days visible: ' + t.visible + ' of ' + nDays() + '. Longest run: ' + t.streak + '.');
+  if(t.bestAmt) L.push('Best day: ' + money(t.bestAmt) + ' on ' + mName() + ' ' + t.bestDay +
+                       ', across ' + t.paidDays + ' day' + (t.paidDays === 1 ? '' : 's') + ' with money in.');
   const rows = sourceTally();
   if(rows.length) L.push('Leads by source: ' + rows.map(([k,v]) => k + ' ' + (Math.round(v*10)/10)).join(' · '));
   const fol = [];
@@ -683,24 +718,23 @@ function wireCopy(id, get){
 function drawAll(){
   drawStrip(); drawDay(); drawStats(); drawTargets(); drawFollowers(); drawSources(); drawCopy();
   const sel = document.getElementById('monthsel');
-  if(sel) sel.value = Y + '-' + M;
+  if(sel) sel.value = M;
 }
 
 (function init(){
   const t = new Date();
-  const inRange = (t.getFullYear() > FIRST.y || (t.getFullYear() === FIRST.y && t.getMonth() >= FIRST.m)) &&
-                  (t.getFullYear() < LAST.y  || (t.getFullYear() === LAST.y  && t.getMonth() <= LAST.m));
-  Y = inRange ? t.getFullYear() : FIRST.y;
-  M = inRange ? t.getMonth()    : FIRST.m;
+  M = t.getMonth();
   D = load();
-  selected = (t.getFullYear() === Y && t.getMonth() === M) ? t.getDate() : 1;
+  selected = t.getDate() > MONTHS[M].days ? 1 : t.getDate();
   drawMonths();
   wireCopy('copyrecap', recapText);
   wireCopy('copymonth', exportText);
+  document.getElementById('print').onclick = () => window.print();
   document.getElementById('reset').onclick = () => {
-    if(!confirm('Clear every day of ' + MONTH_NAMES[M] + ' ' + Y + '? This cannot be undone.')) return;
+    if(!confirm('Clear every day of ' + mName() + '? This cannot be undone.')) return;
     D = BLANK(); save();
-    selected = (new Date().getFullYear() === Y && new Date().getMonth() === M) ? new Date().getDate() : 1;
+    const n = new Date();
+    selected = (n.getMonth() === M) ? n.getDate() : 1;
     drawAll();
   };
   drawAll();
