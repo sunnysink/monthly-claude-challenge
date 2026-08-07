@@ -161,6 +161,20 @@
     background:transparent;border:1px solid transparent;border-radius:7px;padding:6px 6px}
   .folname:hover{border-color:rgba(var(--copper-rgb),0.28)}
   .folname:focus{outline:none;background:rgba(var(--sheet-rgb),0.9);border-color:var(--ember)}
+  .leadin{width:100%;min-width:90px;font-family:var(--sans);font-size:13px;color:var(--ink);
+    background:rgba(var(--sheet-rgb),0.85);border:1px solid rgba(var(--copper-rgb),0.26);
+    border-radius:8px;padding:7px 9px}
+  .leadin:focus{outline:none;border-color:var(--ember)}
+  .leadday{width:58px;text-align:center}
+  .st{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+    padding:6px 11px;border-radius:30px;cursor:pointer;white-space:nowrap;user-select:none;
+    border:1px solid rgba(var(--copper-rgb),0.35);color:var(--ink-dim);background:rgba(var(--sheet-rgb),0.6)}
+  .st.s1{background:rgba(var(--gold-rgb),0.18);border-color:rgba(var(--gold-rgb),0.5);color:var(--copper-lt)}
+  .st.s2{background:rgba(var(--ember-rgb),0.18);border-color:rgba(var(--ember-rgb),0.5);color:var(--copper-lt)}
+  .st.s3{background:var(--green);border-color:var(--green);color:#FFF6EC;font-weight:600}
+  .st.s4{opacity:.55}
+  .del{cursor:pointer;color:var(--ink-dim);opacity:.5;font-size:16px;line-height:1;padding:0 4px}
+  .del:hover{opacity:1;color:var(--ember)}
   .up{color:var(--green);font-family:var(--mono);font-size:12px}
   .down{color:var(--ember);font-family:var(--mono);font-size:12px}
 
@@ -246,6 +260,17 @@
     <div class="note" style="margin-top:15px"><b>Weekly on purpose.</b> Follower counts move slowly, so checking them daily makes a good month look like a bad one. Fill in the platforms you actually use and leave the rest empty. Rename any row by clicking on it.</div>
   </div>
 
+  <div class="label">People to follow up with</div>
+  <div class="card">
+    <div class="cardhead">
+      <span class="ch">Your pipeline</span>
+      <span class="cn" id="pipecount">nobody yet</span>
+    </div>
+    <div class="scrollx"><table id="pipetable"></table></div>
+    <div class="btnrow" style="margin-top:14px"><button class="btn ghost" id="addlead">+ Add someone</button></div>
+    <div class="note" style="margin-top:15px"><b>This is separate from the lead count on the strip, and it is meant to be.</b> The count answers how many. This answers who, and what you owe them next. Use a first name, or just a number if you would rather not write anyone down. Click a status to move it along.</div>
+  </div>
+
   <div class="label">Take your month with you</div>
 
   <div class="copyblock">
@@ -257,12 +282,25 @@
 
   <div class="copyblock">
     <h3>Your full month, day by day</h3>
-    <div class="why">Every logged day in one block. <b>Paste it into a Google Doc and you have the month on record</b>, which is the part this page cannot keep for you. Paste it into a spreadsheet and it lands in proper columns.</div>
+    <div class="why">Every logged day in one block, laid out exactly as you see it below. <b>Copy for a doc</b> keeps these columns lined up when you paste it into a Google Doc. <b>Copy for a spreadsheet</b> sends the same thing tab separated, so Sheets or Excel splits it into real columns.</div>
     <pre id="export">Log a day or two and this fills in.</pre>
     <div class="btnrow">
-      <button class="btn" id="copymonth">Copy the whole month</button>
+      <button class="btn" id="copydoc">Copy for a doc</button>
+      <button class="btn" id="copytsv">Copy for a spreadsheet</button>
       <button class="btn ghost" id="print">Print this page</button>
       <button class="btn ghost" id="reset">Clear this month</button>
+    </div>
+  </div>
+
+  <div class="copyblock">
+    <h3>Moving to a new phone or laptop</h3>
+    <div class="why">Copy this code, open the tracker on the other device, paste it in and press restore. <b>Everything for this month comes with it</b>, including your pipeline and your follower numbers.</div>
+    <pre class="wrap" id="backup"></pre>
+    <div class="btnrow" style="margin-bottom:12px"><button class="btn" id="copybackup">Copy the code</button></div>
+    <div class="f"><label>Paste a code here to restore</label><input type="text" id="restorebox" placeholder="Paste the code from your other device"></div>
+    <div class="btnrow" style="margin-top:11px">
+      <button class="btn ghost" id="dorestore">Restore this month</button>
+      <span id="restoremsg" style="font-size:12.5px;color:var(--ink-dim)"></span>
     </div>
   </div>
 
@@ -315,8 +353,25 @@ const mName  = () => MONTHS[M].name;
 const keyFor = m => KEY_PREFIX + MONTHS[m].name.toLowerCase();
 const dowOf  = n => new Date(DOW_YEAR, M, n).getDay();
 const money  = v => '$' + Math.round(v).toLocaleString();
-const BLANK  = () => ({days:{}, targets:{post:5, video:2, story:3, reach:5},
-                       followers:{}, names:PLATFORMS.slice(), week:1});
+const PREFS_KEY = KEY_PREFIX + 'prefs';
+const STATUSES = ['New','Messaged','Followed up','Booked','Went quiet'];
+
+/* targets and platform names carry forward, so nobody retypes them
+   twelve times a year */
+function prefs(){
+  try{
+    const p = JSON.parse(localStorage.getItem(PREFS_KEY) || '{}');
+    return {
+      targets: Object.assign({post:5, video:2, story:3, reach:5}, p.targets || {}),
+      names: (Array.isArray(p.names) && p.names.length === PLATFORMS.length) ? p.names : PLATFORMS.slice()
+    };
+  }catch(e){ return {targets:{post:5, video:2, story:3, reach:5}, names:PLATFORMS.slice()}; }
+}
+function savePrefs(){
+  try{ localStorage.setItem(PREFS_KEY, JSON.stringify({targets:D.targets, names:D.names})); }catch(e){}
+}
+const BLANK  = () => { const p = prefs();
+  return {days:{}, targets:p.targets, followers:{}, names:p.names, leads:[], week:1}; };
 
 function load(){
   try{
@@ -327,10 +382,11 @@ function load(){
     const out = Object.assign(base, p);
     out.targets = Object.assign(base.targets, p.targets || {});
     if(!Array.isArray(out.names) || out.names.length !== PLATFORMS.length) out.names = PLATFORMS.slice();
+    if(!Array.isArray(out.leads)) out.leads = [];
     return out;
   }catch(e){ return BLANK(); }
 }
-function save(){ try{ localStorage.setItem(keyFor(M), JSON.stringify(D)); }catch(e){} }
+function save(){ try{ localStorage.setItem(keyFor(M), JSON.stringify(D)); savePrefs(); }catch(e){} }
 function day(n){
   if(!D.days[n]) D.days[n] = {post:0,video:0,story:0,reach:0,calls:0,leads:0,money:0,source:'',note:''};
   if(D.days[n].note === undefined) D.days[n].note = '';
@@ -652,20 +708,15 @@ function recapText(){
   return L.join('\n');
 }
 
-function exportText(){
-  const t = totals();
-  if(!t.visible && !t.calls && !t.leads && !t.cash) return 'Log a day or two and this fills in.';
+function exportRows(){
   const yn = v => v ? 'yes' : '';
-  const L = [];
-  L.push('The Visibility Tracker · ' + mName());
-  L.push('');
-  L.push(['Date','Day','Post','Video','Stories','Outreach','Calls','Leads','Where from','Money in','What I posted'].join('\t'));
+  const rows = [['Date','Day','Post','Video','Stories','Outreach','Calls','Leads','Where from','Money in','What I posted']];
   for(let n=1; n<=nDays(); n++){
     const d = D.days[n];
     if(!d) continue;
     const any = ROWS_DID.some(r => d[r.k]) || d.calls || d.leads || d.money || d.source || d.note;
     if(!any) continue;
-    L.push([
+    rows.push([
       mName().slice(0,3) + ' ' + n,
       DOW[dowOf(n)],
       yn(d.post), yn(d.video), yn(d.story), yn(d.reach),
@@ -673,17 +724,22 @@ function exportText(){
       d.source || '',
       d.money ? money(d.money) : '',
       (d.note || '').replace(/\t/g,' ')
-    ].join('\t'));
+    ]);
   }
-  L.push('');
-  L.push(['TOTAL','', t.did.post, t.did.video, t.did.story, t.did.reach,
-          t.calls, t.leads, '', money(t.cash), ''].join('\t'));
-  L.push('');
+  const t = totals();
+  rows.push(['TOTAL','', t.did.post, t.did.video, t.did.story, t.did.reach,
+             t.calls, t.leads, '', money(t.cash), '']);
+  return rows;
+}
+
+function exportFooter(){
+  const t = totals();
+  const L = [];
   L.push('Days visible: ' + t.visible + ' of ' + nDays() + '. Longest run: ' + t.streak + '.');
   if(t.bestAmt) L.push('Best day: ' + money(t.bestAmt) + ' on ' + mName() + ' ' + t.bestDay +
                        ', across ' + t.paidDays + ' day' + (t.paidDays === 1 ? '' : 's') + ' with money in.');
   const rows = sourceTally();
-  if(rows.length) L.push('Leads by source: ' + rows.map(([k,v]) => k + ' ' + (Math.round(v*10)/10)).join(' · '));
+  if(rows.length) L.push('Leads by source: ' + rows.map(([k,v]) => k + ' ' + (Math.round(v*10)/10)).join(' \u00b7 '));
   const fol = [];
   D.names.forEach((name, i) => {
     const row = D.followers[i] || {};
@@ -694,13 +750,111 @@ function exportText(){
       fol.push(name + ' ' + (dd >= 0 ? '+' : '') + dd);
     }
   });
-  if(fol.length) L.push('Followers this month: ' + fol.join(' · '));
-  return L.join('\n');
+  if(fol.length) L.push('Followers this month: ' + fol.join(' \u00b7 '));
+  if(D.leads.length){
+    L.push('');
+    L.push('Follow ups');
+    D.leads.forEach(l => {
+      const bits = [l.name || 'someone'];
+      if(l.from) bits.push('from ' + l.from);
+      if(l.day)  bits.push(mName().slice(0,3) + ' ' + l.day);
+      bits.push(STATUSES[l.status || 0]);
+      if(l.note) bits.push(l.note);
+      L.push('  ' + bits.join(' \u00b7 '));
+    });
+  }
+  return L;
+}
+
+/* the on-screen block and the doc copy are space padded so the columns
+   line up. tabs collapse to tab stops and put money under the wrong
+   heading, which is what this replaces. the spreadsheet copy keeps tabs. */
+function exportDoc(){
+  const t = totals();
+  if(!t.visible && !t.calls && !t.leads && !t.cash) return 'Log a day or two and this fills in.';
+  const rows = exportRows();
+  const last = rows[0].length - 1;
+  const w = [];
+  for(let c=0; c<=last; c++) w[c] = Math.max.apply(null, rows.map(r => String(r[c] == null ? '' : r[c]).length));
+  const line = r => r.map((v, c) => {
+    const str = String(v == null ? '' : v);
+    return c === last ? str : str + ' '.repeat(Math.max(0, w[c] - str.length));
+  }).join('  ').replace(/\s+$/,'');
+  const L = ['The Visibility Tracker \u00b7 ' + mName(), ''];
+  L.push(line(rows[0]));
+  L.push(w.map(n => '-'.repeat(n)).join('  '));
+  rows.slice(1, -1).forEach(r => L.push(line(r)));
+  L.push(w.map(n => '-'.repeat(n)).join('  '));
+  L.push(line(rows[rows.length-1]));
+  L.push('');
+  return L.concat(exportFooter()).join('\n');
+}
+
+function exportTSV(){
+  const t = totals();
+  if(!t.visible && !t.calls && !t.leads && !t.cash) return 'Log a day or two and this fills in.';
+  const rows = exportRows();
+  const L = ['The Visibility Tracker \u00b7 ' + mName(), ''];
+  rows.forEach(r => L.push(r.join('\t')));
+  L.push('');
+  return L.concat(exportFooter()).join('\n');
+}
+
+/* ---------- pipeline ---------- */
+function drawPipeline(){
+  const tbl = document.getElementById('pipetable');
+  const booked = D.leads.filter(l => (l.status || 0) === 3).length;
+  document.getElementById('pipecount').textContent = D.leads.length
+    ? D.leads.length + ' on the list \u00b7 ' + booked + ' booked'
+    : 'nobody yet';
+
+  if(!D.leads.length){
+    tbl.innerHTML = '<tbody><tr><td style="border:none;padding-left:0" class="empty">' +
+      'Nobody on the list. Add the first person you owe a reply to.</td></tr></tbody>';
+    return;
+  }
+  const esc = v => String(v == null ? '' : v).replace(/"/g,'&quot;');
+  let html = '<thead><tr><th style="width:24%">Name or number</th><th style="width:20%">Where from</th>' +
+             '<th style="width:70px">Day</th><th style="width:26%">Next step</th><th>Status</th><th></th></tr></thead><tbody>';
+  D.leads.forEach((l, i) => {
+    const st = l.status || 0;
+    html += '<tr>' +
+      '<td><input class="leadin" data-i="'+i+'" data-k="name" value="'+esc(l.name)+'" placeholder="First name or 1"></td>' +
+      '<td><input class="leadin" data-i="'+i+'" data-k="from" value="'+esc(l.from)+'" placeholder="DM, reel"></td>' +
+      '<td><input class="leadin leadday" type="number" min="1" max="'+nDays()+'" data-i="'+i+'" data-k="day" value="'+(l.day || '')+'" placeholder="\u2014"></td>' +
+      '<td><input class="leadin" data-i="'+i+'" data-k="note" value="'+esc(l.note)+'" placeholder="Send the link"></td>' +
+      '<td><span class="st s'+st+'" data-i="'+i+'">'+STATUSES[st]+'</span></td>' +
+      '<td><span class="del" data-i="'+i+'" title="Remove">\u00d7</span></td>' +
+      '</tr>';
+  });
+  tbl.innerHTML = html + '</tbody>';
+
+  tbl.querySelectorAll('.leadin').forEach(el => {
+    el.oninput = () => {
+      const l = D.leads[+el.dataset.i];
+      l[el.dataset.k] = el.dataset.k === 'day' ? (parseInt(el.value) || '') : el.value;
+      save(); drawCopy();
+    };
+  });
+  tbl.querySelectorAll('.st').forEach(el => {
+    el.onclick = () => {
+      const l = D.leads[+el.dataset.i];
+      l.status = ((l.status || 0) + 1) % STATUSES.length;
+      save(); drawPipeline(); drawCopy();
+    };
+  });
+  tbl.querySelectorAll('.del').forEach(el => {
+    el.onclick = () => {
+      D.leads.splice(+el.dataset.i, 1);
+      save(); drawPipeline(); drawCopy();
+    };
+  });
 }
 
 function drawCopy(){
   document.getElementById('recap').textContent  = recapText();
-  document.getElementById('export').textContent = exportText();
+  document.getElementById('export').textContent = exportDoc();
+  document.getElementById('backup').textContent = btoa(unescape(encodeURIComponent(JSON.stringify({m:M, d:D}))));
 }
 
 function wireCopy(id, get){
@@ -716,7 +870,7 @@ function wireCopy(id, get){
 
 /* ---------- go ---------- */
 function drawAll(){
-  drawStrip(); drawDay(); drawStats(); drawTargets(); drawFollowers(); drawSources(); drawCopy();
+  drawStrip(); drawDay(); drawStats(); drawTargets(); drawFollowers(); drawSources(); drawPipeline(); drawCopy();
   const sel = document.getElementById('monthsel');
   if(sel) sel.value = M;
 }
@@ -728,8 +882,36 @@ function drawAll(){
   selected = t.getDate() > MONTHS[M].days ? 1 : t.getDate();
   drawMonths();
   wireCopy('copyrecap', recapText);
-  wireCopy('copymonth', exportText);
+  wireCopy('copydoc', exportDoc);
+  wireCopy('copytsv', exportTSV);
+  wireCopy('copybackup', () => document.getElementById('backup').textContent);
   document.getElementById('print').onclick = () => window.print();
+  document.getElementById('addlead').onclick = () => {
+    const t = new Date();
+    D.leads.push({name:'', from:'', day:(t.getMonth() === M ? t.getDate() : ''), note:'', status:0});
+    save(); drawPipeline(); drawCopy();
+  };
+  document.getElementById('dorestore').onclick = () => {
+    const box = document.getElementById('restorebox');
+    const msg = document.getElementById('restoremsg');
+    let parsed;
+    try{ parsed = JSON.parse(decodeURIComponent(escape(atob(box.value.trim())))); }
+    catch(e){ msg.textContent = 'That code did not read properly. Copy the whole thing and try again.'; return; }
+    if(!parsed || !parsed.d || typeof parsed.d !== 'object'){
+      msg.textContent = 'That code did not read properly. Copy the whole thing and try again.'; return;
+    }
+    const into = MONTHS[parsed.m] ? MONTHS[parsed.m].name : mName();
+    if(!confirm('Restore into ' + into + '? Anything already saved there is replaced.')) return;
+    if(MONTHS[parsed.m]) M = parsed.m;
+    D = Object.assign(BLANK(), parsed.d);
+    if(!Array.isArray(D.leads)) D.leads = [];
+    save();
+    const n = new Date();
+    selected = (n.getMonth() === M) ? n.getDate() : 1;
+    box.value = '';
+    msg.textContent = 'Restored into ' + mName() + '.';
+    drawMonths(); drawAll();
+  };
   document.getElementById('reset').onclick = () => {
     if(!confirm('Clear every day of ' + mName() + '? This cannot be undone.')) return;
     D = BLANK(); save();
