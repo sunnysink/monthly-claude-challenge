@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Discovery Call Companion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     THE SKIN. A new colour story is this block and nothing else.
+     Honey Linen: warm cream, soft bronze, burnt orange.
+     Identical to The Visibility Tracker.
+     ============================================================ */
+  :root{
+    --bg:#FBF3E7; --bg2:#F3E9D9; --ink:#211A12; --ink-dim:#544738;
+    --copper:#9A6B2E; --copper-lt:#7C5320; --ember:#C25A22; --ember-glow:#D96A2C;
+    --forest:#4A6250; --mauve:#7A5A5E; --gold:#9C7C1E;
+    --green:#4A7154;
+    --copper-rgb:154,107,46;   --copper-lt-rgb:124,83,32;
+    --ember-rgb:194,90,34;     --ember-glow-rgb:217,106,44;
+    --gold-rgb:156,124,30;     --mauve-rgb:122,90,94;
+    --forest-rgb:74,98,80;     --green-rgb:74,113,84;
+    --card-rgb:255,251,244;
+    --bg-rgb:251,243,231;      --bg2-rgb:243,233,217;
+    --veil-rgb:33,26,18;       --well-rgb:33,26,18;    --sheet-rgb:255,251,244;
+    --serif:'Cormorant Garamond','Hoefler Text',Georgia,serif;
+    --sans:'Hanken Grotesk',system-ui,-apple-system,sans-serif;
+    --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;
+    --card:rgba(var(--card-rgb),0.72); --cardborder:rgba(var(--copper-rgb),0.22);
+    --glow-a:rgba(var(--ember-rgb),0.13);
+    --glow-b:rgba(var(--forest-rgb),0.13);
+    --glow-c:rgba(var(--copper-rgb),0.09);
+    --on-accent:#14100C;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:var(--sans); color:var(--ink); background:var(--bg);
+    background-image:
+      radial-gradient(900px 500px at 12% -8%, var(--glow-a), transparent 60%),
+      radial-gradient(800px 500px at 100% 0%, var(--glow-b), transparent 55%),
+      radial-gradient(700px 600px at 60% 120%, var(--glow-c), transparent 60%);
+    min-height:100vh; padding:34px 20px 70px; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1140px;margin:0 auto}
+
+  h1{font-family:var(--serif);font-weight:600;font-size:clamp(38px,6.5vw,62px);line-height:1;
+    color:var(--copper-lt);letter-spacing:.4px}
+  .sub{font-size:16.5px;color:var(--ink-dim);margin-top:11px;line-height:1.6}
+  .sub b{color:var(--ink)}
+
+  .card{background:var(--card);border:1px solid var(--cardborder);border-radius:15px;padding:18px 20px}
+  .card + .card{margin-top:13px}
+  .cardhead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:14px}
+  .cardhead .ch{font-family:var(--serif);font-size:21px;font-weight:600;color:var(--ink)}
+  .cardhead .cn{font-family:var(--mono);font-size:11.5px;color:var(--copper-lt)}
+
+  /* ---- the premise ---- */
+  .premise{background:linear-gradient(135deg,rgba(var(--ember-rgb),0.14),rgba(var(--card-rgb),0.86));
+    border:1px solid rgba(var(--ember-rgb),0.38);border-radius:15px;padding:22px 24px;margin-top:22px}
+  .premise .big{font-family:var(--serif);font-size:26px;font-weight:600;line-height:1.22;color:var(--ink)}
+  .premise p{font-size:14.5px;color:var(--ink-dim);line-height:1.65;margin-top:12px}
+  .premise p b{color:var(--ink)}
+
+  /* ---- tabs ---- */
+  .tabs{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px;
+    border-bottom:1px solid rgba(var(--copper-rgb),0.25)}
+  .tab{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+    background:transparent;color:var(--ink-dim);border:1px solid rgba(var(--copper-rgb),0.28);
+    border-bottom:none;border-radius:11px 11px 0 0;padding:12px 19px;cursor:pointer;
+    position:relative;top:1px;transition:all .15s}
+  .tab:hover{color:var(--ink);background:rgba(var(--copper-rgb),0.07)}
+  .tab.on{background:var(--card);color:var(--copper-lt);font-weight:600;
+    border-color:rgba(var(--copper-rgb),0.4);box-shadow:inset 0 2px 0 var(--ember)}
+  .tab .tn{font-family:var(--mono);font-size:9.5px;opacity:.7;margin-left:7px}
+  .panel{display:none;padding-top:22px}
+  .panel.on{display:block}
+  @media(max-width:700px){
+    .tabs{border-bottom:none;gap:7px}
+    .tab{border-radius:11px;border-bottom:1px solid rgba(var(--copper-rgb),0.28);top:0;flex:1 1 45%}
+  }
+
+  /* ---- score ---- */
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}
+  .stat{background:var(--card);border:1px solid var(--cardborder);border-radius:15px;padding:15px 17px;position:relative;overflow:hidden}
+  .stat::before{content:"";position:absolute;left:0;top:0;right:0;height:2px;
+    background:linear-gradient(90deg,var(--ember),var(--gold))}
+  .stat .sl{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-dim)}
+  .stat .sv{font-family:var(--serif);font-size:40px;font-weight:600;line-height:1;margin:6px 0 3px;color:var(--ember)}
+  .stat .sn{font-size:11.5px;color:var(--ink-dim);line-height:1.4}
+  .stat.ready{background:linear-gradient(135deg,rgba(var(--green-rgb),0.18),rgba(var(--card-rgb),0.85));
+    border-color:rgba(var(--green-rgb),0.5)}
+  .stat.ready::before{background:linear-gradient(90deg,var(--forest),var(--green))}
+  .stat.ready .sv{color:var(--green)}
+  @media(max-width:820px){.stats{grid-template-columns:1fr}}
+
+  /* ---- checklist ---- */
+  .grouphead{font-family:var(--serif);font-size:20px;font-weight:600;color:var(--ink);margin:2px 0 3px}
+  .groupwhy{font-size:12.5px;color:var(--ink-dim);line-height:1.6;margin-bottom:10px}
+  .check{display:flex;gap:12px;align-items:flex-start;padding:13px 0;
+    border-top:1px solid rgba(var(--copper-rgb),0.14);cursor:pointer}
+  .check:first-of-type{border-top:none}
+  .bx{width:19px;height:19px;border-radius:6px;border:1.6px solid var(--copper);flex:none;margin-top:2px;
+    display:grid;place-items:center;transition:all .16s;background:rgba(var(--sheet-rgb),0.7)}
+  .bx::after{content:"✓";font-size:12px;color:#FFF6EC;opacity:0;font-weight:700}
+  .check.on .bx{background:var(--green);border-color:var(--green)}
+  .check.on .bx::after{opacity:1}
+  .check .ct{font-size:14.5px;color:var(--ink);line-height:1.4}
+  .check.on .ct{opacity:.55}
+  .check .cw{display:block;font-size:12.5px;color:var(--ink-dim);line-height:1.55;margin-top:4px}
+  .check .cw b{color:var(--ink)}
+
+  /* ---- the call phases ---- */
+  .phase{background:var(--card);border:1px solid var(--cardborder);border-radius:15px;padding:18px 20px}
+  .phase + .phase{margin-top:13px}
+  .ph{display:flex;flex-wrap:wrap;align-items:baseline;gap:11px;margin-bottom:4px}
+  .ph .pn{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:#FFF6EC;
+    background:var(--copper);border-radius:30px;padding:4px 11px}
+  .ph h3{font-family:var(--serif);font-size:23px;font-weight:600;color:var(--ink);line-height:1.15}
+  .ph .mins{font-family:var(--mono);font-size:11px;color:var(--copper-lt);margin-left:auto}
+  .job{font-size:13.5px;color:var(--ink-dim);line-height:1.6;margin-bottom:13px}
+  .job b{color:var(--ink)}
+  .say{background:rgba(var(--sheet-rgb),0.92);border-left:3px solid var(--ember);
+    border-radius:0 12px 12px 0;padding:13px 16px;margin-bottom:11px}
+  .say .sl2{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--ember);margin-bottom:6px}
+  .say p{font-family:var(--serif);font-size:18.5px;font-style:italic;color:var(--ink);line-height:1.45}
+  .say p + p{margin-top:9px}
+  .asks{display:flex;flex-direction:column;gap:10px}
+  .ask{background:rgba(var(--sheet-rgb),0.8);border:1px solid rgba(var(--copper-rgb),0.2);
+    border-radius:12px;padding:13px 15px}
+  .ask .q{font-family:var(--serif);font-size:18.5px;font-weight:600;color:var(--ink);line-height:1.3}
+  .ask .listen{font-size:12.5px;color:var(--ink-dim);line-height:1.6;margin-top:7px}
+  .ask .listen b{color:var(--copper-lt)}
+  .steplab{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--copper-lt);background:rgba(var(--gold-rgb),0.15);
+    border:1px solid rgba(var(--gold-rgb),0.4);border-radius:30px;padding:3px 9px;
+    display:inline-block;margin-bottom:7px}
+  .starred{background:linear-gradient(135deg,rgba(var(--green-rgb),0.16),rgba(var(--sheet-rgb),0.9));
+    border-color:rgba(var(--green-rgb),0.45)}
+  .wrongwrap{margin-top:13px;background:rgba(var(--ember-rgb),0.09);
+    border:1px solid rgba(var(--ember-rgb),0.32);border-radius:12px;padding:13px 15px}
+  .wrongwrap .wl{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--ember);margin-bottom:6px}
+  .wrongwrap p{font-size:13px;color:var(--ink-dim);line-height:1.6}
+  .wrongwrap p b{color:var(--ink)}
+  textarea{width:100%;font-family:var(--sans);font-size:14px;color:var(--ink);line-height:1.6;
+    background:rgba(var(--sheet-rgb),0.9);border:1px solid rgba(var(--copper-rgb),0.28);
+    border-radius:11px;padding:11px 13px;margin-top:12px;resize:vertical;min-height:64px}
+  textarea:focus{outline:none;border-color:var(--ember)}
+  input[type=text],input[type=url],input[type=date]{font-family:var(--sans);font-size:13.5px;color:var(--ink);
+    background:rgba(var(--sheet-rgb),0.9);border:1px solid rgba(var(--copper-rgb),0.28);
+    border-radius:9px;padding:8px 11px;width:100%}
+  input:focus{outline:none;border-color:var(--ember)}
+  .fieldlab{font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--ink-dim);margin-bottom:6px;display:block}
+  .linkrow{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+  .linkrow input{flex:1 1 260px}
+  .openlink{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+    color:#FFF6EC;background:var(--copper);border-radius:30px;padding:9px 17px;text-decoration:none;
+    white-space:nowrap}
+  .openlink:hover{background:var(--copper-lt)}
+  .openlink.off{opacity:.4;pointer-events:none}
+
+  /* ---- the log ---- */
+  .logtable{width:100%;border-collapse:collapse}
+  .logtable th{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--ink-dim);text-align:left;padding:0 8px 9px 0;font-weight:500}
+  .logtable td{padding:5px 8px 5px 0;vertical-align:middle}
+  .logtable tr + tr td{border-top:1px solid rgba(var(--copper-rgb),0.12)}
+  .st{font-family:var(--mono);font-size:10px;letter-spacing:.08em;padding:5px 11px;border-radius:30px;
+    cursor:pointer;border:1px solid rgba(var(--copper-rgb),0.35);background:rgba(var(--sheet-rgb),0.8);
+    color:var(--ink-dim);white-space:nowrap}
+  .st.s1{background:rgba(var(--gold-rgb),0.16);border-color:rgba(var(--gold-rgb),0.5);color:var(--copper-lt)}
+  .st.s2{background:rgba(var(--ember-rgb),0.15);border-color:rgba(var(--ember-rgb),0.45);color:var(--ember)}
+  .st.s3{background:var(--green);border-color:var(--green);color:#FFF6EC;font-weight:600}
+  .st.s4{opacity:.55}
+  .del{cursor:pointer;color:var(--ink-dim);opacity:.5;font-size:16px;line-height:1;padding:0 4px}
+  .del:hover{opacity:1;color:var(--ember)}
+  .logscroll{overflow-x:auto}
+  .logscroll table{min-width:760px}
+
+  /* ---- copy blocks ---- */
+  .copyblock{background:linear-gradient(135deg,rgba(var(--forest-rgb),0.13),rgba(var(--card-rgb),0.82));
+    border:1px solid rgba(var(--forest-rgb),0.4);border-radius:15px;padding:18px 20px}
+  .copyblock + .copyblock{margin-top:14px}
+  .copyblock h3{font-family:var(--serif);font-weight:600;font-size:22px;margin-bottom:5px}
+  details.copyblock{padding:0}
+  details.copyblock > summary{font-family:var(--serif);font-weight:600;font-size:22px;color:var(--ink);
+    padding:17px 20px;cursor:pointer;list-style:none;display:flex;align-items:baseline;gap:12px}
+  details.copyblock > summary::-webkit-details-marker{display:none}
+  details.copyblock > summary::after{content:"+";margin-left:auto;font-family:var(--mono);
+    font-size:19px;color:var(--copper-lt);font-weight:400;line-height:1}
+  details.copyblock[open] > summary::after{content:"–"}
+  details.copyblock > summary:hover{color:var(--copper-lt)}
+  details.copyblock .pnum{font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;
+    text-transform:uppercase;color:#FFF6EC;background:var(--copper);border-radius:30px;
+    padding:4px 10px;flex:none;position:relative;top:-3px}
+  details.copyblock > *:not(summary){margin-left:20px;margin-right:20px}
+  details.copyblock > *:last-child{margin-bottom:19px}
+  .copyblock .why{font-size:13px;color:var(--ink-dim);line-height:1.6}
+  .copyblock .why b{color:var(--ink)}
+  .copyblock pre{font-family:var(--mono);font-size:11.5px;line-height:1.7;color:var(--ink);
+    white-space:pre;overflow-x:auto;background:rgba(var(--sheet-rgb),0.85);
+    border:1px solid rgba(var(--copper-rgb),0.2);border-radius:11px;padding:14px 15px;margin:13px 0;
+    max-height:340px}
+  .copyblock pre.wrap{white-space:pre-wrap;font-size:12.5px}
+  .btn{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+    background:var(--copper);color:#FFF6EC;border:none;border-radius:30px;padding:10px 20px;cursor:pointer}
+  .btn:hover{background:var(--copper-lt)}
+  .btn.ghost{background:transparent;color:var(--ink-dim);border:1px solid rgba(var(--copper-rgb),0.35)}
+  .btn.ghost:hover{background:rgba(var(--copper-rgb),0.1);color:var(--ink)}
+  .btnrow{display:flex;flex-wrap:wrap;gap:9px;align-items:center}
+
+  .note{margin-top:16px;font-size:13px;color:var(--ink-dim);line-height:1.65;
+    background:rgba(var(--sheet-rgb),0.6);border:1px dashed rgba(var(--copper-rgb),0.35);
+    border-radius:12px;padding:14px 16px}
+  .note b{color:var(--ink)}
+  footer{margin-top:38px;text-align:center;font-family:var(--mono);font-size:10.5px;
+    color:var(--ink-dim);opacity:.7;letter-spacing:.06em}
+
+  @media print{
+    body{background:#fff;padding:0}
+    .copyblock,.note,.tabs{display:none}
+    .panel{display:block !important}
+    .logscroll{overflow:visible}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>The Discovery Call Companion</h1>
+  <div class="sub"><b>Everything about the call itself: what to ask, what you are listening for, and where the yes actually happens.</b> Fill it in for one real person, then keep it open while you are on the call.</div>
+
+  <div class="premise">
+    <div class="big">You can be brilliant at booking discovery calls and still hear no every time. The call is usually the part that was already working.</div>
+    <p>I once did sixty one hour discovery calls in a row and got sixty nos. I kept the same pitch, the same words and the same offer for all sixty, because I had been taught to keep trying. <b>The calls were fine. The offer they pointed at was the problem, and so was everything I did after we hung up.</b></p>
+    <p>So this covers all three parts, in the order they decide the outcome. <b>Start on The Offer.</b> If that tab is not clear, no script can save it.</p>
+  </div>
+
+  <div class="tabs">
+    <button class="tab on" data-panel="offer">The offer<span class="tn" id="t-offer"></span></button>
+    <button class="tab" data-panel="prompts">The prompts</button>
+    <button class="tab" data-panel="script">The script</button>
+    <button class="tab" data-panel="log">The log<span class="tn" id="t-log"></span></button>
+  </div>
+
+  <!-- ============ TAB 1 · THE OFFER ============ -->
+  <div class="panel on" id="p-offer">
+
+    <div class="stats">
+      <div class="stat"><div class="sl">Checked</div><div class="sv" id="s-count">0</div><div class="sn" id="s-count-n">out of 11</div></div>
+      <div class="stat"><div class="sl">The essentials</div><div class="sv" id="s-ess">0</div><div class="sn">of 6 · these decide it</div></div>
+      <div class="stat ready"><div class="sl">Verdict</div><div class="sv" id="s-verdict" style="font-size:26px;line-height:1.15">Not yet</div><div class="sn" id="s-verdict-n">start ticking</div></div>
+    </div>
+
+    <div class="card" style="margin-top:13px">
+      <div class="grouphead">The essentials</div>
+      <div class="groupwhy">Six things. When one of these is missing, the call spends its energy fixing something an hour at your desk would have handled properly.</div>
+
+      <div class="check" data-ess="1"><span class="bx"></span><span class="ct">I can say what changes for them in one sentence, out loud, without backing up
+        <span class="cw">Not what it includes. <b>What is different for them at the end of it.</b> Say it to the wall right now. If you need a run-up, a bit of history, or the word "basically," the sentence is not there yet, and on a call you get one try at it while your heart is going.</span></span></div>
+
+      <div class="check" data-ess="1"><span class="bx"></span><span class="ct">Every deliverable has a name, and there is one for every week
+        <span class="cw">A twelve week program needs twelve things they can point at. And each one needs a real name, ideally a line describing it. <b>"Weekly support materials" is a shrug. "The Sovereign Leader Transformation Guide" is a thing that exists</b>, and named things are what your mockups are pictures of.</span></span></div>
+
+      <div class="check" data-ess="1"><span class="bx"></span><span class="ct">There is a page they can look at after we hang up
+        <span class="cw">They are going to want to reread it, sit with it, or show someone. When the only place your offer exists is your voice on a call, it disappears the moment the call ends. <b>A Canva page with a Stripe checkout link on it is plenty.</b> A Google Doc will do in a pinch. This does not need to be a funnel.</span></span></div>
+
+      <div class="check" data-ess="1"><span class="bx"></span><span class="ct">That page shows what they actually receive, as images
+        <span class="cw">Mockups of the guide, the portal, the deck, the workbook, whatever it is. A bulleted list of deliverables reads as a promise. <b>A picture of the thing reads as something that already exists</b>, which is the difference between hoping and buying.</span></span></div>
+
+      <div class="check" data-ess="1"><span class="bx"></span><span class="ct">I can say the price out loud at a normal volume
+        <span class="cw">Practise it in the car. The mumbled price, the price wrapped in an apology, and the phrase "let's talk about investment" all say the same thing about what you believe it is worth.</span></span></div>
+
+      <div class="check" data-ess="1"><span class="bx"></span><span class="ct">There is a reason to decide now, and it has a clock on it
+        <span class="cw"><b>The clock is the whole thing.</b> A quick pay discount if they pay within 48 hours. A bonus call that goes to whoever books by Friday. A start date that fills. <b>A bonus with no deadline on it is available forever</b>, which means it gives nobody a reason to answer you today. Make it true, put an hour on it, and say it out loud on the call.</span></span></div>
+    </div>
+
+    <div class="card">
+      <div class="grouphead">The rest</div>
+      <div class="groupwhy">These make the call easier. None of them will sink it on their own.</div>
+
+      <div class="check"><span class="bx"></span><span class="ct">I can name the person it is not for
+        <span class="cw">An offer for everyone is an offer nobody recognises as theirs. Naming who it is not for is what makes the person on the call certain that it is them.</span></span></div>
+
+      <div class="check"><span class="bx"></span><span class="ct">I know what happens in their first week
+        <span class="cw">"We would start with a session" is vague enough to feel risky. "Monday you fill in the intake, Wednesday we meet, and by Friday you have your first one written" is a plan, and a plan is easy to say yes to.</span></span></div>
+
+      <div class="check"><span class="bx"></span><span class="ct">I know the objection I am going to hear, because I have heard it before
+        <span class="cw">Money, timing, or a partner who needs convincing. It is nearly always one of those three. Decide your honest answer while you are calm, rather than inventing one while they wait.</span></span></div>
+
+      <div class="check"><span class="bx"></span><span class="ct">I know what I say when they are not a fit
+        <span class="cw">You will get people this is wrong for, and the call goes better when you already have the sentence. Having somewhere else to send them turns it into a kindness.</span></span></div>
+
+      <div class="check"><span class="bx"></span><span class="ct">I know how they pay, today, without going to look it up
+        <span class="cw">The link, the plan option, the deposit. Any gap here turns a yes into "I'll send that over later," and later is where yeses go to die.</span></span></div>
+
+      <div class="note">⭐ <b>One thing to decide on purpose: whether your price goes on the booking form.</b> Put it there and everybody who books has already decided they can spend that much, so you get fewer calls and they are further along. Leave it off and you get more calls, some of which were never going to be able to say yes. <b>Neither one is the right answer.</b> When your calendar is empty and your time is free, more calls is the better trade. When your calendar is full, it stops being.</div>
+    </div>
+  </div>
+
+  <!-- ============ TAB 2 · THE SCRIPT ============ -->
+  <div class="panel" id="p-script">
+
+    <div class="card">
+      <div class="cardhead"><span class="ch">Fill this in before your call</span><span class="cn">saves as you type</span></div>
+      <span class="fieldlab">Who is the call with</span>
+      <input type="text" id="who" placeholder="Their name">
+      <span class="fieldlab" style="margin-top:12px">What you already know about them</span>
+      <textarea id="known" placeholder="From the intake form, a DM, a comment, or one sentence they said in your group."></textarea>
+      <span class="fieldlab" style="margin-top:12px">The offer you have in mind for them</span>
+      <textarea id="offer" placeholder="The one sentence from The Offer tab, the price, and the thing with a clock on it."></textarea>
+      <span class="fieldlab" style="margin-top:12px">Your own script, if you keep one elsewhere</span>
+      <div class="linkrow">
+        <input type="url" id="scriptlink" placeholder="Paste a Google Doc, Notion or Canva link">
+        <a class="openlink off" id="openscript" target="_blank" rel="noopener">Open</a>
+      </div>
+    </div>
+
+    <div class="note" style="margin-bottom:16px">The lines in the cream boxes are a script you can read word for word until it becomes yours. <b>The questions underneath are the part that matters</b>, and the order they are in is doing most of the work.</div>
+
+    <div class="phase">
+      <div class="ph"><span class="pn">01</span><h3>Building rapport</h3><span class="mins">3 minutes</span></div>
+      <div class="job">They have probably been nervous about this since they booked it. <b>Your only job here is to make it a conversation rather than an audition.</b> Tell them how long you have and what you are going to do with it, so they stop guessing.</div>
+      <div class="say">
+        <div class="sl2">Say this</div>
+        <p>"Hi, I am so glad you booked this. Before we get into anything, how are you doing today?"</p>
+        <p>"So we have got thirty minutes. What I would like to do is spend most of it understanding where you are, and then I will tell you honestly whether I am the right person for it. Does that sound alright?"</p>
+      </div>
+      <div class="asks">
+        <div class="ask">
+          <div class="q">"How are you doing today?"</div>
+          <div class="listen"><b>Listening for:</b> whether they are rushed, distracted, or already braced for a pitch. If it is any of those, name it and slow down. Nobody buys while they are holding their breath.</div>
+        </div>
+        <div class="ask">
+          <div class="q">"I will tell you honestly whether I am the right person for it."</div>
+          <div class="listen"><b>Why it matters:</b> it tells them there is a point at which you might say no. That one sentence takes the pressure out of the whole call, and it makes your yes mean something at the end.</div>
+        </div>
+      </div>
+      <div class="wrongwrap">
+        <div class="wl">Where it goes wrong</div>
+        <p>Filling the silence with your own story. <b>They booked to be understood, and the first four minutes decide which of you the call is about.</b></p>
+      </div>
+      <textarea data-note="p1" placeholder="Notes"></textarea>
+    </div>
+
+    <div class="phase">
+      <div class="ph"><span class="pn">02</span><h3>Where they are, and where they want to be</h3><span class="mins">12 minutes</span></div>
+      <div class="job">Most of the call lives here, and the order is doing the work. <b>Open it with why they came, then the hurt, then what they actually want, then what stands in the way.</b> Everything after this gets measured against their picture instead of your offer.</div>
+      <div class="say">
+        <div class="sl2">Open with this</div>
+        <p>"So tell me, what inspired you to book this call with me today?"</p>
+      </div>
+      <div class="asks">
+        <div class="ask starred">
+          <span class="steplab">The opening</span>
+          <div class="q">"What inspired you to book this call with me today?"</div>
+          <div class="listen"><b>Something happened recently, and this asks for it directly.</b> People book calls on the day the problem finally costs them something, and whatever that was is the thing they actually want solved. Ask it, then let them run for as long as they want to.</div>
+        </div>
+        <div class="ask">
+          <span class="steplab">Step 1 · The pain</span>
+          <div class="q">"What has been the hardest part of that for you?"</div>
+          <div class="listen"><b>Take notes while they answer, and mirror it back in their exact words as you go.</b> Not your summary of it, their sentence. It is the fastest way to make somebody feel seen, and it makes the rest of the call a different conversation.<br><br>Listen for the specific version. The tidy version is the one they have already told six people, and the real thing usually arrives after a silence you had to sit through.</div>
+        </div>
+        <div class="ask">
+          <span class="steplab">Step 2 · The desired outcome</span>
+          <div class="q">"If we were to work together, what would you hope the outcome would be after [10, 12, however many] weeks?"</div>
+          <div class="listen"><b>Put them at the end of your program, not at a magic tomorrow.</b> They picture the real timeline, which is the one you would actually be working in.<br><br><b>This is also the question that tells you whether to make an offer at all.</b> You are never promising an outcome. What you are checking is whether you can say, honestly and with a straight back, that your program is built to get somebody there. If the answer is no, this is where you find out, and it is a gift.<br><br><b>Write their answer down word for word.</b> You will say it back in phase three and use it again in phase four, and their sentence lands harder than anything on your page.</div>
+        </div>
+        <div class="ask starred">
+          <span class="steplab">Step 3 · Underneath it</span>
+          <div class="q">"And what would that change for you?"</div>
+          <div class="listen"><b>The thing under the thing.</b> Fully booked is the outcome. Sleeping through the night is what they are buying. Ask it a second time if the first answer is still a business answer.</div>
+        </div>
+        <div class="ask">
+          <span class="steplab">Step 4 · The gap</span>
+          <div class="q">"What do you think is in the way of that right now?"</div>
+          <div class="listen"><b>Listening for:</b> their own diagnosis. It is often wrong, and that is useful. Where their diagnosis and yours differ is exactly what your offer has to answer in phase four.</div>
+        </div>
+        <div class="ask">
+          <span class="steplab">Step 5 · What they have tried</span>
+          <div class="q">"What have you already tried?"</div>
+          <div class="listen"><b>Listening for:</b> the thing you are about to describe. If they have tried something close to your offer, ask what part of it did not work. That answer is the whole call.</div>
+        </div>
+        <div class="ask">
+          <span class="steplab">Step 6 · The cost of staying</span>
+          <div class="q">"If nothing changes, where does that leave you in a year?"</div>
+          <div class="listen"><b>The question most people skip, and the one that moves someone.</b> Ask it gently and then be quiet. They have usually never said the answer out loud, and hearing themselves say it does more than any argument you could make.</div>
+        </div>
+        <div class="ask starred">
+          <span class="steplab">Step 7 · The open window</span>
+          <div class="q">"Is there anything you would love to share with me that you have not yet, about your situation?"</div>
+          <div class="listen"><b>Leave this wide open and wait.</b> It is the only question with no direction in it, and it is where the real thing tends to arrive: the health thing, the money thing, the person at home. <b>Whatever comes out here belongs in your offer two minutes later.</b> Say it back to them by name and the offer stops sounding like a package.</div>
+        </div>
+      </div>
+      <div class="wrongwrap">
+        <div class="wl">Where it goes wrong</div>
+        <p>Hearing a problem you can solve and jumping to the solution at minute six. <b>The moment you start describing your offer, they stop telling you things</b>, and everything they had not said yet is gone. Step 7 exists because that door closes and never reopens.</p>
+      </div>
+      <textarea data-note="p2" placeholder="Their exact words for the outcome, what it would change, and whatever came out of step 7"></textarea>
+    </div>
+
+    <div class="phase">
+      <div class="ph"><span class="pn">03</span><h3>Say it back</h3><span class="mins">2 minutes</span></div>
+      <div class="job">Repeat their situation to them and have them confirm it. <b>The highest value two minutes of the call, and the part most people skip.</b> Use their words, including whatever arrived in step 7.</div>
+      <div class="say">
+        <div class="sl2">Say this</div>
+        <p>"Let me make sure I have got this. Right now [what is hardest]. What you actually want is [their outcome, in their words], and the reason that matters is [what they said it would change]. And the thing in the way is [the gap]. Have I got that right?"</p>
+        <p>"Is there anything I have missed?"</p>
+      </div>
+      <div class="asks">
+        <div class="ask">
+          <div class="q">"Have I got that right?"</div>
+          <div class="listen"><b>Listening for:</b> "yes, exactly" or a correction. Both are good. A correction here saves you from describing the wrong thing thirty seconds later.</div>
+        </div>
+        <div class="ask">
+          <div class="q">"Is there anything I have missed?"</div>
+          <div class="listen"><b>Listening for:</b> anything still being held back. It often arrives right here, once they can tell you were genuinely listening.</div>
+        </div>
+      </div>
+      <div class="wrongwrap">
+        <div class="wl">Where it goes wrong</div>
+        <p>Saying it back in your marketing language instead of theirs. <b>People recognise their own sentences and not your positioning</b>, and swapping them in makes the whole thing feel handled.</p>
+      </div>
+      <textarea data-note="p3" placeholder="Notes"></textarea>
+    </div>
+
+    <div class="phase">
+      <div class="ph"><span class="pn">04</span><h3>Offer it, once</h3><span class="mins">6 minutes</span></div>
+      <div class="job">Now you describe the thing. <b>Their outcome, then the plan, then the first week, then the price, then the thing with the clock on it, then stop talking.</b> The stopping is the hard part and it is the part that works.</div>
+      <div class="say">
+        <div class="sl2">Say this</div>
+        <p>"Based on everything you have told me, here is what I would do with you. By the end of it, [their outcome, in their words]. The way we get there is [the plan, in three steps]. In your first week, [the concrete first week]."</p>
+        <p>"It is [price]. And if you decide within the next 48 hours, [the discount, or the bonus]. Either way I am going to send you the page with all of it on it."</p>
+        <p>[Then stop. Count to ten.]</p>
+        <p>"What is coming up for you as I say that?"</p>
+      </div>
+      <div class="asks">
+        <div class="ask">
+          <div class="q">Their outcome, in their language, before anything else</div>
+          <div class="listen"><b>Two minutes at most.</b> Their words, then the shape of the plan, then the first week concretely. Deliverables come last, and only the named ones. Work in whatever they gave you in step 7.</div>
+        </div>
+        <div class="ask">
+          <div class="q">"It is [price]. And if you decide within the next 48 hours, [the incentive]."</div>
+          <div class="listen"><b>Then say nothing.</b> Count to ten. The silence after a price feels like it lasts a year and it is where they decide. Filling it with a discount you had not planned, an extra bonus, or a nervous joke is how the last three seconds undo the whole call.</div>
+        </div>
+        <div class="ask">
+          <div class="q">"What is coming up for you as I say that?"</div>
+          <div class="listen"><b>Listening for:</b> the real objection, which is almost never the first one. "I need to think about it" usually means money, timing, or a person they need to talk to. Ask which one and they will usually tell you.</div>
+        </div>
+      </div>
+      <div class="wrongwrap">
+        <div class="wl">Where it goes wrong</div>
+        <p>Offering three options. <b>Two choices is a decision and three is a research project</b>, and a research project ends with "let me get back to you."</p>
+      </div>
+      <textarea data-note="p4" placeholder="What they said after the price"></textarea>
+    </div>
+
+    <div class="phase">
+      <div class="ph"><span class="pn">05</span><h3>Ask them to start, while they are still on the call</h3><span class="mins">4 minutes</span></div>
+      <div class="job"><b>Take the payment on the call. That is the goal of the whole thirty minutes.</b> Nobody is ever more certain than they are right now, with your voice in their ear and their own words still hanging in the air. Have the link open in a tab before the call starts, ask them directly, and stay on while they pay.</div>
+      <div class="say">
+        <div class="sl2">Say this</div>
+        <p>"So how do you feel about starting?"</p>
+        <p>[If yes] "Wonderful. I am going to drop the link in the chat right now and we can do it while we are still on. It takes about a minute. Then I will tell you exactly what happens next."</p>
+        <p>[If they need to think] "Completely fair. Can I ask what you need to think about? Sometimes it is the money, sometimes it is the timing, and sometimes it is something I have not explained well."</p>
+        <p>[Then] "Shall I send you the page and check back with you on [a specific day]? Remember the [discount or bonus] is good until [the deadline]."</p>
+        <p>[If no] "That is genuinely fine. Would it help if I pointed you somewhere else?"</p>
+      </div>
+      <div class="asks">
+        <div class="ask starred">
+          <span class="steplab">⭐ The one that matters</span>
+          <div class="q">"Let's do it now while we are on the call."</div>
+          <div class="listen"><b>Payment on the call is the number one goal, every time.</b> Send the link, stay on the line, and use the ninety seconds while they type to tell them what happens Monday. A yes that leaves the room becomes an email, then a maybe, then nothing, and none of that is about how much they wanted it.</div>
+        </div>
+        <div class="ask">
+          <div class="q">"How do you feel about starting?"</div>
+          <div class="listen"><b>Ask it and stop.</b> This is the question the whole call was for, and most people talk straight past it into logistics. It is a soft question with a real answer inside it.</div>
+        </div>
+        <div class="ask">
+          <div class="q">"Can I ask what you need to think about?"</div>
+          <div class="listen"><b>Listening for:</b> which of the three it is. Money, timing, or someone they need to talk to. Each one has a different honest answer, and guessing which gets you the wrong one.</div>
+        </div>
+        <div class="ask">
+          <div class="q">"Shall I check back with you on [a specific day]?"</div>
+          <div class="listen"><b>A named day makes the follow-up something they agreed to</b> rather than something you are doing at them. Put it in your calendar while they are still on the line, and put it in the log. Say the deadline on your incentive out loud again here.</div>
+        </div>
+      </div>
+      <div class="wrongwrap">
+        <div class="wl">Where it goes wrong</div>
+        <p>Ending warm and vague. <b>They felt great, you felt great, and neither of you agreed on anything.</b> Warm and specific is the same call with a date in it.</p>
+      </div>
+      <textarea data-note="p5" placeholder="What you agreed, the date, and whether they paid on the call"></textarea>
+    </div>
+
+    <div class="card">
+      <div class="cardhead"><span class="ch">After the call</span><span class="cn">same day, then the day you named</span></div>
+      <div class="job" style="margin-bottom:0">
+        <b>Same day, within a couple of hours:</b> the page, and three lines. Their outcome in their words, one line on what you would do about it, the deadline on your incentive, and the day you agreed to check back. Nothing else, and no new arguments. <b>The prompts tab writes this from your call notes.</b><br><br>
+        <b>On the day you named:</b> one message that refers to the specific thing they told you. Not "just checking in." Closer to "you said you wanted the readings booked before September, and I have been thinking about that."<br><br>
+        <b>Then stop.</b> Two touches and a genuine door left open does better than six touches and a person who now avoids your name in their inbox.
+      </div>
+      <div class="note" style="margin-top:14px">⭐ <b>Send the page even when it is a no.</b> Nos change when circumstances change, and the only people who come back are the ones who still have the link.</div>
+    </div>
+
+    <div class="copyblock">
+      <h3>Save this call</h3>
+      <div class="why">Everything on this page, plus your checklist and your call log, as plain text. <b>Paste it straight into a Google Doc and you have a record of the call</b> to look back on before the follow-up.</div>
+      <div class="btnrow">
+        <button class="btn" id="copyscript">Copy all to a Google Doc</button>
+        <button class="btn ghost" id="printscript">Print this page</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ TAB 3 · THE PROMPTS ============ -->
+  <div class="panel" id="p-prompts">
+
+    <details class="copyblock" open>
+      <summary><span class="pnum">Prompt 1</span> The post that fills your calendar</summary>
+      <div class="why">Everything else here waits on somebody being on the call. <b>This writes the post that invites them.</b> Name the problem in their words, tell them your own experience of it, then open the door. No price anywhere.</div>
+      <pre class="wrap" id="prompt0"></pre>
+      <div class="btnrow"><button class="btn" id="copyp0">Copy prompt 1</button></div>
+      <div class="note" style="margin-top:14px">⭐ <b>One post per problem, never one post about your offer.</b> People recognise a problem they are living with long before they recognise a program. Run this three times on three different problems and you have a fortnight of posts that all end in the same place.</div>
+    </details>
+
+    <details class="copyblock">
+      <summary><span class="pnum">Prompt 2</span> Your script, for this person</summary>
+      <div class="why">Fill in the fields on the script tab and this fills itself in. <b>It asks you questions before it writes anything</b>, which is why what comes back sounds like you instead of a template. It carries the same steps the script does, in the same order.</div>
+      <pre class="wrap" id="prompt1"></pre>
+      <div class="btnrow"><button class="btn" id="copyp1">Copy prompt 2</button></div>
+      <div class="note" style="margin-top:14px">If the questions come back stiff, paste in one real call transcript first and ask again. It will match your rhythm instead of a sales textbook's.</div>
+    </details>
+
+    <details class="copyblock">
+      <summary><span class="pnum">Prompt 3</span> The follow-up, from what actually happened</summary>
+      <div class="why">Use this after you hang up. <b>Paste in the transcript, or the recording summary, or just type what you remember.</b> It writes the same day message and the one for the day you named, in their words rather than yours. Your call notes are already in it.</div>
+      <pre class="wrap" id="prompt2"></pre>
+      <div class="btnrow"><button class="btn" id="copyp2">Copy prompt 3</button></div>
+      <div class="note" style="margin-top:14px">A recording beats notes, and notes beat memory by a mile. If you record your calls, drop the transcript straight in. If you do not, spend two minutes typing what they said while it is fresh, because by tomorrow you will only have the tidy version.</div>
+    </details>
+
+    <details class="copyblock">
+      <summary><span class="pnum">Prompt 4</span> Five calls, five nos. What now</summary>
+      <div class="why">For when a run of them goes the same way. <b>It looks for the pattern across all five</b> and tells you whether you are looking at a lead problem, an offer problem, or a call problem, which are three completely different things to fix. It is told not to reassure you.</div>
+      <pre class="wrap" id="prompt3"></pre>
+      <div class="btnrow"><button class="btn" id="copyp3">Copy prompt 4</button></div>
+      <div class="note" style="margin-top:14px">Five nos in a row is information, and it is the cheapest information you will ever get. I ran sixty before I asked this question of anybody, and the answer took about ten minutes once I did.</div>
+    </details>
+
+    <details class="copyblock">
+      <summary><span class="pnum">Export</span> Everything you have filled in</summary>
+      <div class="why">All of it as plain text. The same thing the Save this call button at the bottom of the script tab gives you.</div>
+      <pre id="export"></pre>
+      <div class="btnrow">
+        <button class="btn" id="copydoc">Copy for a doc</button>
+        <button class="btn ghost" id="print">Print this page</button>
+        <button class="btn ghost" id="reset">Clear everything</button>
+      </div>
+    </details>
+
+    <details class="copyblock">
+      <summary><span class="pnum">Move</span> Take this to another device</summary>
+      <div class="why">This code carries everything on this page. Copy it, paste it into the box on your other device, and restore.</div>
+      <pre class="wrap" id="backup"></pre>
+      <div class="btnrow" style="margin-bottom:12px"><button class="btn" id="copybackup">Copy the code</button></div>
+      <textarea id="restorebox" placeholder="Paste a code here to restore" style="margin-top:0"></textarea>
+      <div class="btnrow" style="margin-top:10px"><button class="btn ghost" id="dorestore">Restore</button></div>
+    </details>
+
+    <div class="note">
+      <b>This saves to this device and nowhere else.</b> Nothing is sent anywhere, nobody can see it, and there is no account. That is also why you can use real names in the log. The trade is that your phone and your laptop keep separate copies, so pick one and stay on it. Clearing your browser data clears this too, which is the real reason to copy your notes out after a call.
+    </div>
+  </div>
+
+  <!-- ============ TAB 4 · THE LOG ============ -->
+  <div class="panel" id="p-log">
+    <div class="card">
+      <div class="cardhead"><span class="ch">The call log</span><span class="cn" id="logcount">0 calls</span></div>
+      <div class="logscroll">
+        <table class="logtable">
+          <thead><tr><th style="width:120px">Name</th><th style="width:140px">Call date</th><th>What they said they wanted</th><th style="width:140px">What stopped them</th><th style="width:140px">Follow up on</th><th style="width:125px">Where it stands</th><th style="width:28px"></th></tr></thead>
+          <tbody id="logbody"></tbody>
+        </table>
+      </div>
+      <div class="btnrow" style="margin-top:14px"><button class="btn ghost" id="addcall">+ Add a call</button></div>
+      <div class="note">Click a status to move it along: <b>Waiting on me</b>, <b>Waiting on them</b>, <b>Yes</b>, <b>Closed</b>. Use real names, none of this leaves your device.</div>
+      <div class="note">⭐ <b>After ten calls, "what stopped them" is the most useful thing on this page.</b> The same word keeps showing up, and that word is what your page has to answer before the next call starts.</div>
+    </div>
+  </div>
+
+  <footer>The Discovery Call Companion</footer>
+</div>
+
+<script>
+/* ==============================================================
+   Storage. Own prefix, so this never collides with the tracker.
+   ============================================================== */
+const KEY = 'forge-discovery-companion';
+let D = { checks:{}, fields:{}, notes:{}, calls:[] };
+
+try { const raw = localStorage.getItem(KEY); if (raw) D = Object.assign(D, JSON.parse(raw)); } catch(e){}
+
+/* persist() saves and refreshes the derived text only.
+   render() also rebuilds the log table, so it is never called from
+   inside a log input handler. Rebuilding the table mid-keystroke is
+   what steals focus after a single character. */
+function persist(){
+  try { localStorage.setItem(KEY, JSON.stringify(D)); } catch(e){}
+  refresh();
+}
+function save(){ persist(); drawLog(); }
+
+/* ---------- tabs ---------- */
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('on'));
+    document.querySelectorAll('.panel').forEach(x => x.classList.remove('on'));
+    t.classList.add('on');
+    document.getElementById('p-' + t.dataset.panel).classList.add('on');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+});
+
+/* ---------- checklist ---------- */
+const checks = [...document.querySelectorAll('.check')];
+checks.forEach((c, i) => {
+  c.addEventListener('click', () => { D.checks[i] = !D.checks[i]; c.classList.toggle('on', !!D.checks[i]); persist(); });
+});
+
+/* ---------- fields ---------- */
+const fields = ['who','known','offer','scriptlink'];
+fields.forEach(id => {
+  const el = document.getElementById(id);
+  el.value = D.fields[id] || '';
+  el.addEventListener('input', () => { D.fields[id] = el.value; persist(); });
+});
+document.querySelectorAll('[data-note]').forEach(el => {
+  const k = el.dataset.note;
+  el.value = D.notes[k] || '';
+  el.addEventListener('input', () => { D.notes[k] = el.value; persist(); });
+});
+
+/* ---------- the log ---------- */
+const STATUSES = ['Waiting on me','Waiting on them','Yes','Closed'];
+const COLS = [
+  ['who','text','Their name'],
+  ['date','date',''],
+  ['wanted','text','In their words'],
+  ['stopped','text','money / timing / partner'],
+  ['due','date','']
+];
+document.getElementById('addcall').addEventListener('click', () => {
+  D.calls.push({ who:'', date:'', wanted:'', stopped:'', due:'', s:0 }); save();
+});
+function drawLog(){
+  const b = document.getElementById('logbody');
+  b.innerHTML = '';
+  D.calls.forEach((c, i) => {
+    const tr = document.createElement('tr');
+    COLS.forEach(([f, type, ph]) => {
+      const td = document.createElement('td');
+      const inp = document.createElement('input');
+      inp.type = type; inp.value = c[f] || '';
+      if (ph) inp.placeholder = ph;
+      inp.addEventListener('input', () => { c[f] = inp.value; persist(); });
+      td.appendChild(inp); tr.appendChild(td);
+    });
+    const tds = document.createElement('td');
+    const st = document.createElement('span');
+    st.className = 'st s' + (c.s + 1);
+    st.textContent = STATUSES[c.s];
+    st.addEventListener('click', () => {
+      c.s = (c.s + 1) % STATUSES.length;
+      st.textContent = STATUSES[c.s];
+      st.className = 'st s' + (c.s + 1);
+      persist();
+    });
+    tds.appendChild(st); tr.appendChild(tds);
+    const tdd = document.createElement('td');
+    const x = document.createElement('span');
+    x.className = 'del'; x.textContent = '×';
+    x.addEventListener('click', () => { D.calls.splice(i, 1); save(); });
+    tdd.appendChild(x); tr.appendChild(tdd);
+    b.appendChild(tr);
+  });
+  const n = D.calls.length;
+  document.getElementById('logcount').textContent = n + (n === 1 ? ' call' : ' calls');
+  document.getElementById('t-log').textContent = n ? n : '';
+}
+
+/* ---------- the prompts ---------- */
+function f(id, fallback){ const v = (D.fields[id] || '').trim(); return v || fallback; }
+function n(k){ return (D.notes[k] || '').trim(); }
+
+function prompt0(){
+  return `I am a coach [or tarot reader, or healer] and I want to write a post that gets the right people to book a free call with me.
+
+MY IDEAL CLIENT
+[Who they are and where they are in it right now. Write it the way they would describe themselves.]
+
+THE PROBLEM THIS POST IS ABOUT
+[One thing they are living with. Their words for it, not my diagnosis of it.]
+
+MY OWN EXPERIENCE OF THAT PROBLEM
+[What it was like when I was in it, or what I have watched my people go through. Be specific and be honest. This is most of the post.]
+
+WHAT MY FREE CALL IS CALLED
+[e.g. a Clarity Call, a Discovery Call, a Fertility Reset Call]
+
+THE LINK TO BOOK IT
+[paste it]
+
+WHERE THIS IS GOING
+[Instagram / Facebook / LinkedIn / my email list / my community]
+
+Before you write anything, ask me up to 3 questions about how my person actually talks about this problem, and about my own experience of it.
+
+Then write me 3 versions of the post. Each one:
+
+1. Opens on the problem in their language. No throat clearing, no "as a coach I often see."
+2. Tells my own experience of it. This is the body of the post.
+3. Names the specific things I know they are struggling with, closely enough that they feel recognised.
+4. Invites them to [my call name], where we work out together whether working with me is the right next step for them.
+5. Ends with one clear instruction and the link.
+
+Make the three genuinely different. One that tells the story, one that names the things they are living with, one that is short and direct.
+
+Then give me 3 different calls to action so I can test them against each other.
+
+Rules:
+- Never tell them they are broken, behind, or doing it wrong.
+- No shame, no fake scarcity, no countdown that is not real.
+- No em dashes.
+- Do not mention price anywhere. That is what the call is for.
+- Write it in my voice. Plain sentences, warm and direct, nothing that sounds like an ad.`;
+}
+
+function prompt3(){
+  return `I have had five discovery calls recently and every one of them was a no. Help me work out what to do differently in the next five.
+
+MY OFFER, THE PRICE, AND ANY URGENCY ON IT
+${f('offer','[my offer information, plus discounts, plus urgency]')}
+
+THE CALLS
+[For each one: who they were, what they said they wanted, what I offered, what they said when I named the price, and how it ended. Paste transcripts if you have them. Memory is fine if you do not.]
+
+Do not reassure me. I want the pattern.
+
+First tell me:
+- What these five have in common. The same objection, the same kind of person, or the same moment where it turned.
+- Whether this reads as a lead problem, an offer problem, or a call problem, and how you can tell the difference from what I have given you.
+- The moment in these calls where I most likely lost them.
+
+Then give me:
+- Three things to change before the next call, in the order that would matter most.
+- One thing I am doing well that I should leave alone while I fix the rest.
+- The question I should have asked and did not.
+
+If you cannot tell from what I have given you, say what you would need to see instead of guessing.`;
+}
+
+function prompt1(){
+  return `I am a coach [or tarot reader, or healer] and I have a discovery call coming up.
+
+MY OFFER, THE PRICE, AND THE URGENCY ON IT
+${f('offer','[my offer information, plus discounts, plus urgency]')}
+
+WHAT I ALREADY KNOW ABOUT THEM
+${f('known','[paste the intake form answers, a DM, or a comment. One sentence is enough.]')}
+
+Before you write anything, ask me up to 3 questions about what I most need to understand about this specific person.
+
+Then write me a call plan that follows this structure, in this order:
+
+1. RAPPORT. An opening line, and the sentence where I tell them I will be honest about whether I am the right person for this.
+2. THE OPENING QUESTION. What inspired them to book this call today, phrased in my voice.
+3. THE PAIN. What has been hardest about it for them.
+4. THE DESIRED OUTCOME. Ask what they would hope the outcome is after however many weeks my program runs, so they picture the end of the real timeline rather than a magic tomorrow. Tell me how to hear whether my program can honestly get them there.
+5. UNDERNEATH IT. And what would that change for them. Give me a second version to ask if the first answer is still a business answer.
+6. THE GAP. What they think is in the way, and what they have already tried.
+7. THE COST OF STAYING. One gently asked question about where they land in a year if nothing changes.
+8. THE OPEN WINDOW. Is there anything they would love to share that they have not yet. Leave it completely open.
+9. SAY IT BACK. A short paragraph template where I repeat their situation in their words, ending in "have I got that right?"
+10. THE OFFER. The two minute version. Their outcome in their language first, then the plan, then the first week, then the price, then the incentive and its deadline.
+11. ASK THEM TO START. The direct question, the line where I send the payment link while we are still on the call, what I say if they need to think about it, and what I say if it is a no.
+
+For every question, give me one line on what I am listening for underneath the answer.
+
+Then tell me the objection I am most likely to hear from this specific person, and an honest answer to it that does not push.
+
+Write it in my voice. Plain sentences, warm and direct, no sales script language, nothing that sounds like a webinar.`;
+}
+
+function prompt2(){
+  const who = f('who','them');
+  const notes = ['p1','p2','p3','p4','p5'].map(k => n(k)).filter(Boolean).join('\n');
+  return `I just finished a discovery call with ${who}. Write my follow-up.
+
+MY OFFER, THE PRICE, AND THE URGENCY ON IT
+${f('offer','[my offer information, plus discounts, plus urgency]')}
+
+WHAT HAPPENED ON THE CALL
+[Paste the transcript or the recording summary here. If you have neither, type what you remember while it is fresh.]
+${notes ? '\nMY NOTES FROM THE CALL\n' + notes : ''}
+
+First, pull out and show me:
+- Their exact words for what they want. Quote them, do not paraphrase.
+- What they said it would change for them.
+- What they said is in the way.
+- Anything that came out at the end when I asked if there was anything else they wanted to share.
+- The objection they actually raised, and whether it was money, timing, or another person.
+- Anything I agreed to do, and by when.
+
+Then write two messages.
+
+MESSAGE 1, to send today. Three or four lines. Their words for what they want, one line on what I would do about it, the link to the page, the deadline on the incentive, and the day we agreed I would check back. No new arguments and no pressure.
+
+MESSAGE 2, to send on the day we agreed. Two or three lines. It has to refer to the specific thing they told me, so it could not have been sent to anybody else. Never "just checking in."
+
+If they said no, write message 1 only, warmly, with the page attached anyway and a genuine door left open.
+
+Write both in my voice. Plain sentences, no sales language, and do not apologise for following up.`;
+}
+
+/* ---------- export ---------- */
+function exportText(){
+  const L = [];
+  L.push('THE DISCOVERY CALL COMPANION');
+  L.push('');
+  if ((D.fields.who || '').trim()) L.push('Call with: ' + D.fields.who.trim());
+  if ((D.fields.known || '').trim()) { L.push(''); L.push('What I already know:'); L.push(D.fields.known.trim()); }
+  if ((D.fields.offer || '').trim()) { L.push(''); L.push('The offer:'); L.push(D.fields.offer.trim()); }
+  if ((D.fields.scriptlink || '').trim()) { L.push(''); L.push('My script: ' + D.fields.scriptlink.trim()); }
+
+  L.push(''); L.push('--- THE OFFER CHECKLIST ---');
+  checks.forEach((c, i) => {
+    const t = c.querySelector('.ct').childNodes[0].textContent.trim();
+    L.push((D.checks[i] ? '[x] ' : '[ ] ') + t + (c.dataset.ess ? '  (essential)' : ''));
+  });
+
+  L.push(''); L.push('--- MY NOTES FROM THE CALL ---');
+  const names = {
+    p1:'01 Building rapport',
+    p2:'02 Where they are, and where they want to be',
+    p3:'03 Say it back',
+    p4:'04 Offer it, once',
+    p5:'05 Ask them to start'
+  };
+  Object.keys(names).forEach(k => {
+    L.push(''); L.push(names[k] + ':');
+    L.push(n(k) || '(nothing yet)');
+  });
+
+  if (D.calls.length){
+    L.push(''); L.push('--- CALL LOG ---');
+    L.push('Name | Call date | What they wanted | What stopped them | Follow up on | Status');
+    D.calls.forEach(c => {
+      L.push([ (c.who||'?'), (c.date||''), (c.wanted||''), (c.stopped||''), (c.due||''), STATUSES[c.s] ].join(' | '));
+    });
+  }
+  return L.join('\n');
+}
+
+/* ---------- derived text and counters ---------- */
+function refresh(){
+  const total = checks.length;
+  const done = checks.filter((c, i) => D.checks[i]).length;
+  const ess = checks.filter(c => c.dataset.ess);
+  const essDone = ess.filter(c => D.checks[checks.indexOf(c)]).length;
+
+  document.getElementById('s-count').textContent = done;
+  document.getElementById('s-count-n').textContent = 'out of ' + total;
+  document.getElementById('s-ess').textContent = essDone;
+  document.getElementById('t-offer').textContent = done ? done + '/' + total : '';
+
+  const v = document.getElementById('s-verdict');
+  const vn = document.getElementById('s-verdict-n');
+  const left = ess.length - essDone;
+  if (essDone === ess.length && done === total) { v.textContent = 'Ready'; vn.textContent = 'go and fill your calendar'; }
+  else if (essDone === ess.length) { v.textContent = 'Ready'; vn.textContent = 'all six essentials are clear'; }
+  else if (left === 1) { v.textContent = 'One left'; vn.textContent = 'an hour of work, not a call'; }
+  else if (done === 0) { v.textContent = 'Not yet'; vn.textContent = 'start ticking'; }
+  else { v.textContent = left + ' left'; vn.textContent = 'essentials to clear before the call'; }
+
+  const link = (D.fields.scriptlink || '').trim();
+  const a = document.getElementById('openscript');
+  a.href = link || '#';
+  a.classList.toggle('off', !link);
+
+  document.getElementById('prompt0').textContent = prompt0();
+  document.getElementById('prompt1').textContent = prompt1();
+  document.getElementById('prompt2').textContent = prompt2();
+  document.getElementById('prompt3').textContent = prompt3();
+  document.getElementById('export').textContent = exportText();
+  try {
+    document.getElementById('backup').textContent = btoa(unescape(encodeURIComponent(JSON.stringify(D))));
+  } catch(e){ document.getElementById('backup').textContent = '(nothing saved yet)'; }
+}
+
+function render(){
+  checks.forEach((c, i) => c.classList.toggle('on', !!D.checks[i]));
+  drawLog();
+  refresh();
+}
+
+/* ---------- buttons ---------- */
+function wireCopy(id, fn){
+  const b = document.getElementById(id);
+  b.addEventListener('click', () => {
+    const original = b.textContent;
+    navigator.clipboard.writeText(typeof fn === 'function' ? fn() : fn).then(() => {
+      b.textContent = 'Copied';
+      setTimeout(() => b.textContent = original, 1600);
+    }).catch(() => {
+      b.textContent = 'Select it and copy';
+      setTimeout(() => b.textContent = original, 2200);
+    });
+  });
+}
+wireCopy('copyp0', prompt0);
+wireCopy('copyp1', prompt1);
+wireCopy('copyp2', prompt2);
+wireCopy('copyp3', prompt3);
+wireCopy('copydoc', exportText);
+wireCopy('copybackup', () => document.getElementById('backup').textContent);
+
+wireCopy('copyscript', exportText);
+document.getElementById('print').addEventListener('click', () => window.print());
+document.getElementById('printscript').addEventListener('click', () => window.print());
+document.getElementById('reset').addEventListener('click', () => {
+  if (confirm('Clear everything on this page? This cannot be undone.')) {
+    D = { checks:{}, fields:{}, notes:{}, calls:[] };
+    fields.forEach(id => document.getElementById(id).value = '');
+    document.querySelectorAll('[data-note]').forEach(el => el.value = '');
+    save();
+  }
+});
+document.getElementById('dorestore').addEventListener('click', () => {
+  const box = document.getElementById('restorebox');
+  try {
+    const obj = JSON.parse(decodeURIComponent(escape(atob(box.value.trim()))));
+    if (!obj || typeof obj !== 'object') throw new Error('bad');
+    D = Object.assign({ checks:{}, fields:{}, notes:{}, calls:[] }, obj);
+    fields.forEach(id => document.getElementById(id).value = D.fields[id] || '');
+    document.querySelectorAll('[data-note]').forEach(el => el.value = D.notes[el.dataset.note] || '');
+    box.value = '';
+    save();
+    alert('Restored.');
+  } catch(e){ alert('That code did not read properly. Copy the whole thing and try again.'); }
+});
+
+render();
+</script>
+</body>
+</html>
