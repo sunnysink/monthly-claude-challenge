@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Before You Sit Down</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     Honey Linen — the same skin as The Visibility Tracker and
+     The Discovery Call Companion, so the three Sparks read as a
+     family. Laid out for calm, not for work.
+     ============================================================ */
+  :root{
+    --bg:#FBF3E7; --bg2:#F3E9D9; --ink:#211A12; --ink-dim:#544738;
+    --copper:#9A6B2E; --copper-lt:#7C5320; --ember:#C25A22; --ember-glow:#D96A2C;
+    --forest:#4A6250; --mauve:#7A5A5E; --gold:#9C7C1E; --green:#4A7154;
+    --copper-rgb:154,107,46; --ember-rgb:194,90,34; --ember-glow-rgb:217,106,44;
+    --gold-rgb:156,124,30; --mauve-rgb:122,90,94; --forest-rgb:74,98,80;
+    --green-rgb:74,113,84; --card-rgb:255,251,244; --sheet-rgb:255,251,244;
+    --serif:'Cormorant Garamond','Hoefler Text',Georgia,serif;
+    --sans:'Hanken Grotesk',system-ui,-apple-system,sans-serif;
+    --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;
+    --card:rgba(var(--card-rgb),0.72); --cardborder:rgba(var(--copper-rgb),0.22);
+    --on-accent:#14100C;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:var(--sans); color:var(--ink); background:var(--bg);
+    background-image:
+      radial-gradient(900px 520px at 15% -10%, rgba(var(--ember-rgb),0.12), transparent 60%),
+      radial-gradient(820px 520px at 100% 5%, rgba(var(--forest-rgb),0.12), transparent 55%),
+      radial-gradient(760px 620px at 55% 120%, rgba(var(--copper-rgb),0.09), transparent 60%);
+    min-height:100vh; padding:34px 20px 70px; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:760px;margin:0 auto}
+
+  h1{font-family:var(--serif);font-weight:600;font-size:clamp(40px,7vw,64px);line-height:1;
+    color:var(--copper-lt);letter-spacing:.4px}
+  .sub{font-size:16.5px;color:var(--ink-dim);margin-top:12px;line-height:1.6}
+  .sub b{color:var(--ink)}
+
+  .premise{background:linear-gradient(135deg,rgba(var(--ember-rgb),0.13),rgba(var(--card-rgb),0.86));
+    border:1px solid rgba(var(--ember-rgb),0.34);border-radius:16px;padding:22px 24px;margin-top:24px}
+  .premise p{font-size:15px;color:var(--ink-dim);line-height:1.68}
+  .premise p b{color:var(--ink)}
+  .premise p + p{margin-top:11px}
+
+  .step{background:var(--card);border:1px solid var(--cardborder);border-radius:16px;
+    padding:24px 24px;margin-top:16px}
+  .stephead{display:flex;align-items:baseline;gap:12px;margin-bottom:5px}
+  .stepno{font-family:var(--mono);font-size:11px;letter-spacing:.18em;color:#FFF6EC;
+    background:var(--copper);border-radius:30px;padding:5px 12px;flex:none}
+  .step h2{font-family:var(--serif);font-size:27px;font-weight:600;color:var(--ink);line-height:1.12}
+  .stepwhy{font-size:13.5px;color:var(--ink-dim);line-height:1.6;margin:9px 0 16px}
+  .stepwhy b{color:var(--ink)}
+
+  /* ---- name it ---- */
+  .fieldlab{font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--ink-dim);margin-bottom:7px;display:block}
+  textarea,input[type=text]{width:100%;font-family:var(--sans);font-size:15px;color:var(--ink);
+    line-height:1.55;background:rgba(var(--sheet-rgb),0.9);border:1px solid rgba(var(--copper-rgb),0.28);
+    border-radius:12px;padding:12px 14px;resize:vertical}
+  textarea:focus,input:focus{outline:none;border-color:var(--ember)}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 4px}
+  .chip{font-size:12.5px;color:var(--copper-lt);background:rgba(var(--copper-rgb),0.09);
+    border:1px solid rgba(var(--copper-rgb),0.3);border-radius:30px;padding:8px 14px;cursor:pointer;
+    transition:all .14s;font-family:var(--sans)}
+  .chip:hover{background:rgba(var(--ember-rgb),0.12);border-color:var(--ember);color:var(--ember)}
+  .chip.on{background:var(--ember);border-color:var(--ember);color:#FFF6EC}
+  .reflect{margin-top:16px;background:rgba(var(--sheet-rgb),0.92);border-left:3px solid var(--ember);
+    border-radius:0 13px 13px 0;padding:16px 18px;display:none}
+  .reflect.show{display:block}
+  .reflect .rl{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--ember);margin-bottom:8px}
+  .reflect .echo{font-family:var(--serif);font-size:20px;font-style:italic;color:var(--ink);
+    line-height:1.42}
+  .reflect .echo q{color:var(--copper-lt);font-style:normal;font-weight:600}
+  .reflect .meet{font-size:14.5px;color:var(--ink-dim);line-height:1.62;margin-top:11px}
+  .reflect .meet b{color:var(--ink)}
+
+  /* ---- breathe ---- */
+  .orbwrap{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 0 4px}
+  .orbstage{width:100%;height:290px;display:grid;place-items:center;position:relative}
+  .breath-orb{width:120px;height:120px;border-radius:50%;
+    background:radial-gradient(circle at 38% 34%, var(--ember-glow), var(--ember) 58%, var(--copper) 100%);
+    box-shadow:0 0 60px rgba(var(--ember-rgb),0.4), inset 0 0 30px rgba(255,246,236,0.25);
+    transform:scale(0.62);transition:transform 1200ms ease-in-out;display:grid;place-items:center}
+  .breath-orb span{font-family:var(--serif);font-size:20px;color:#FFF6EC;font-weight:500;
+    letter-spacing:.5px;opacity:.94;text-shadow:0 1px 6px rgba(0,0,0,0.25)}
+  .rounds{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--ink-dim)}
+  .btnrow{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+  .btn{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;
+    background:var(--copper);color:#FFF6EC;border:none;border-radius:30px;padding:12px 26px;cursor:pointer}
+  .btn:hover{background:var(--copper-lt)}
+  .btn.ghost{background:transparent;color:var(--ink-dim);border:1px solid rgba(var(--copper-rgb),0.35)}
+  .btn.ghost:hover{background:rgba(var(--copper-rgb),0.1);color:var(--ink)}
+  .breathnote{font-size:13px;color:var(--ink-dim);line-height:1.6;text-align:center;margin-top:14px}
+  .breathnote b{color:var(--ink)}
+
+  /* ---- ground ---- */
+  .check{display:flex;gap:13px;align-items:flex-start;padding:14px 0;
+    border-top:1px solid rgba(var(--copper-rgb),0.14);cursor:pointer}
+  .check:first-of-type{border-top:none}
+  .bx{width:21px;height:21px;border-radius:7px;border:1.6px solid var(--copper);flex:none;margin-top:1px;
+    display:grid;place-items:center;transition:all .16s;background:rgba(var(--sheet-rgb),0.7)}
+  .bx::after{content:"✓";font-size:13px;color:#FFF6EC;opacity:0;font-weight:700}
+  .check.on .bx{background:var(--green);border-color:var(--green)}
+  .check.on .bx::after{opacity:1}
+  .check .ct{font-size:15.5px;color:var(--ink);line-height:1.45}
+  .check.on .ct{opacity:.55}
+
+  /* ---- carry ---- */
+  .carry{background:linear-gradient(135deg,rgba(var(--green-rgb),0.16),rgba(var(--sheet-rgb),0.9));
+    border-color:rgba(var(--green-rgb),0.45)}
+  .carryline{font-family:var(--serif);font-size:23px;font-style:italic;color:var(--ink);line-height:1.36;
+    margin-top:14px;min-height:32px}
+  .carryline:empty::before{content:"Your line will show here.";font-size:16px;opacity:.4;font-style:normal}
+
+  /* ---- tapping (optional) ---- */
+  details.tap{background:var(--card);border:1px dashed rgba(var(--mauve-rgb),0.5);border-radius:16px;
+    margin-top:16px;overflow:hidden}
+  details.tap > summary{font-family:var(--serif);font-weight:600;font-size:22px;color:var(--ink);
+    padding:20px 24px;cursor:pointer;list-style:none;display:flex;align-items:center;gap:12px}
+  details.tap > summary::-webkit-details-marker{display:none}
+  details.tap > summary::after{content:"+";margin-left:auto;font-family:var(--mono);font-size:20px;
+    color:var(--mauve);font-weight:400}
+  details.tap[open] > summary::after{content:"–"}
+  details.tap > summary .opt{font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;
+    color:#FFF6EC;background:var(--mauve);border-radius:30px;padding:4px 10px}
+  details.tap .tapbody{padding:0 24px 22px}
+  .tapintro{font-size:14px;color:var(--ink-dim);line-height:1.64;margin-bottom:14px}
+  .tapintro b{color:var(--ink)}
+  .setup{background:rgba(var(--mauve-rgb),0.1);border:1px solid rgba(var(--mauve-rgb),0.3);
+    border-radius:12px;padding:14px 16px;margin-bottom:14px}
+  .setup .sl{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--mauve);margin-bottom:7px}
+  .setup p{font-family:var(--serif);font-size:18px;font-style:italic;color:var(--ink);line-height:1.44}
+  .setup p q{font-style:normal;font-weight:600;color:var(--copper-lt)}
+  .points{list-style:none;counter-reset:pt}
+  .points li{padding:11px 0 11px 40px;border-top:1px solid rgba(var(--copper-rgb),0.12);position:relative;
+    font-size:14.5px;color:var(--ink);line-height:1.5}
+  .points li:first-child{border-top:none}
+  .points li::before{counter-increment:pt;content:counter(pt);position:absolute;left:0;top:11px;
+    width:26px;height:26px;border-radius:50%;background:rgba(var(--mauve-rgb),0.15);color:var(--mauve);
+    font-family:var(--mono);font-size:11px;display:grid;place-items:center;font-weight:600}
+  .points li b{color:var(--copper-lt)}
+
+  .note{margin-top:22px;font-size:13px;color:var(--ink-dim);line-height:1.66;
+    background:rgba(var(--sheet-rgb),0.6);border:1px dashed rgba(var(--copper-rgb),0.35);
+    border-radius:12px;padding:15px 17px}
+  .note b{color:var(--ink)}
+  footer{margin-top:36px;text-align:center;font-family:var(--mono);font-size:10.5px;
+    color:var(--ink-dim);opacity:.7;letter-spacing:.06em}
+  a{color:var(--copper-lt);font-weight:600}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Before You Sit Down</h1>
+  <div class="sub"><b>Three minutes to settle your body before a discovery call or a reading.</b> Do it in the car, at your desk, or in the ninety seconds before they join. Work top to bottom.</div>
+
+  <div class="premise">
+    <p>Nervous before a call is not a sign the call will go badly. <b>It is your body getting ready for something that matters to you.</b> The goal here is not to make the nerves vanish. It is to bring your system down far enough to think clearly and listen well, and that takes about three minutes.</p>
+    <p>Name what you are carrying, lengthen your breath until your body catches up, put your feet on the floor, and take one steady line in with you.</p>
+  </div>
+
+  <!-- ============ 1 · NAME IT ============ -->
+  <div class="step">
+    <div class="stephead"><span class="stepno">01</span><h2>Name what you are carrying</h2></div>
+    <div class="stepwhy">Saying the fear out loud, even to a screen, takes some of its charge out. <b>Type the real one, or tap the closest below.</b></div>
+
+    <span class="fieldlab">What are you actually nervous about?</span>
+    <textarea id="fear" rows="2" placeholder="They'll think I'm too expensive. I'll freeze. They'll say no."></textarea>
+
+    <div class="chips" id="chips"></div>
+
+    <div class="reflect" id="reflect">
+      <div class="rl">What is happening</div>
+      <div class="echo" id="echo"></div>
+      <div class="meet" id="meet"></div>
+    </div>
+  </div>
+
+  <!-- ============ 2 · BREATHE ============ -->
+  <div class="step">
+    <div class="stephead"><span class="stepno">02</span><h2>Lengthen your breath</h2></div>
+    <div class="stepwhy">A longer out-breath is the fastest way to tell your body it is safe. <b>Follow the circle. In as it grows, out as it shrinks.</b> Six rounds is enough.</div>
+
+    <div class="orbwrap">
+      <div class="orbstage">
+        <div class="breath-orb" id="orb"><span id="orbtext">Ready</span></div>
+      </div>
+      <div class="rounds" id="rounds">Six rounds · about two minutes</div>
+    </div>
+    <div class="btnrow">
+      <button class="btn" id="breathBtn">Begin breathing</button>
+      <button class="btn ghost" id="resetBreath" style="display:none">Stop</button>
+    </div>
+    <div class="breathnote">Out longer than in. If the pace fights you, <b>let the circle lead and go a little slower.</b></div>
+  </div>
+
+  <!-- ============ 3 · GROUND ============ -->
+  <div class="step">
+    <div class="stephead"><span class="stepno">03</span><h2>Come back to the room</h2></div>
+    <div class="stepwhy">Thirty seconds. This pulls you out of the call in your head and into the chair you are actually in.</div>
+
+    <div class="check" data-g="1"><span class="bx"></span><span class="ct">Put both feet flat on the floor and feel the ground hold them</span></div>
+    <div class="check" data-g="2"><span class="bx"></span><span class="ct">Look up and name three things you can see in the room</span></div>
+    <div class="check" data-g="3"><span class="bx"></span><span class="ct">Drop your shoulders down, unclench your jaw, let your hands open</span></div>
+    <div class="check" data-g="4"><span class="bx"></span><span class="ct">Remember one real person you have already helped. Bring them with you</span></div>
+  </div>
+
+  <!-- ============ 4 · CARRY ============ -->
+  <div class="step carry">
+    <div class="stephead"><span class="stepno">04</span><h2>Take one line in with you</h2></div>
+    <div class="stepwhy">Not a script. One steady sentence you can come back to if the nerves spike mid-call. <b>Edit it into your own words.</b></div>
+
+    <span class="fieldlab">The line you are carrying</span>
+    <input type="text" id="anchor" placeholder="I am here to understand them, and I am allowed to take my time.">
+    <div class="carryline" id="carryShow"></div>
+  </div>
+
+  <!-- ============ OPTIONAL · TAPPING ============ -->
+  <details class="tap">
+    <summary><span class="opt">Optional</span>Add tapping</summary>
+    <div class="tapbody">
+      <p class="tapintro">If you use EFT, this uses the fear you named in step one. <b>Tap lightly, about seven times at each point, and say the line as you go.</b> If tapping is not your thing, skip it. The three steps above stand on their own.</p>
+
+      <div class="setup">
+        <div class="sl">Setup · tap the side of your hand</div>
+        <p>Say three times: <q id="setupline">"Even though I'm nervous about this call, I'm allowed to feel this and still show up."</q></p>
+      </div>
+
+      <ol class="points">
+        <li><b>Eyebrow.</b> "This nervous feeling."</li>
+        <li><b>Side of the eye.</b> "It showed up because this matters to me."</li>
+        <li><b>Under the eye.</b> "I don't have to make it disappear."</li>
+        <li><b>Under the nose.</b> "I'm here to understand them, not to perform."</li>
+        <li><b>Chin.</b> "I can ask my question and listen."</li>
+        <li><b>Collarbone.</b> "My body is allowed to settle now."</li>
+        <li><b>Under the arm.</b> "I've helped people before, and I can do it again."</li>
+        <li><b>Top of the head.</b> "Steady, and ready to begin."</li>
+      </ol>
+    </div>
+  </details>
+
+  <div class="note">🕯️ This is yours to keep. It works before a sales call, a reading, a livestream, or any moment you have to show up for someone with something on the line. <b>Come back to it whenever your heart starts going.</b></div>
+
+  <footer>AUGUST · MADE VISIBLE · A FREE SPARK INSIDE SOUL-FORGED FOUNDERS</footer>
+</div>
+
+<script>
+(function(){
+  var KEY = 'sff-before-you-sit-down-v1';
+
+  // ---- common fears + how they get met, in Sunny's voice ----
+  var FEARS = [
+    { chip:"They'll think I'm too expensive",
+      meet:"Your price is the price. The people this is for can hear a number without flinching, and the ones who flinch were never going to be your client. Say it at a normal volume and let it sit.",
+      carry:"My price is my price, and I can say it out loud." },
+    { chip:"I'll freeze or ramble",
+      meet:"You are not there to perform. You are there to understand them. Ask your first question and listen. The listening is the job, and it takes the pressure off your mouth.",
+      carry:"I am here to understand them, not to perform." },
+    { chip:"They'll say no",
+      meet:"A no on a call is information, not a verdict on you. Some people are not your person, and finding that out fast is a good outcome. You are allowed to want the yes and to be fine without it.",
+      carry:"A no is information, not a verdict on me." },
+    { chip:"I'm not qualified enough",
+      meet:"You have helped someone before. Bring that person into the room with you, because it actually happened. The doubt is loud right now because the call matters, and loud is not the same as true.",
+      carry:"I have helped someone before, and I can do it again." },
+    { chip:"I won't know what to say",
+      meet:"You do not need every answer. 'That's a good question, let me think about that for a second' is a full sentence, and it makes you look more trustworthy, not less.",
+      carry:"I don't need every answer to be trustworthy." },
+    { chip:"My mind will go blank",
+      meet:"Everything you need is in front of you. Keep your notes open and your first question ready, and let the rest be a conversation. You are allowed to look things up.",
+      carry:"Everything I need is right in front of me." }
+  ];
+
+  var state = { fear:'', anchor:'', ground:{} };
+  try { var saved = JSON.parse(localStorage.getItem(KEY)); if(saved) state = Object.assign(state, saved); } catch(e){}
+  function save(){ try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
+
+  var fearEl = document.getElementById('fear');
+  var chipsEl = document.getElementById('chips');
+  var reflect = document.getElementById('reflect');
+  var echo = document.getElementById('echo');
+  var meet = document.getElementById('meet');
+  var setupline = document.getElementById('setupline');
+
+  // build chips
+  FEARS.forEach(function(f){
+    var b = document.createElement('button');
+    b.className = 'chip'; b.type = 'button'; b.textContent = f.chip;
+    b.addEventListener('click', function(){
+      fearEl.value = f.chip;
+      state.fear = f.chip;
+      updateFear(f.meet);
+      markChip(f.chip);
+      offerCarry(f.carry);
+      save();
+    });
+    chipsEl.appendChild(b);
+  });
+  function markChip(text){
+    Array.prototype.forEach.call(chipsEl.children, function(c){
+      c.classList.toggle('on', c.textContent === text);
+    });
+  }
+  function matchMeet(text){
+    var t = (text||'').toLowerCase();
+    for (var i=0;i<FEARS.length;i++){ if (FEARS[i].chip.toLowerCase() === t) return FEARS[i].meet; }
+    return null;
+  }
+  function matchFear(text){
+    var t = (text||'').trim().toLowerCase();
+    for (var i=0;i<FEARS.length;i++){ if (FEARS[i].chip.toLowerCase() === t) return FEARS[i]; }
+    return null;
+  }
+  function updateFear(forcedMeet){
+    var val = fearEl.value.trim();
+    if (!val){ reflect.classList.remove('show'); return; }
+    reflect.classList.add('show');
+    echo.innerHTML = 'Right now, part of you is bracing for this: <q></q>';
+    echo.querySelector('q').textContent = val;
+    var m = forcedMeet || matchMeet(val);
+    if (m){
+      meet.innerHTML = '<b>' + escapeHtml(m) + '</b>';
+    } else {
+      meet.innerHTML = 'That is the fear talking, and fear shows up loudest right before something you care about. It is not a forecast of how the call will go. <b>Lengthen your breath below, then take one steady line in with you.</b>';
+    }
+    // setup line for tapping uses their words
+    var lower = val.charAt(0).toLowerCase() + val.slice(1);
+    setupline.textContent = '"Even though ' + softenForSetup(val) + ", I'm allowed to feel this and still show up.\"";
+  }
+  function softenForSetup(val){
+    var v = val.trim().replace(/[.!]+$/,'');
+    // keep it readable inside "Even though ___"
+    return "I'm carrying this thought — " + v.charAt(0).toLowerCase() + v.slice(1) + " —";
+  }
+  function escapeHtml(s){ var d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+
+  function offerCarry(carry){
+    if (!carry) return;
+    if (anchorEl.value.trim()) return;   // never clobber a line they already have
+    anchorEl.value = carry;
+    state.anchor = carry;
+    updateCarry();
+  }
+
+  fearEl.addEventListener('input', function(){
+    state.fear = fearEl.value;
+    updateFear(null);
+    markChip(fearEl.value.trim());
+    var mf = matchFear(fearEl.value);
+    if (mf) offerCarry(mf.carry);
+    save();
+  });
+
+  // ---- ground checks ----
+  Array.prototype.forEach.call(document.querySelectorAll('.check'), function(c){
+    var g = c.getAttribute('data-g');
+    if (state.ground && state.ground[g]) c.classList.add('on');
+    c.addEventListener('click', function(){
+      c.classList.toggle('on');
+      state.ground[g] = c.classList.contains('on');
+      save();
+    });
+  });
+
+  // ---- carry line ----
+  var anchorEl = document.getElementById('anchor');
+  var carryShow = document.getElementById('carryShow');
+  function updateCarry(){ carryShow.textContent = anchorEl.value.trim(); }
+  anchorEl.addEventListener('input', function(){ state.anchor = anchorEl.value; updateCarry(); save(); });
+
+  // ---- restore ----
+  if (state.fear){ fearEl.value = state.fear; updateFear(null); markChip(state.fear.trim()); }
+  if (state.anchor){ anchorEl.value = state.anchor; updateCarry(); }
+
+  // ---- breath pacer ----
+  var orb = document.getElementById('orb');
+  var orbtext = document.getElementById('orbtext');
+  var roundsEl = document.getElementById('rounds');
+  var breathBtn = document.getElementById('breathBtn');
+  var stopBtn = document.getElementById('resetBreath');
+  var TARGET = 6;
+  var PHASES = [
+    { label:'Breathe in', dur:4000, scale:1.0 },
+    { label:'Hold',       dur:2000, scale:1.0 },
+    { label:'Slowly out', dur:6000, scale:0.55 }
+  ];
+  var running=false, round=0, phase=0, timer=null;
+
+  function setOrb(scale, dur, label){
+    orb.style.transitionDuration = dur + 'ms';
+    orb.style.transform = 'scale(' + scale + ')';
+    orbtext.textContent = label;
+  }
+  function step(){
+    if (!running) return;
+    var p = PHASES[phase];
+    setOrb(p.scale, p.dur, p.label);
+    timer = setTimeout(function(){
+      phase++;
+      if (phase >= PHASES.length){ phase = 0; round++;
+        if (round >= TARGET){ finish(); return; }
+        roundsEl.textContent = 'Round ' + (round+1) + ' of ' + TARGET;
+      }
+      step();
+    }, p.dur);
+  }
+  function start(){
+    running=true; round=0; phase=0;
+    roundsEl.textContent = 'Round 1 of ' + TARGET;
+    breathBtn.style.display='none'; stopBtn.style.display='inline-block';
+    step();
+  }
+  function stop(){
+    running=false; clearTimeout(timer);
+    setOrb(0.62, 600, 'Ready');
+    roundsEl.textContent = 'Six rounds · about two minutes';
+    breathBtn.style.display='inline-block'; breathBtn.textContent='Begin breathing'; stopBtn.style.display='none';
+  }
+  function finish(){
+    running=false; clearTimeout(timer);
+    setOrb(0.72, 1400, 'Settled');
+    roundsEl.textContent = 'Notice how your body feels now';
+    breathBtn.style.display='inline-block'; breathBtn.textContent='Breathe again'; stopBtn.style.display='none';
+  }
+  breathBtn.addEventListener('click', start);
+  stopBtn.addEventListener('click', stop);
+})();
+</script>
+</body>
+</html>
