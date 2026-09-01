@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Monthly Claude Challenge — September: Set It & Forget It</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ───────────────────────────────────────────────────────────
+     THE MONTHLY SKIN — change this block, get a new month.
+     Every colour in the file reads from here, so the layout never moves.
+
+     SEPTEMBER · SET IT & FORGET IT — "she speaks"
+     Deep plum night, violet and orchid, aqua and teal, warm gold.
+     A dark month, so no data-mode="light" on the <html> tag.
+     ─────────────────────────────────────────────────────────── */
+  :root{
+    --bg:#07050F; --bg2:#130B22; --ink:#F3EAFF; --ink-dim:#C2ACE2;
+    --copper:#A76BFF; --copper-lt:#C9A5FF; --ember:#E86FD8; --ember-glow:#FF6FC8;
+    --forest:#5FE3D0; --mauve:#C79BE8; --gold:#FFE3A3;
+    --green:#8BE9AE;
+    /* same colours as rgb triples, so alpha variants track the skin */
+    --copper-rgb:167,107,255;   --copper-lt-rgb:201,165,255;
+    --ember-rgb:232,111,216;     --ember-glow-rgb:255,111,200;
+    --gold-rgb:255,227,163;     --mauve-rgb:199,155,232;
+    --forest-rgb:95,227,208;     --green-rgb:139,233,174;
+    --card-rgb:28,16,48;
+    --bg-rgb:7,5,15;      --bg2-rgb:19,11,34;
+    --veil-rgb:6,3,12;       --well-rgb:10,6,20;    --sheet-rgb:29,16,48;
+    --serif:'Cormorant Garamond','Hoefler Text',Georgia,serif;
+    --sans:'Hanken Grotesk',system-ui,-apple-system,sans-serif;
+    --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;
+    --card:rgba(var(--card-rgb),0.70); --cardborder:rgba(var(--copper-rgb),0.24);
+    --glow-a:rgba(var(--ember-rgb),0.16);
+    --glow-b:rgba(var(--forest-rgb),0.14);
+    --glow-c:rgba(var(--copper-rgb),0.12);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:var(--sans);color:var(--ink);background:var(--bg);
+    background-image:
+      radial-gradient(900px 520px at 10% -10%, var(--glow-a), transparent 60%),
+      radial-gradient(820px 500px at 100% 0%, var(--glow-b), transparent 55%),
+      radial-gradient(760px 620px at 55% 120%, var(--glow-c), transparent 60%);
+    min-height:100vh;padding:44px 22px 80px;position:relative;overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;line-height:1.65;
+  }
+  .embers{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+  .ember{position:absolute;bottom:-12px;width:3px;height:3px;border-radius:50%;
+    background:var(--ember-glow);box-shadow:0 0 6px 1px rgba(var(--ember-glow-rgb),0.6);
+    opacity:0;animation:rise linear infinite}
+  @keyframes rise{0%{transform:translateY(0) translateX(0);opacity:0}
+    12%{opacity:.7}100%{transform:translateY(-104vh) translateX(26px);opacity:0}}
+  .wrap{max-width:1080px;margin:0 auto;position:relative;z-index:1}
+
+  /* header */
+  header{text-align:center;margin-bottom:34px}
+  .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.34em;text-transform:uppercase;
+    color:var(--copper);opacity:.9;margin-bottom:12px}
+  h1{font-family:var(--serif);font-weight:600;font-size:clamp(46px,8vw,84px);line-height:.95;
+    background:linear-gradient(92deg,var(--copper-lt),var(--ember-glow) 38%,var(--gold) 70%,var(--copper));
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:.5px}
+  .sub{font-family:var(--serif);font-style:italic;font-size:clamp(19px,2.4vw,25px);
+    color:var(--ink-dim);margin-top:10px}
+
+  /* stat strip */
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin:30px 0 34px}
+  .stat{background:var(--card);border:1px solid var(--cardborder);border-radius:16px;
+    padding:19px 16px;text-align:center;backdrop-filter:blur(14px);position:relative;overflow:hidden}
+  .stat::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+    background:linear-gradient(180deg,var(--copper),var(--ember),var(--gold))}
+  .stat .n{font-family:var(--serif);font-size:42px;font-weight:600;line-height:1;color:var(--copper-lt)}
+  .stat.live .n{color:var(--ember-glow)}
+  .stat .l{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--ink-dim);margin-top:8px}
+  @media(max-width:620px){.stats{grid-template-columns:1fr;gap:10px}
+    .stat{display:flex;align-items:center;justify-content:space-between;text-align:left;padding:14px 18px}
+    .stat .n{font-size:30px}.stat .l{margin-top:0}}
+
+  .section-label{font-family:var(--mono);font-size:11px;letter-spacing:.28em;text-transform:uppercase;
+    color:var(--ink-dim);margin:44px 0 16px;display:flex;align-items:center;gap:12px}
+  .section-label::after{content:"";flex:1;height:1px;
+    background:linear-gradient(90deg,rgba(var(--copper-rgb),0.35),transparent)}
+
+  /* rules */
+  .rules{background:var(--card);border:1px solid var(--cardborder);border-radius:16px;
+    padding:24px 26px;backdrop-filter:blur(14px)}
+  .rules ol{list-style:none;counter-reset:r;display:flex;flex-direction:column;gap:13px}
+  /* ⚠️ do NOT make this a flex row. A flex container turns every bare
+     run of text into its own anonymous column, so a line with two <b>
+     tags in it breaks into four columns side by side. The number is
+     positioned instead, which lets the sentence flow as one paragraph. */
+  .rules li{counter-increment:r;position:relative;padding-left:38px;
+    font-size:15px;line-height:1.65;color:var(--ink-dim)}
+  .rules li::before{content:counter(r);position:absolute;left:0;top:1px;
+    font-family:var(--mono);font-size:11px;font-weight:700;
+    color:var(--copper);border:1px solid rgba(var(--copper-rgb),.45);border-radius:50%;
+    width:24px;height:24px;display:grid;place-items:center}
+  .rules b{color:var(--ink)}
+  .prize{margin-top:22px;padding-top:20px;border-top:1px solid rgba(var(--copper-rgb),.18);
+    display:grid;grid-template-columns:auto 1fr;gap:22px;align-items:center}
+  .prize .amtwrap{text-align:center;padding-right:22px;border-right:1px solid rgba(var(--copper-rgb),.18)}
+  .prize .amt{font-family:var(--serif);font-size:52px;font-weight:600;color:var(--gold);
+    line-height:.9;display:block}
+  .prize .amtlbl{font-family:var(--mono);font-size:8.5px;letter-spacing:.24em;text-transform:uppercase;
+    color:var(--ink-dim);display:block;margin-top:7px}
+  .prize p{font-size:14.5px;color:var(--ink-dim);max-width:none;line-height:1.7}
+  @media(max-width:620px){
+    .prize{grid-template-columns:1fr;gap:14px;text-align:center}
+    .prize .amtwrap{padding-right:0;border-right:none;padding-bottom:14px;
+      border-bottom:1px solid rgba(var(--copper-rgb),.18)}
+  }
+
+  /* board */
+  .board{display:grid;grid-template-columns:repeat(5,1fr) 52px;gap:10px}
+  .sq{position:relative;aspect-ratio:1;background:var(--card);border:1px solid var(--cardborder);
+    border-radius:13px;padding:14px 11px;cursor:pointer;backdrop-filter:blur(12px);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;
+    text-align:center;overflow:hidden;
+    transition:transform .18s,border-color .18s,box-shadow .18s,background .25s}
+  /* inset hairline, the bit that makes it read as a pressed tile */
+  .sq::before{content:"";position:absolute;inset:5px;border-radius:9px;
+    border:1px solid rgba(var(--copper-rgb),.13);pointer-events:none;transition:border-color .2s}
+  .sq:hover{transform:translateY(-3px);border-color:rgba(var(--copper-lt-rgb),.6);
+    box-shadow:0 14px 34px -18px rgba(var(--ember-rgb),.7)}
+  .sq:hover::before{border-color:rgba(var(--copper-rgb),.3)}
+  .sq .num{font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.18em;
+    color:var(--copper);opacity:.7;position:relative;z-index:1}
+  .sq .nm{font-family:var(--serif);font-size:clamp(13px,1.5vw,19px);font-weight:600;
+    line-height:1.16;color:var(--ink);position:relative;z-index:1;max-width:94%}
+  /* hairline rule under the number, a small piece of metalwork */
+  .sq .num::after{content:"";display:block;width:16px;height:1px;margin:6px auto 0;
+    background:linear-gradient(90deg,transparent,var(--copper),transparent);opacity:.55}
+  .sq.done{background:linear-gradient(155deg,rgba(var(--copper-rgb),.28),rgba(var(--card-rgb),.84));
+    border-color:rgba(var(--copper-lt-rgb),.62)}
+  .sq.done::before{border-color:rgba(var(--copper-lt-rgb),.28)}
+  .sq.done .nm{color:var(--copper-lt)}
+  .sq.done .num{opacity:.9}
+  .sq .mark{position:absolute;top:9px;right:10px;width:16px;height:16px;border-radius:50%;
+    border:1.5px solid rgba(var(--copper-rgb),.4);display:grid;place-items:center;
+    font-size:9px;color:var(--on-accent);font-weight:700;z-index:2;transition:all .2s}
+  .sq.done .mark{background:var(--copper);border-color:var(--copper);
+    box-shadow:0 0 10px rgba(var(--copper-rgb),.55)}
+  .sq.done .mark::after{content:"\2713"}
+  .sq.free{background:linear-gradient(150deg,rgba(var(--ember-rgb),.22),rgba(var(--card-rgb),.82));
+    border-color:rgba(var(--ember-rgb),.5);cursor:pointer;align-items:center;justify-content:center;text-align:center}
+  .sq.free:hover{transform:translateY(-3px);box-shadow:0 14px 34px -18px rgba(var(--ember-rgb),.7)}
+  .sq.free .nm{font-size:clamp(12px,1.5vw,17px);color:var(--ember-glow)}
+  .sq.free .glyph{font-size:24px;line-height:1;margin-bottom:4px}
+  .sq.free .freehint{font-family:var(--mono);font-size:7.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--gold);margin-bottom:5px}
+  .sq.inline{outline:1.5px solid rgba(var(--gold-rgb),.75);outline-offset:-1.5px}
+  @media(max-width:560px){.sq{padding:8px 7px;border-radius:10px}
+    .board{gap:6px;grid-template-columns:repeat(5,1fr) 34px}}
+
+  /* the bingo slot that appears at the end of a finished row or column */
+  .bslot{border:none;background:none;padding:0;cursor:default;opacity:0;
+    display:grid;place-items:center;border-radius:11px;
+    font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.12em;
+    color:var(--on-accent);transition:opacity .35s ease,transform .18s,box-shadow .18s}
+  .bslot.won{opacity:1;cursor:pointer;
+    background:linear-gradient(150deg,var(--gold),var(--ember));
+    box-shadow:0 0 16px -2px rgba(var(--gold-rgb),.6)}
+  .bslot.won:hover{transform:translateY(-3px);box-shadow:0 10px 26px -10px rgba(var(--ember-rgb),.85)}
+  .bslot .bw{writing-mode:vertical-rl;text-orientation:mixed}
+  .board > .bslot:nth-last-child(-n+5) .bw{writing-mode:horizontal-tb}
+  @media(max-width:560px){.bslot{font-size:7.5px}}
+
+  /* detail modal */
+  .veil{position:fixed;inset:0;background:rgba(var(--veil-rgb),.82);backdrop-filter:blur(7px);
+    z-index:60;display:none;align-items:flex-start;justify-content:center;padding:34px 18px;overflow-y:auto}
+  .veil.on{display:flex}
+  .sheet{background:linear-gradient(150deg,rgba(var(--sheet-rgb),.97),rgba(var(--bg-rgb),.99));
+    border:1px solid rgba(var(--copper-rgb),.36);border-radius:18px;max-width:660px;width:100%;
+    padding:30px 30px 26px;position:relative;box-shadow:0 30px 90px -30px #000}
+  .sheet .num{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--copper)}
+  .sheet h3{font-family:var(--serif);font-size:33px;font-weight:600;line-height:1.1;margin:7px 0 5px}
+  .sheet .job{font-size:14.5px;color:var(--ink-dim);margin-bottom:20px}
+  .close{position:absolute;top:15px;right:17px;background:none;border:none;color:var(--ink-dim);
+    font-size:25px;cursor:pointer;line-height:1;padding:4px 8px}
+  .close:hover{color:var(--ember-glow)}
+  .pbox{background:rgba(var(--well-rgb),.72);border:1px solid rgba(var(--copper-rgb),.2);border-radius:12px;
+    padding:19px 20px;font-family:var(--mono);font-size:12.5px;line-height:1.78;
+    color:var(--well-ink);white-space:pre-wrap;max-height:44vh;overflow-y:auto}
+  .acts{display:flex;gap:11px;margin-top:17px;flex-wrap:wrap}
+  .btn{border:none;border-radius:30px;padding:12px 24px;font-family:var(--sans);font-size:14px;
+    font-weight:700;cursor:pointer;transition:transform .18s,box-shadow .18s}
+  .btn.copy{background:linear-gradient(135deg,var(--copper),var(--ember));color:var(--on-accent)}
+  .btn.mark{background:transparent;color:var(--copper-lt);border:1.5px solid rgba(var(--copper-rgb),.5)}
+  .btn.mark.is{background:rgba(var(--green-rgb),.16);color:var(--green);border-color:rgba(var(--green-rgb),.5)}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 8px 22px -8px rgba(var(--ember-rgb),.6)}
+  .btn.ok{background:linear-gradient(135deg,var(--forest),var(--green));color:var(--on-accent)}
+
+  /* generic panel */
+  .panel{background:var(--card);border:1px solid var(--cardborder);border-radius:16px;
+    padding:24px 26px;backdrop-filter:blur(14px)}
+  .panel p{font-size:15px;color:var(--ink-dim);margin-bottom:12px}
+  .panel p:last-child{margin-bottom:0}
+  .panel b{color:var(--ink)}
+  .tmpl{background:rgba(var(--well-rgb),.72);border:1px solid rgba(var(--copper-rgb),.2);border-radius:12px;
+    padding:18px 20px;font-family:var(--mono);font-size:12.5px;line-height:1.85;
+    color:var(--well-ink);white-space:pre-wrap;margin-top:6px}
+
+  /* completed lines — one copyable post per bingo */
+  .bingos{display:none;margin-top:13px}
+  .bingos.on{display:block}
+  .bingo{display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+    background:linear-gradient(140deg,rgba(var(--gold-rgb),.16),rgba(var(--card-rgb),.84));
+    border:1px solid rgba(var(--gold-rgb),.45);border-radius:14px;
+    padding:16px 20px;margin-bottom:10px}
+  .bingo .bn{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--ink);flex:none}
+  .bingo .bd{font-size:13.5px;color:var(--ink-dim);flex:1;min-width:150px}
+  .bingo button{flex:none;border:none;border-radius:30px;padding:10px 20px;
+    font-family:var(--sans);font-size:13.5px;font-weight:700;cursor:pointer;
+    background:linear-gradient(135deg,var(--copper),var(--ember));color:var(--on-accent);
+    transition:transform .18s,box-shadow .18s}
+  .bingo button:hover{transform:translateY(-2px);box-shadow:0 8px 22px -8px rgba(var(--ember-rgb),.6)}
+  @media(max-width:520px){.bingo{gap:10px}.bingo button{width:100%}}
+
+  /* board tools — clear all + copy my links */
+  .boardtools{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:13px}
+  .tool{background:none;border:1px solid rgba(var(--copper-rgb),.34);border-radius:30px;
+    padding:8px 17px;font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;
+    text-transform:uppercase;color:var(--ink-dim);cursor:pointer;
+    transition:color .18s,border-color .18s,background .18s}
+  .tool:hover{color:var(--ember-glow);border-color:rgba(var(--ember-rgb),.6);
+    background:rgba(var(--ember-rgb),.07)}
+  .tool.danger:hover{color:var(--mauve);border-color:rgba(var(--mauve-rgb),.6);
+    background:rgba(var(--mauve-rgb),.07)}
+  @media(max-width:520px){.boardtools{justify-content:stretch}.tool{flex:1;text-align:center}}
+
+  /* optional post link, inside the square sheet */
+  .linkwrap{margin-top:16px;padding-top:15px;border-top:1px solid rgba(var(--copper-rgb),.18)}
+  .linkwrap label{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--ink-dim);margin-bottom:8px}
+  .linkwrap input{width:100%;background:rgba(var(--well-rgb),.5);
+    border:1px solid rgba(var(--copper-rgb),.28);border-radius:10px;padding:11px 14px;
+    font-family:var(--mono);font-size:12.5px;color:var(--ink);outline:none;
+    transition:border-color .18s}
+  .linkwrap input:focus{border-color:rgba(var(--ember-rgb),.65)}
+  .linkwrap input::placeholder{color:var(--ink-dim);opacity:.55}
+  .linkwrap .hint{font-size:12px;color:var(--ink-dim);margin-top:8px;opacity:.85}
+
+  /* unlocks */
+  .sparklead{font-size:15px;color:var(--ink-dim);margin-bottom:15px}
+  .sparklead b{color:var(--ink)}
+  .unlocks{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:13px}
+  .unlock{background:var(--card);border:1px dashed rgba(var(--copper-rgb),.34);border-radius:14px;
+    padding:19px 18px;backdrop-filter:blur(12px);position:relative}
+  .freetag{position:absolute;top:15px;right:15px;font-family:var(--mono);font-size:8.5px;
+    font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--on-accent);
+    background:linear-gradient(135deg,var(--ember),var(--copper));
+    padding:4px 9px;border-radius:20px;line-height:1}
+  .unlock .u{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--mauve);margin-bottom:9px}
+  .unlock h4{font-family:var(--serif);font-size:20px;font-weight:600;margin-bottom:6px}
+  .unlock p{font-size:12.5px;color:var(--ink-dim);line-height:1.5}
+  .unlock.open{border-style:solid;border-color:rgba(var(--gold-rgb),.55)}
+  .unlock.open .u{color:var(--gold)}
+  .unlock a{color:var(--copper-lt);font-weight:600}
+
+  .keeper{background:linear-gradient(140deg,rgba(var(--gold-rgb),.15),rgba(var(--card-rgb),.84));
+    border:1px solid rgba(var(--gold-rgb),.4);border-radius:16px;padding:30px 30px 28px;
+    backdrop-filter:blur(14px);text-align:center}
+  .keeper .crownrow{display:flex;align-items:center;justify-content:center;gap:13px;margin-bottom:12px}
+  .keeper svg{width:34px;height:34px;flex:none;
+    filter:drop-shadow(0 0 9px rgba(var(--gold-rgb),.45))}
+  .keeper h4{font-family:var(--serif);font-size:31px;font-weight:600;color:var(--ink);line-height:1}
+  .keeper p{font-size:15px;color:var(--ink-dim);max-width:64ch;margin:0 auto 12px;line-height:1.7}
+  .keeper p:last-child{margin-bottom:0}
+  .keeper b{color:var(--gold)}
+  @media(max-width:520px){.keeper h4{font-size:25px}.keeper svg{width:27px;height:27px}}
+
+  footer{margin-top:52px;text-align:center;font-family:var(--mono);font-size:11px;
+    color:var(--ink-dim);opacity:.6;letter-spacing:.06em;line-height:2}
+  footer a{color:var(--copper)}
+  .toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(90px);
+    background:var(--copper);color:var(--on-accent);font-family:var(--mono);font-size:12px;font-weight:600;
+    padding:11px 22px;border-radius:30px;z-index:90;transition:transform .3s;letter-spacing:.05em}
+  .toast.up{transform:translateX(-50%) translateY(0)}
+
+  /* text sitting on a bright accent fill, and text inside the dark prompt wells */
+  :root{ --on-accent:#160726; --well-ink:#E9DEFF; }
+</style>
+</head>
+<body>
+<div class="embers" id="embers"></div>
+<div class="wrap">
+
+  <header>
+    <div class="kicker">Soul-Forged Founders · The Monthly Claude Challenge</div>
+    <h1>Set It &amp; Forget It</h1>
+    <div class="sub">September · Set It &amp; Forget It</div>
+  </header>
+
+  <div class="stats">
+    <div class="stat"><div class="n" id="sDone">0</div><div class="l">Squares built</div></div>
+    <div class="stat live"><div class="n" id="sLines">0</div><div class="l">Lines complete · your entries</div></div>
+    <div class="stat"><div class="n" id="sLeft">—</div><div class="l">Days remaining</div></div>
+  </div>
+
+  <div class="section-label">How it works</div>
+  <div class="rules">
+    <p style="font-size:15px;color:var(--ink);margin-bottom:17px;line-height:1.6"><b>Start in the middle.</b> The centre square, Your Biz Brain, is the one that makes the rest run. Set it up first, then every other square has a home to save to and read from.</p>
+    <ol>
+      <li><b>Pick any square.</b> Tap it, copy the prompt, run it in Claude, and build the system it hands you.</li>
+      <li><b>Put it to work.</b> Set it running, save it, or wire it into your tools. The square counts once the thing is actually built and doing its job.</li>
+      <li><b>Share it in the Monthly Challenge category</b> in the community, with the square's name as your title. That is what marks it done. Show what you built and one line on what it now saves you.</li>
+      <li><b>Five in a row is one entry.</b> Any direction, across, down, or corner to corner. The centre square, Your Biz Brain, is done for you, so two of the lines start with a head start.</li>
+      <li><b>Fill more rows, get more entries.</b> Twelve lines exist on this board. Every one you complete is another name in the draw.</li>
+      <li><b>One build per square.</b> Each thing you make counts for one square only, and it has to be something you built this month.</li>
+    </ol>
+    <div class="prize">
+      <div class="amtwrap"><span class="amt">$50</span><span class="amtlbl">Cash prize</span></div>
+      <p>One winner, drawn on <b>October 1</b>. Every completed line puts your name in once more, so the board rewards finishing a row over collecting scattered squares. Your progress saves on this device, so you can close the tab and pick it back up whenever you have twenty minutes.</p>
+    </div>
+  </div>
+
+  <div class="section-label">The board</div>
+  <div class="board" id="board"></div>
+  <div class="bingos" id="bingos"></div>
+  <div class="boardtools">
+    <button class="tool danger" id="clearAll">Clear the board</button>
+  </div>
+
+  <div class="section-label">When you post it</div>
+  <div class="panel">
+    <p>Copy this, fill the three lines, and put it in the <b>Monthly Challenge</b> category. Title the post with the square's name so everyone can see which one you built.</p>
+    <div class="tmpl" id="tmpl">Square: [the name of the square]
+
+What I built: [one line on what it is]
+
+What it now runs without me: [the part you handed off]
+
+The part that surprised me: [one honest sentence, this is the bit people actually read]</div>
+    <div class="acts"><button class="btn copy" id="copyTmpl">Copy the template</button></div>
+  </div>
+
+  <div class="section-label">Your free Sparks</div>
+  <p class="sparklead"><b>Four free things, one a week, yours just for being here.</b> No square to finish and nothing to buy. Each one opens on its date, so check back on a Saturday.</p>
+  <!-- Sparks for September are still being decided. When one opens: add class "open" to its .unlock, set the title, and put the real link in the <p>. -->
+  <div class="unlocks" id="unlocks">
+    <div class="unlock"><span class="freetag">Free</span><div class="u">Opens Sat Sep 5</div><h4>Spark 01</h4><p>Opening soon. Check back Saturday.</p></div>
+    <div class="unlock"><span class="freetag">Free</span><div class="u">Opens Sat Sep 12</div><h4>Spark 02</h4><p>Opening soon. Check back Saturday.</p></div>
+    <div class="unlock"><span class="freetag">Free</span><div class="u">Opens Sat Sep 19</div><h4>Spark 03</h4><p>Opening soon. Check back Saturday.</p></div>
+    <div class="unlock"><span class="freetag">Free</span><div class="u">Opens Sat Sep 26</div><h4>Spark 04</h4><p>Opening soon. Check back Saturday.</p></div>
+  </div>
+
+  <div class="section-label">The crown</div>
+  <div class="keeper">
+    <div class="crownrow">
+      <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <path d="M4 23.5 L2.6 9.4 L9.4 14.6 L16 4.5 L22.6 14.6 L29.4 9.4 L28 23.5 Z"
+              fill="url(#cg)" stroke="var(--copper)" stroke-width="1.3" stroke-linejoin="round"/>
+        <rect x="4" y="24.8" width="24" height="3.4" rx="1.3" fill="url(#cg)" stroke="var(--copper)" stroke-width="1.1"/>
+        <circle cx="16" cy="18.6" r="1.7" fill="var(--bg)" opacity=".6"/>
+        <defs>
+          <linearGradient id="cg" x1="2" y1="4" x2="30" y2="28" gradientUnits="userSpaceOnUse">
+            <stop stop-color="var(--gold)"/><stop offset=".5" stop-color="var(--copper)"/><stop offset="1" stop-color="var(--ember)"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <h4>The Ember Keeper</h4>
+    </div>
+    <p>The Ember Keeper award goes to whoever is most active. Posting, commenting, and cheering everyone on.</p>
+    <p>The leaderboard in the community already tracks this, because points come from people appreciating what you put out. <b>Give the most, rise the highest.</b></p>
+    <p>September closes on the <b>30th</b>. The Ember Keeper is crowned <b>October 1</b>.</p>
+    <p><b>What they win:</b> the crown beside their name all month, and a half hour private session with me.</p>
+  </div>
+
+  <style>
+  .joinsff{margin:30px auto 0;text-align:center;background:linear-gradient(135deg,rgba(var(--ember-rgb),0.10),rgba(var(--card-rgb),0.82));border:1px solid rgba(var(--copper-rgb),0.30);border-radius:16px;padding:24px 24px}
+  .joinsff p{font-size:14.5px;color:var(--ink-dim);line-height:1.6;margin:0 auto 15px;max-width:480px}
+  .joinsff a{display:inline-block;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;background:var(--ember);color:#160726;text-decoration:none;padding:13px 30px;border-radius:30px;font-weight:600}
+  .joinsff a:hover{background:var(--copper)}
+  </style>
+  <div class="joinsff">
+    <p>Built inside Soul-Forged Founders, where tarot readers, coaches, and healers create tools like these with Claude.</p>
+    <a href="https://www.skool.com/soul-forged-founders" target="_blank" rel="noopener">Come build with us →</a>
+  </div>
+
+  <footer>
+    The Monthly Claude Challenge · September: Set It &amp; Forget It · Soul-Forged Founders<br>
+    Progress saves on this device. Bookmark it and come back.
+  </footer>
+</div>
+
+<div class="veil" id="veil"><div class="sheet" id="sheet"></div></div>
+<div class="toast" id="toast">Copied</div>
+
+<script>
+const SQUARES = [
+ {n:"The Weekly Content Routine", job:"One prompt that plans your whole week.", p:`Build me a reusable prompt I can run every week that plans my content in one sitting.
+
+Answer nothing yet. First ask me these and wait:
+- What do I post on, and how often? [ ]
+- What are my content pillars, the handful of things I teach? [ ]
+- What am I usually pointing people toward? [ ]
+
+Then build a single prompt I can paste in every week. When I run it, it should:
+- Rotate through my pillars so I am not posting the same lane twice
+- Hand me a full week in one go, each piece with a hook and a one-line brief
+- Save a short summary of the week it just planned into my Biz Brain folder, so next week it reads that and knows what not to repeat
+- If my Biz Brain is not set up yet, hand me that summary to paste back in next week instead
+
+Rules:
+- Frame every piece around what my ideal client is dealing with, not around my modality. If I read tarot for clients, do not build a routine that produces tarot lessons unless I told you I teach it.
+- Do not assume you remember last week. Read it from my Biz Brain, or from the summary I paste in. If I have neither, plan a clean week from my pillars and say so.
+- Do not invent my pillars or my offer. Mark [FILL IN] where you would be guessing.
+- The output is the reusable prompt itself, written so I can save it and run it untouched next week.
+
+Then tell me the one line to change in it each week so it never goes stale.`},
+
+ {n:"The Repurpose Engine", job:"One piece in, a week of posts out.", p:`Build me a saved prompt that turns one thing I already made into a week of content.
+
+Ask me first: what am I feeding it (a video, a blog, a livestream, a long caption), and where do the pieces need to land? [ ]
+
+Then write one reusable prompt that takes that piece and returns the outputs I want, for example three short captions, one carousel outline, two story frames, and one email angle.
+
+Rules:
+- Keep my meaning and my words. Pull real lines from the source instead of writing new claims.
+- Do not add facts, numbers, or promises that were not in the original.
+- Frame each output around my ideal client's problem, not my modality.
+- The output is the reusable prompt, written so I can drop any future piece under it and run it.
+
+Then tell me which output this piece is strongest for, and which one to skip.`},
+
+ {n:"The Voice Skill", job:"Teach Claude to sound like you, once.", p:`Help me capture my writing voice so I stop re-explaining it every time.
+
+First ask me for three things and wait:
+- Two or three pieces I wrote that sound most like me [ ]
+- Words and phrases I never want to see in my copy [ ]
+- The feeling someone should get reading me [ ]
+
+Then write me a voice guide I can save and reuse: the patterns in how I write, my sentence shapes, my go-to moves, and a banned list. Short enough to paste at the top of any writing task.
+
+Rules:
+- Build it from my actual samples, not from what you assume a coach or a reader sounds like.
+- Quote real lines from my samples as the examples.
+- Do not invent rules I did not show you. If a pattern is not in my samples, leave it out.
+- Save the finished voice guide into my Biz Brain folder, so every future writing task can pull from it.
+
+Then tell me the one habit in my writing that most makes it mine, and the one tell that most makes it sound like a machine.`},
+
+ {n:"The Idea Well", job:"An idea bank that refills itself.", p:`Build me a system so I never open a blank page again.
+
+Ask me first: what do I teach or talk about, and who am I talking to? [ ]
+
+Then give me two things:
+1. A starter bank of 20 content ideas, each a real angle with a hook, sorted by my pillars.
+2. A reusable prompt that refills the bank whenever it runs low. When it refills, it reads the current bank from my Biz Brain folder so it can see what is already there and not repeat it. If my Biz Brain is not set up yet, I paste the bank in instead.
+
+Rules:
+- Every idea sits on my ideal client's problem, not on my modality. If I read tarot for clients, the bank is not full of tarot lessons unless I teach tarot.
+- Do not assume you remember the bank. Read it from my Biz Brain or from what I paste in, and if I give you neither, build fresh and tell me to save it there.
+- Save the bank into my Biz Brain folder, so this square and my content routine both pull from the same one.
+- No idea repeats an angle already in what I gave you.
+- Do not invent results, stats, or client stories. Ideas only.
+
+Then tell me which five to post first, and why those.`},
+
+ {n:"The Swipe File", job:"Your best lines, always within reach.", p:`Help me build a swipe file of my own best writing, and a way to actually use it.
+
+Ask me first for the pieces of mine that performed or that I am proud of. [ ]
+
+Then pull from them and organize: my strongest hooks, my best CTAs, the lines people replied to, the openers that worked. Group them so I can find one fast.
+
+Then write a short prompt that, given a new topic, pulls the closest matches from this file so I start from my own proven lines instead of a blank page.
+
+Rules:
+- Use only my real lines. Do not write new ones and slip them in.
+- Tag each line with one word for what it is: hook, CTA, story open.
+- Do not invent performance claims about which lines worked. Use what I told you.
+- Save the swipe file into my Biz Brain folder, so I and my content routine can pull from it later.
+
+Then tell me the single line in here worth building a whole post around again.`},
+
+ {n:"The Booking Confirmation", job:"Prep and links that go out without you.", p:`Write the confirmation that sends the moment someone books me, so I never send it by hand again.
+
+Ask me first:
+- What are they booking? [name, length, format]
+- What do they need to do or bring before we meet? [ ]
+- The links they need: call link, intake, anything to read [ ]
+
+Then write the confirmation email, and tell me in plain steps how to set it to send automatically in my booking tool.
+
+Rules:
+- Everything they need is on the first screen: when, where, and the link.
+- One clear thing to prepare, not a homework list.
+- Do not invent a link, a time, or a step. Mark [FILL IN].
+- Warm and brief. They just said yes, so do not oversell.
+
+Then tell me the one line that will cut my no-shows.`},
+
+ {n:"The Intake That Fills Itself", job:"The form does the sorting.", p:`Help me build a client intake that hands me a brief instead of a pile of answers.
+
+Ask me first: what do I actually need to know before I work with someone, and what do I keep having to ask on the call? [ ]
+
+Then give me two things:
+1. The intake questions, ordered, tight enough that people finish them.
+2. A saved prompt that takes a filled-in intake and returns a one-page brief: who they are, what they want, what to prep, and the one thing to watch for.
+
+Rules:
+- Every question earns its place. If an answer would not change how I show up, cut it.
+- The brief has to be readable in under a minute before a call.
+- Do not invent what I need to know. Build from what I gave you and mark [FILL IN].
+
+Then tell me the one question that will save me the most time on calls.`},
+
+ {n:"The Delivery Template", job:"Every client gets the same clean handoff.", p:`Build me a reusable delivery document so every client gets the same clear finish.
+
+Ask me first: what do I deliver, and what does a client need to actually use it after we are done? [ ]
+
+Then build a template with each section carrying a prompt to me: what they got, how to use it, what is next, and how to reach me. Then write a short prompt that fills this template for a specific client from my notes.
+
+Rules:
+- Write it so a client could open it a month later and still know what to do.
+- One named next step at the end, every time.
+- Do not invent deliverables or promises. Mark [FILL IN].
+- Save the finished template into my Biz Brain folder, so I reuse the same one for every client.
+
+Then tell me the section clients will actually reread, and make that one the clearest.
+
+Once I have approved the template, ask me whether I want to turn it into an artifact I can send a client as a page instead of plain text. If I say yes, build it from the approved template and tell me, in one step, how to share it with them.`},
+
+ {n:"The Session Recap", job:"Notes and next steps after every call, in one run.", p:`Build me a saved prompt that turns my messy call notes into a finished recap.
+
+When I run it, I will paste rough notes or a transcript. It should return:
+- A short recap of what we covered
+- The decisions we made
+- Their next steps and mine, each with an owner
+- A warm client-facing version I can send as-is
+
+Rules:
+- Use only what is in my notes. Do not invent a decision, a number, or a next step I did not record.
+- Keep the client version in my voice, warm and plain.
+- If something important is missing from my notes, ask me rather than filling it in.
+
+Then tell me the one thing worth capturing during the call so this runs cleaner next time.`},
+
+ {n:"The Follow-Up That Runs", job:"The message that used to slip, on time.", p:`Help me build the follow-up I keep meaning to send, so it sends itself.
+
+Ask me first: follow up with who, and after what? A discovery call, a purchase, a freebie, a lapsed lead. [ ]
+
+Then write the sequence: how many touches, how far apart, and what each one says. Then tell me in plain steps how to set it running in my tool.
+
+Rules:
+- Every message gives something before it asks for anything.
+- Space them so it reads as care, not pressure. No scarcity, no guilt.
+- Do not invent an offer, a price, or a result. Mark [FILL IN].
+
+Then tell me which message in the sequence does the real work, so I get that one right first.`},
+
+ {n:"The Self-Sending Welcome", job:"The first email a new subscriber gets, on its own.", p:`Write the welcome email that sends automatically the moment someone joins my list, and tell me how to switch it on.
+
+Ask me first:
+- What did they just sign up for? [ ]
+- The one thing I want them to know about me first [ ]
+- What I want them to do, if anything [ ]
+- My link [ ]
+
+Then write the email, plus the plain steps to set it as an automation in my tool.
+
+Rules:
+- Deliver what they signed up for in the first two lines, with the link, before anything else.
+- One job. No "a little about me" section.
+- Under 200 words.
+- Do not invent the freebie or the link. Mark [FILL IN].
+
+Then give me three subject lines and tell me what each one promises.`},
+
+ {n:"The Reader Segment", job:"Find the people who actually open.", p:`Help me build a segment of the people on my list who are actually reading, so my regular sends land better.
+
+Ask me first: what tool am I on, and roughly how big is my list? [ ]
+
+Then walk me through building a segment based on who clicked in the last 90 days, in plain steps for my tool. Tell me what to send it and what to keep sending to everyone.
+
+Rules:
+- Segment on clicks, not opens. Opens are half machines now, so opens will lie to me.
+- Never cut anyone on one send. Tell me how many touches before anyone is set aside, and how they climb back in.
+- Be honest that this is about deliverability and open rate on regular sends, not about lowering my bill.
+
+Then tell me the one number to watch to know if it actually worked.`},
+
+ {n:"The Re-Engagement Note", job:"One real reach to the ones who went quiet.", p:`Help me win back the people who stopped opening my emails, starting with the hardest part: what to actually send them.
+
+Ask me first, and wait for my answers:
+- Who are these people, and what did they first come to me for? [ ]
+- What do I already have that I could give away, a freebie, a training, a tool, a favourite past email, something half-built? [ ]
+
+Then brainstorm with me. Give me five things I could send that would be worth a click to someone who has ignored me for months, leaning on what I already have where you can. For each, one line on why it would pull that person back. These are ideas, so actually generate them. Do not leave them blank and do not hand this part back to me.
+
+Once I pick one, write the win-back email around it, tell me when to send it, and tell me how to set it running for anyone who goes quiet from here on.
+
+Rules:
+- Lead with the thing they get, not with "we miss you."
+- No guilt, no "last chance," no shaming anyone for going quiet.
+- One clear thing to click, which is also how I learn who is still there.
+- Brainstorm the offer with me. The only thing you mark [FILL IN] is a real fact you cannot know, like the link.
+
+Then tell me the subject line most likely to get opened by someone who has ignored me for months.`},
+
+ {n:"The Testimonial Ask, Automated", job:"Proof that collects itself after every client.", p:`Help me set up a testimonial request that goes out on its own after someone finishes with me, so I stop forgetting to ask.
+
+Ask me first, and wait:
+- What happens right before I would want to ask? A session ends, a program wraps, a package is delivered. [ ]
+- Where would the ask go out from: my email tool, my booking tool, or by hand for now? [ ]
+
+Then give me two things:
+1. The request itself: a short message with three specific questions, not "please leave a testimonial." The three should pull where they were before, what changed, and who they would send to me.
+2. The plain steps to make it send automatically after that trigger, in the tool I named. If nothing can automate it yet, give me the saved version plus the one reminder to set so it still happens every time.
+
+Rules:
+- Easy to answer on a phone in two minutes. A blank "any feedback?" is why people never reply.
+- Give them an out that costs them nothing, so the ask stays kind.
+- Tell me where the answers should land so they are easy to find when I need proof later.
+- Do not invent my offer or my timing. Mark [FILL IN].
+
+Then tell me the one question most likely to get a line I could put straight on a sales page.`},
+
+ {n:"The Nurture Sequence", job:"The emails after your freebie that warm people without you.", p:`Help me build the emails that go out on their own after someone grabs my freebie, so a new subscriber gets welcomed and warmed up without me touching it.
+
+First, find out where I actually am. Ask me and wait:
+- Do I have a freebie, and does it deliver automatically when someone signs up? [ ]
+- After that first delivery, does anything else go out, a real sequence, or just the one email? [ ]
+- If I know them, what are the numbers on what I have: open rate, click rate? [ ]
+
+Then, based on my answers:
+- If nothing delivers yet, walk me through wiring the delivery first, one step at a time, in whatever tool I use.
+- If delivery works but it is only the one email, help me build a short nurture sequence behind it: three to five emails over the first week or two that each teach one useful thing, build trust, and lead toward my offer without hard selling.
+- If I already have a sequence, audit it with me: where opens or clicks fall off, whether the freebie email actually earns the click, and which email is the weak link. Then rewrite the weak part.
+
+Also ask me what the freebie leads to, so the sequence points somewhere.
+
+Rules:
+- Every email gives something before it asks for anything.
+- Frame it around what my ideal client came for, not around my modality.
+- Do not invent my numbers, my links, or my offer. Mark [FILL IN], and if I do not know a number, tell me where to find it.
+
+Then tell me which single email in the whole path does the most work, so I get that one right first.`},
+ {n:"The Canned Reply", job:"The message you rewrite every time, written once.", p:`Help me write the replies I keep rewriting, so I never start from scratch again.
+
+Ask me first: which messages do I send over and over? A refund, a reschedule, "can I get a discount," "how does this work," a polite no. [ ]
+
+Then write a clean, warm version of each one I can save and reuse, with the spots I personalize marked.
+
+Rules:
+- Kind and clear, never cold. A saved reply should still sound like a person.
+- Hold my boundary without apologizing for it.
+- Do not invent my policies. Where a number or a rule goes, mark [FILL IN].
+- Save these replies into my Biz Brain folder, so I can grab them anytime.
+
+Then tell me which of these I have been dreading to send, and why this version makes it easier.`},
+
+ {n:"The Renewal Watch", job:"Nothing expensive surprises you again.", p:`Help me set up a way to never get surprised by a renewal or a bill again.
+
+Ask me first: what recurring costs and renewals do I have that I want to see coming? [ ]
+
+Then give me a simple tracker layout and a reminder system: what to log, and how to get a nudge before each one hits, using a calendar or a recurring task.
+
+Rules:
+- Keep it light enough that I will actually maintain it.
+- The nudge lands with enough time to cancel or decide, not the day of.
+- Do not invent my subscriptions. Build the structure and mark [FILL IN] for me to fill.
+
+Then tell me the one renewal most worth reviewing before it charges me again.`},
+
+ {n:"The Process, Documented", job:"Get one workflow out of your head.", p:`Help me document one thing I do the same way every time, so it lives somewhere besides my head.
+
+Ask me first: which process? Pick one I do often and could hand off. [ ]
+
+Then interview me step by step, and write it up as a clean set of instructions: the steps in order, what each one needs, and where it usually goes wrong.
+
+Rules:
+- Ask me one step at a time. Do not guess the middle of my process.
+- Write it so someone who has never done it could follow it.
+- Note the spots only I know about, the ones that break if skipped.
+- Save the finished write-up into my Biz Brain folder, so it lives somewhere besides my head.
+
+Then tell me the one step I could hand to someone else first, and what I would keep for myself.`},
+
+ {n:"The Task You Dread", job:"Turn the chore you avoid into a saved prompt.", p:`There is a task I put off every week. Help me turn it into something I run instead of dread.
+
+Ask me first: what is the task, and what makes it a slog? [ ]
+
+Then build me a saved prompt that does the heavy part of it, so all I do is run it and finish. Tell me exactly what to paste in each time.
+
+Rules:
+- Solve the actual slow part, not a tidy version of the task.
+- The prompt has to work with what I already have in hand when the task comes up.
+- Do not invent the details of my task. Ask me what it really involves.
+
+Then tell me how much of this task the prompt takes off my plate, honestly, and what is still mine to do.`},
+
+ {n:"The Handoff", job:"Give a task to a system you'd normally white-knuckle.", p:`There is a task I have never trusted to anyone or anything but me. I want to hand it off and still sleep.
+
+Ask me first: what is the task, and what am I afraid goes wrong if I let go of it? [ ]
+
+Then build the system that could hold it, plus the check that lets me trust it: what runs on its own, and the one look I take to confirm it went right.
+
+Rules:
+- Take my fear seriously. The check exists because letting go is hard, so make it real and quick.
+- Do not pretend a system removes all my judgment. Name what still needs me.
+- Do not invent the task. Ask.
+
+Then tell me the smallest version of this I could hand off first, to prove to myself it holds.`},
+
+ {n:"The Cleanup", job:"Turn off a system that stopped earning its keep.", p:`Help me find one thing I am still paying for or maintaining that has quietly stopped being worth it.
+
+Ask me first: what tools, subscriptions, funnels, or routines am I running right now? [ ]
+
+Then walk through them with me and help me decide what to keep, what to cut, and what to simplify. For anything I cut, give me the safe steps to turn it off without breaking something that depends on it.
+
+Rules:
+- A thing that still earns its keep stays. This is not about cutting for its own sake.
+- Before I turn anything off, name what points at it, so a live link does not become a dead one.
+- Do not invent what I am running. Work from what I tell you.
+
+Then tell me the one thing that, turned off today, buys me back the most time or money.`},
+ {n:"The Appointment Reminder", job:"The nudge that shows up so they do too.", p:`Set up the reminder that goes out before a session on its own, so I stop chasing no-shows.
+
+Ask me first:
+- What am I reminding people about, and how far ahead should it land? A day before, an hour before, both. [ ]
+- Where would it send from: my booking tool, my calendar, or my email tool? [ ]
+
+Then write the reminder, and give me the plain steps to set it to send automatically at that time in the tool I named.
+
+Rules:
+- Short. When, where, the link, and the one thing to have ready.
+- Warm, not naggy. It is a favour, not a scolding.
+- Give me a day-before version and an hour-before version, so I can use one or both.
+- Do not invent my link or my timing. Mark [FILL IN].
+
+Then tell me the one line most likely to actually cut a no-show.`},
+
+ {n:"The New-Client Onboarding", job:"The welcome that runs the moment someone buys.", p:`Help me set up the sequence that greets a new client on its own the moment they book or buy, so nobody lands in silence.
+
+Ask me first:
+- What happens right after someone buys or books, and what do they need from me to get started? [ ]
+- Where would this send from, and by what trigger: a purchase, a booking, a form? [ ]
+
+Then build a short onboarding sequence, two to four messages, that welcomes them, tells them exactly what happens next, hands over anything they need (links, paperwork, how to prepare), and sets the tone. Then give me the plain steps to make it fire automatically off that trigger.
+
+Rules:
+- The first message goes out within minutes of them buying, so they never wonder if it worked.
+- One clear next step per message, never a pile.
+- Frame it around their relief and excitement, not my process.
+- Do not invent my links, my paperwork, or my steps. Mark [FILL IN].
+
+Then tell me the one thing new clients most often get confused about, and make sure a message answers it.`},
+
+ {n:"The List That Sorts Itself", job:"Your list tags people by what they care about, on its own.", p:`Help me set my email list to sort people by what they actually care about, automatically, so I can send the right thing to the right people without doing it by hand.
+
+Ask me first:
+- What tool holds my list? [ ]
+- What are the two or three things my people split into: the topics they want, the offers they have bought, where they came from? [ ]
+
+Then walk me through setting up automatic tags or groups in that tool: what to tag on, like a link someone clicks or a freebie they grab, and how the rule keeps applying itself going forward. Plain steps, one at a time.
+
+Rules:
+- Tag on real actions, a click or a purchase, not on guesses.
+- Keep it to a few tags that actually change what I would send. More than that and nobody maintains it.
+- Do not invent my tools or my topics. Build the structure and mark [FILL IN].
+
+Then tell me the first tag worth setting up, the one that would most change what I send next.`}
+];
+
+const CENTER = {n:"Your Biz Brain", job:"Start here. The one home your whole board reads and writes to.", p:`Help me build my Biz Brain: one folder my AI can save to and read from, so it stops forgetting what I did and the rest of this board has a home.
+
+Right now my AI starts fresh every time and cannot see what I posted, planned, or decided before. I want to fix that once, because it is the thing that makes everything else here run without me.
+
+First ask me one thing and wait: do I already have a cloud drive, like Google Drive, and is it connected to my AI as a connector or a tool? [ ]
+
+Then, based on my answer:
+- If it is not connected, walk me through connecting it, one step at a time, in plain language. Stop and check I finished each step before you give me the next. Do not hand me the whole setup at once.
+- Once it is connected, make a folder called Biz Brain. Inside it, start one running file called Log, where my AI saves a short summary each time I plan or post something, and reads from before it plans again. Other squares on this board will save their work into this same folder, so it becomes the one place my business lives.
+
+Rules:
+- Assume I have never set up a connector. No jargon, and explain anything I would have to look up.
+- One step at a time. Wait for me between steps.
+- Keep the saved summaries short. A few lines at a time, not every word.
+- If I do not use a cloud drive and do not want one, tell me the paste-it-back way to do the same thing by hand, and be honest about the tradeoff.
+
+Then tell me the first thing worth saving into my Biz Brain, and how I will know it is working.`};
+
+const KEY = 'forge-board-2026-09';
+const FREE = 12;               // centre square, index in the 25-cell grid
+const END  = new Date('2026-10-01T00:00:00');
+
+// grid index -> SQUARES index (centre is free, so everything after it shifts by one)
+function sqIndex(cell){ return cell < FREE ? cell : cell - 1; }
+
+function lineName(i){
+  if(i < 5)  return 'Row ' + (i+1);
+  if(i < 10) return 'Column ' + (i-4);
+  return i === 10 ? 'Corner to corner, top left' : 'Corner to corner, top right';
+}
+
+const LINES = (() => {
+  const L = [];
+  for(let r=0;r<5;r++) L.push([0,1,2,3,4].map(c=>r*5+c));
+  for(let c=0;c<5;c++) L.push([0,1,2,3,4].map(r=>r*5+c));
+  L.push([0,6,12,18,24]);
+  L.push([4,8,12,16,20]);
+  return L;
+})();
+
+let state = JSON.parse(localStorage.getItem(KEY) || '{}');
+const save = () => localStorage.setItem(KEY, JSON.stringify(state));
+const isDone = cell => cell === FREE || !!state[cell];
+
+// post links live in their own key, so an older saved board still loads fine
+const LKEY = KEY + ':links';
+let links = JSON.parse(localStorage.getItem(LKEY) || '{}');
+const saveLinks = () => localStorage.setItem(LKEY, JSON.stringify(links));
+
+const board = document.getElementById('board');
+
+function makeSlot(li){
+  const b = document.createElement('button');
+  b.className = 'bslot';
+  b.type = 'button';
+  b.dataset.line = li;
+  b.innerHTML = '<span class="bw">BINGO</span>';
+  b.title = lineName(li);
+  b.onclick = () => {
+    if(!b.classList.contains('won')) return;
+    navigator.clipboard.writeText(bingoPost(li)).then(() => toast('Bingo post copied'));
+  };
+  return b;
+}
+
+for(let cell=0; cell<25; cell++){
+  const el = document.createElement('div');
+  if(cell === FREE){
+    el.className = 'sq free';
+    el.id = 'freeSq';
+    el.innerHTML = '<span class="freehint">Start here</span><div class="glyph">✦</div><div class="nm">'+CENTER.n+'</div>';
+    el.addEventListener('click', openCenter);
+  } else {
+    const s = SQUARES[sqIndex(cell)];
+    el.className = 'sq';
+    el.dataset.cell = cell;
+    el.innerHTML = '<span class="mark"></span><div class="num">'+String(sqIndex(cell)+1).padStart(2,'0')+
+                   '</div><div class="nm">'+s.n+'</div>';
+    el.addEventListener('click', () => open(cell));
+  }
+  board.appendChild(el);
+  if(cell % 5 === 4) board.appendChild(makeSlot((cell - 4) / 5));   // end of that row
+}
+for(let c=0; c<5; c++) board.appendChild(makeSlot(5 + c));          // foot of each column
+
+function completedLines(){
+  return LINES.filter(l => l.every(isDone));
+}
+
+function paint(){
+  let done = 0;
+  document.querySelectorAll('.sq[data-cell]').forEach(el => {
+    const cell = +el.dataset.cell;
+    el.classList.toggle('done', isDone(cell));
+    el.classList.remove('inline');
+    if(isDone(cell)) done++;
+  });
+  const lines = completedLines();
+  const hot = new Set();
+  lines.forEach(l => l.forEach(c => hot.add(c)));
+  const freeEl = document.getElementById('freeSq');
+  if(freeEl) freeEl.classList.toggle('inline', hot.has(FREE));
+  hot.forEach(c => {
+    const el = document.querySelector('.sq[data-cell="'+c+'"]');
+    if(el) el.classList.add('inline');
+  });
+  document.getElementById('sDone').textContent  = done;
+  document.getElementById('sLines').textContent = lines.length;
+  paintBingos(lines);
+  const days = Math.max(0, Math.ceil((END - new Date()) / 86400000));
+  document.getElementById('sLeft').textContent = days;
+}
+
+// ── one copyable post per completed line ─────────────────────
+function bingoPost(li){
+  const rows = LINES[li].map(cell => {
+    if(cell === FREE) return '✦  ' + CENTER.n;
+    const s = SQUARES[sqIndex(cell)];
+    const u = (links[cell] || '').trim();
+    return String(sqIndex(cell)+1).padStart(2,'0') + '  ' + s.n + '  ' + (u || '(link not saved)');
+  });
+  return '🔥 I got a bingo! ' + lineName(li) + '.\n\n' +
+         'The Monthly Claude Challenge · September: Set It & Forget It\n\n' +
+         rows.join('\n');
+}
+
+function paintBingos(lines){
+  const idx = lines.map(l => LINES.indexOf(l));
+
+  // rows and columns light up in the grid, at the end of the line they finished
+  document.querySelectorAll('.bslot').forEach(b => {
+    b.classList.toggle('won', idx.includes(+b.dataset.line));
+  });
+
+  // the diagonals have no edge to sit on, so they get cards under the board
+  const box = document.getElementById('bingos');
+  const diag = idx.filter(i => i >= 10);
+  box.classList.toggle('on', diag.length > 0);
+  box.innerHTML = diag.map(i => {
+    const withLinks = LINES[i].filter(c => c !== FREE && (links[c]||'').trim()).length;
+    const real = LINES[i].filter(c => c !== FREE).length;
+    return '<div class="bingo">' +
+             '<span class="bn">🔥 ' + lineName(i) + '</span>' +
+             '<span class="bd">' + withLinks + ' of ' + real + ' with links saved</span>' +
+             '<button data-line="' + i + '">Copy my bingo post</button>' +
+           '</div>';
+  }).join('');
+  box.querySelectorAll('button').forEach(b => {
+    b.onclick = () => navigator.clipboard.writeText(bingoPost(+b.dataset.line))
+      .then(() => toast('Bingo post copied'));
+  });
+}
+
+const veil  = document.getElementById('veil');
+const sheet = document.getElementById('sheet');
+
+function open(cell){
+  const s = SQUARES[sqIndex(cell)];
+  const on = isDone(cell);
+  sheet.innerHTML =
+    '<button class="close" aria-label="Close">&times;</button>' +
+    '<div class="num">Square '+String(sqIndex(cell)+1).padStart(2,'0')+'</div>' +
+    '<h3>'+s.n+'</h3>' +
+    '<div class="job">'+s.job+'</div>' +
+    '<div class="pbox" id="pbox"></div>' +
+    '<div class="acts">' +
+      '<button class="btn copy" id="cp">Copy the prompt</button>' +
+      '<button class="btn mark'+(on?' is':'')+'" id="mk">'+(on?'✓ Built':'Mark it built')+'</button>' +
+    '</div>' +
+    '<div class="linkwrap">' +
+      '<label for="lk">Community post link</label>' +
+      '<input id="lk" type="url" placeholder="Paste the link to your post in the community">' +
+      '<div class="hint">The link to your post inside the community, not to the thing you built. Save it as you go and your bingo post writes itself. It is also how a bingo gets checked, so a line with missing links takes longer to confirm.</div>' +
+    '</div>';
+  document.getElementById('pbox').textContent = s.p;
+  const lk = document.getElementById('lk');
+  lk.value = links[cell] || '';
+  lk.addEventListener('input', () => {
+    const v = lk.value.trim();
+    if(v) links[cell] = v; else delete links[cell];
+    saveLinks();
+  });
+  veil.classList.add('on');
+  document.body.style.overflow = 'hidden';
+
+  sheet.querySelector('.close').onclick = close;
+  document.getElementById('cp').onclick = e => {
+    navigator.clipboard.writeText(s.p).then(() => {
+      e.target.textContent = 'Copied';
+      e.target.classList.add('ok');
+      toast('Prompt copied');
+      setTimeout(() => { e.target.textContent = 'Copy the prompt'; e.target.classList.remove('ok'); }, 1800);
+    });
+  };
+  document.getElementById('mk').onclick = e => {
+    const before = completedLines().length;
+    if(state[cell]) delete state[cell]; else state[cell] = 1;
+    save(); paint();
+    const now = completedLines().length;
+    e.target.classList.toggle('is', !!state[cell]);
+    e.target.textContent = state[cell] ? '✓ Built' : 'Mark it built';
+    if(now > before) toast(now === 1 ? 'That is a line. One entry in.' : 'Another line. '+now+' entries.');
+  };
+}
+
+function openCenter(){
+  sheet.innerHTML =
+    '<button class="close" aria-label="Close">&times;</button>' +
+    '<div class="num">The centre square · start here</div>' +
+    '<h3>'+CENTER.n+'</h3>' +
+    '<div class="job">'+CENTER.job+'</div>' +
+    '<div class="pbox" id="pbox"></div>' +
+    '<div class="acts"><button class="btn copy" id="cp">Copy the prompt</button></div>' +
+    '<div class="linkwrap"><div class="hint">This is the square that makes the rest of the board run, so build it first. Once your Biz Brain is set up, the routines and check-ins read from it instead of asking you to paste everything back in.</div></div>';
+  document.getElementById('pbox').textContent = CENTER.p;
+  veil.classList.add('on');
+  document.body.style.overflow = 'hidden';
+  sheet.querySelector('.close').onclick = close;
+  document.getElementById('cp').onclick = e => {
+    navigator.clipboard.writeText(CENTER.p).then(() => {
+      e.target.textContent = 'Copied';
+      e.target.classList.add('ok');
+      toast('Prompt copied');
+      setTimeout(() => { e.target.textContent = 'Copy the prompt'; e.target.classList.remove('ok'); }, 1800);
+    });
+  };
+}
+
+function close(){ veil.classList.remove('on'); document.body.style.overflow = ''; }
+veil.addEventListener('click', e => { if(e.target === veil) close(); });
+document.addEventListener('keydown', e => { if(e.key === 'Escape') close(); });
+
+const toastEl = document.getElementById('toast');
+let tid;
+function toast(msg){
+  toastEl.textContent = msg;
+  toastEl.classList.add('up');
+  clearTimeout(tid);
+  tid = setTimeout(() => toastEl.classList.remove('up'), 2400);
+}
+
+document.getElementById('copyTmpl').onclick = e => {
+  navigator.clipboard.writeText(document.getElementById('tmpl').textContent).then(() => {
+    e.target.textContent = 'Copied';
+    e.target.classList.add('ok');
+    toast('Template copied');
+    setTimeout(() => { e.target.textContent = 'Copy the template'; e.target.classList.remove('ok'); }, 1800);
+  });
+};
+
+// ── clear the board ──────────────────────────────────────────
+document.getElementById('clearAll').onclick = () => {
+  const n = Object.keys(state).length;
+  if(!n){ toast('Nothing to clear'); return; }
+  if(!confirm('Clear all ' + n + ' built squares and any links you saved?\n\nThis cannot be undone.')) return;
+  state = {}; links = {};
+  save(); saveLinks(); paint();
+  toast('Board cleared');
+};
+
+const em = document.getElementById('embers');
+for(let i=0;i<20;i++){
+  const s = document.createElement('div');
+  s.className = 'ember';
+  s.style.left = Math.random()*100+'%';
+  s.style.animationDuration = (7+Math.random()*9)+'s';
+  s.style.animationDelay = (Math.random()*11)+'s';
+  s.style.transform = 'scale('+(0.6+Math.random()*1.4)+')';
+  em.appendChild(s);
+}
+
+paint();
+</script>
+</body>
+</html>
