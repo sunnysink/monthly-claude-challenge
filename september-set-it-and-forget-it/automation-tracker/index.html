@@ -152,6 +152,15 @@
   .empty{text-align:center;color:var(--ink-faint);font-family:var(--mono);font-size:13px;padding:34px 20px;
     border:1px dashed var(--edge);border-radius:14px}
 
+  .export{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+    background:var(--surface);border:1px solid var(--edge2);border-radius:13px;padding:12px 16px;margin-bottom:18px;backdrop-filter:blur(12px)}
+  .export-lbl{font-size:12.5px;color:var(--ink-dim);flex:1;min-width:210px;line-height:1.45}
+  .export-btns{display:flex;gap:8px;flex-wrap:wrap}
+  .eb{font-family:var(--mono);font-size:11.5px;letter-spacing:.03em;color:var(--ink);cursor:pointer;
+    background:rgba(7,5,15,0.5);border:1px solid var(--edge);border-radius:30px;padding:9px 15px;transition:all .15s}
+  .eb:hover{border-color:var(--copper);transform:translateY(-1px)}
+  .eb.on{border-color:var(--green);color:var(--green)}
+
   footer{margin-top:38px;text-align:center;font-family:var(--mono);font-size:10.5px;
     color:var(--ink-dim);opacity:.7;letter-spacing:.06em}
 
@@ -181,6 +190,14 @@
   </section>
 
   <div class="attn" id="attn"></div>
+
+  <div class="export">
+    <span class="export-lbl">🤖 Take your systems to any AI. Hand it to Claude or ChatGPT so it knows how your business runs before it helps.</span>
+    <div class="export-btns">
+      <button class="eb" id="copy-ai">Copy for your AI</button>
+      <button class="eb" id="dl-ai">Download .md</button>
+    </div>
+  </div>
 
   <div class="examples-note" id="ex-note">
     <span><b>Loaded with the 24 automations from your September board</b>, plus your Biz Brain. Mark each one Running as you build it, or clear them to start from a blank page.</span>
@@ -409,6 +426,51 @@
   $('clear-ex').addEventListener('click', function(){
     state.systems=state.systems.filter(function(s){ return !s.example; });
     save(); render();
+  });
+
+  /* export: hand your systems to any AI */
+  function exportText(){
+    var by={running:[],look:[],manual:[]};
+    state.systems.forEach(function(s){ (by[s.status]||by.manual).push(s); });
+    var lines=['# My business automations',
+      '_Exported from The Automation Tracker on '+today()+'_','',
+      'Here are the systems in my business: what each does, where it lives, and whether it is running. Use this as context when you help me with my business.',''];
+    [['running','Running'],['look','Needs a look'],['manual','Still by hand (automate next)']].forEach(function(pair){
+      var arr=by[pair[0]]; if(!arr.length) return;
+      lines.push('## '+pair[1]);
+      arr.forEach(function(s){
+        var bits=[];
+        if(s.where) bits.push(s.where);
+        if(s.status!=='manual' && s.checked) bits.push(ageText(s.checked).txt);
+        var meta=bits.length ? ' ('+bits.join(', ')+')' : '';
+        lines.push('- **'+s.name+'**'+meta+(s.what?' — '+s.what:''));
+        if(s.notes) lines.push('  - note: '+s.notes);
+      });
+      lines.push('');
+    });
+    return lines.join('\n').trim()+'\n';
+  }
+  function flash(btn,txt){ var o=btn.getAttribute('data-o')||btn.textContent; btn.setAttribute('data-o',o); btn.textContent=txt; btn.classList.add('on'); setTimeout(function(){ btn.textContent=o; btn.classList.remove('on'); },1600); }
+  function fallbackCopy(t,btn){
+    var ta=document.createElement('textarea'); ta.value=t; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.focus(); ta.select();
+    try{ document.execCommand('copy'); flash(btn,'Copied ✓'); }catch(e){ flash(btn,'Press Ctrl+C'); }
+    document.body.removeChild(ta);
+  }
+  $('copy-ai').addEventListener('click', function(){
+    var t=exportText(), btn=$('copy-ai');
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(t).then(function(){ flash(btn,'Copied ✓'); }, function(){ fallbackCopy(t,btn); });
+    } else { fallbackCopy(t,btn); }
+  });
+  $('dl-ai').addEventListener('click', function(){
+    var t=exportText();
+    try{
+      var blob=new Blob([t],{type:'text/markdown'}), url=URL.createObjectURL(blob);
+      var a=document.createElement('a'); a.href=url; a.download='my-automations.md';
+      document.body.appendChild(a); a.click();
+      setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(url); },120);
+      flash($('dl-ai'),'Downloaded ✓');
+    }catch(e){ fallbackCopy(t,$('dl-ai')); }
   });
 
   render();
