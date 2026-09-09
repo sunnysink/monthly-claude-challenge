@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Automation Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* She Speaks — the September "Set It & Forget It" board skin */
+    --bg:#07050F; --bg2:#130B22; --surface-solid:#150C26;
+    --card-rgb:28,16,48;
+    --violet-rgb:167,107,255; --violet-lt-rgb:201,165,255;
+    --magenta-rgb:232,111,216; --magenta-glow-rgb:255,111,200;
+    --gold-rgb:255,227,163; --aqua-rgb:95,227,208; --mauve-rgb:199,155,232;
+    --ink:#F3EAFF; --ink-dim:#C2ACE2; --ink-faint:#8F7BA8;
+    --copper:#A76BFF; --copper-lt:#C9A5FF;      /* violet accent */
+    --ember:#E86FD8; --ember-glow:#FF6FC8;       /* magenta / orchid */
+    --gold:#FFE3A3; --forest:#5FE3D0; --mauve:#C79BE8;
+    --green:#5FE3D0;   /* status: running = aqua (board has no green) */
+    --amber:#FFE3A3;   /* status: needs a look / stale = gold */
+    --red:#F2789A;
+    --surface:rgba(var(--card-rgb),0.70);
+    --edge:#2A1C44; --edge2:rgba(var(--violet-rgb),0.24);
+    --serif:'Cormorant Garamond','Hoefler Text',Georgia,serif;
+    --sans:'Hanken Grotesk',system-ui,-apple-system,sans-serif;
+    --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg); color:var(--ink); font-family:var(--sans);
+    font-size:15px; line-height:1.6; -webkit-font-smoothing:antialiased; min-height:100vh;
+    background-image:
+      radial-gradient(900px 520px at 10% -10%, rgba(var(--magenta-rgb),0.16), transparent 60%),
+      radial-gradient(820px 500px at 100% 0%, rgba(var(--aqua-rgb),0.14), transparent 55%),
+      radial-gradient(760px 620px at 55% 120%, rgba(var(--violet-rgb),0.12), transparent 60%);
+  }
+  #cinders{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+  .wrap{position:relative;z-index:1;max-width:940px;margin:0 auto;padding:44px 22px 64px}
+
+  /* header */
+  header{margin-bottom:22px}
+  .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.3em;text-transform:uppercase;
+    color:var(--copper);font-weight:600;margin-bottom:11px;opacity:.95}
+  h1{font-family:var(--serif);font-size:clamp(38px,7.4vw,62px);line-height:.98;font-weight:600;letter-spacing:.5px;
+    text-wrap:balance;
+    background:linear-gradient(92deg,var(--copper-lt),var(--ember-glow) 38%,var(--gold) 70%,var(--copper));
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .lede{color:var(--ink-dim);font-size:15.5px;max-width:60ch;margin-top:13px;line-height:1.6}
+  .lede b{color:var(--copper-lt);font-weight:600}
+
+  /* health strip */
+  .health{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin:24px 0 14px}
+  .tile{position:relative;overflow:hidden;background:var(--surface);border:1px solid var(--edge2);
+    border-radius:16px;padding:17px 18px 15px;backdrop-filter:blur(16px)}
+  .tile::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px}
+  .tile.run::before{background:var(--green)} .tile.look::before{background:var(--amber)} .tile.man::before{background:var(--mauve)}
+  .tile .n{font-family:var(--serif);font-size:40px;font-weight:600;line-height:1;letter-spacing:-.01em}
+  .tile.run .n{color:var(--green)} .tile.look .n{color:var(--amber)} .tile.man .n{color:var(--mauve)}
+  .tile .lab{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-dim);margin-top:9px}
+  .tile .sub{font-size:12px;color:var(--ink-faint);margin-top:3px;min-height:1.2em}
+
+  .attn{font-family:var(--mono);font-size:12px;color:var(--amber);background:rgba(var(--gold-rgb),0.09);
+    border:1px solid rgba(var(--gold-rgb),0.34);border-radius:11px;padding:10px 14px;margin-bottom:20px;display:none}
+  .attn.show{display:block}
+  .attn b{color:var(--ink)}
+
+  /* example banner */
+  .examples-note{display:none;align-items:center;gap:12px;flex-wrap:wrap;justify-content:space-between;
+    background:linear-gradient(135deg,rgba(var(--aqua-rgb),0.15),rgba(var(--card-rgb),0.7));border:1px solid rgba(var(--aqua-rgb),0.4);
+    border-radius:12px;padding:11px 15px;margin-bottom:18px;font-size:13px;color:var(--ink-dim)}
+  .examples-note.show{display:flex}
+  .examples-note b{color:var(--forest)}
+
+  /* add / edit form */
+  .panel{background:var(--surface-solid);border:1px solid var(--edge2);border-radius:16px;padding:19px 20px;margin-bottom:22px}
+  .panel h2{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--ember);font-weight:700;margin-bottom:15px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+  .field{display:flex;flex-direction:column;gap:6px;margin-bottom:13px}
+  .field.full{grid-column:1 / -1}
+  label{font-family:var(--mono);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-dim);font-weight:600}
+  input[type=text],textarea{font-family:var(--sans);font-size:14.5px;color:var(--ink);background:rgba(7,5,15,0.55);
+    border:1px solid var(--edge);border-radius:9px;padding:10px 12px;width:100%;transition:border-color .15s,box-shadow .15s}
+  textarea{resize:vertical;min-height:52px;line-height:1.5}
+  input[type=text]:focus,textarea:focus{outline:none;border-color:var(--copper);box-shadow:0 0 0 3px rgba(var(--violet-rgb),0.18)}
+  input::placeholder,textarea::placeholder{color:var(--ink-faint)}
+
+  .seg{display:flex;gap:7px;flex-wrap:wrap}
+  .seg button{font-family:var(--mono);font-size:11.5px;letter-spacing:.03em;color:var(--ink-dim);
+    background:rgba(7,5,15,0.5);border:1px solid var(--edge);border-radius:30px;padding:8px 14px;cursor:pointer;
+    display:inline-flex;align-items:center;gap:7px;transition:all .15s}
+  .seg button .dot{width:8px;height:8px;border-radius:50%;background:currentColor;flex:none}
+  .seg button:hover{border-color:var(--copper)}
+  .seg button[aria-pressed="true"]{color:var(--ink);background:rgba(7,5,15,0.8)}
+  .seg button[data-s="running"][aria-pressed="true"]{border-color:var(--green);color:var(--green)}
+  .seg button[data-s="look"][aria-pressed="true"]{border-color:var(--amber);color:var(--amber)}
+  .seg button[data-s="manual"][aria-pressed="true"]{border-color:var(--mauve);color:var(--mauve)}
+
+  .row-actions{display:flex;gap:10px;align-items:center;margin-top:6px}
+  .btn{font-family:var(--sans);font-weight:600;font-size:14px;cursor:pointer;border-radius:30px;padding:10px 20px;
+    border:1px solid var(--edge2);background:rgba(7,5,15,0.5);color:var(--ink);transition:all .15s}
+  .btn:hover{border-color:var(--copper);transform:translateY(-1px)}
+  .btn.primary{border-color:transparent;color:#160726;font-weight:700;
+    background:linear-gradient(94deg,var(--copper-lt),var(--ember-glow) 55%,var(--gold));background-size:200% auto;animation:sheen 7s linear infinite}
+  .btn.primary:hover{transform:translateY(-1px);box-shadow:0 10px 28px rgba(var(--magenta-rgb),0.3)}
+  .btn.ghost{background:none;color:var(--ink-dim);border-color:transparent;padding:10px 6px}
+  .btn.ghost:hover{color:var(--ember-glow);transform:none}
+  @keyframes sheen{to{background-position:200% center}}
+
+  /* filters */
+  .barhead{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:4px 0 14px;flex-wrap:wrap}
+  .barhead h2{font-family:var(--serif);font-size:26px;font-weight:600;color:var(--ink)}
+  .filters{display:flex;gap:7px;flex-wrap:wrap}
+  .filters button{font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--ink-dim);
+    background:none;border:1px solid var(--edge);border-radius:30px;padding:6px 13px;cursor:pointer;transition:all .15s}
+  .filters button:hover{border-color:var(--copper)}
+  .filters button[aria-pressed="true"]{color:var(--ink);border-color:var(--copper);background:rgba(var(--violet-rgb),0.12)}
+  .filters button b{color:var(--copper-lt);font-weight:600}
+
+  /* system cards */
+  .list{display:flex;flex-direction:column;gap:12px}
+  .sys{position:relative;overflow:hidden;background:var(--surface);border:1px solid var(--edge2);
+    border-radius:15px;padding:17px 19px 16px 22px;backdrop-filter:blur(14px)}
+  .sys::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px}
+  .sys[data-s="running"]::before{background:var(--green)}
+  .sys[data-s="look"]::before{background:var(--amber)}
+  .sys[data-s="manual"]::before{background:var(--mauve)}
+  .sys-top{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
+  .sys-name{font-family:var(--serif);font-size:23px;font-weight:600;line-height:1.15;color:var(--ink)}
+  .pill{font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;font-weight:600;
+    border-radius:30px;padding:5px 11px;white-space:nowrap;display:inline-flex;align-items:center;gap:6px;flex:none}
+  .pill .dot{width:7px;height:7px;border-radius:50%;background:currentColor}
+  .pill.running{color:var(--green);background:rgba(var(--aqua-rgb),0.13);border:1px solid rgba(var(--aqua-rgb),0.42)}
+  .pill.look{color:var(--amber);background:rgba(var(--gold-rgb),0.12);border:1px solid rgba(var(--gold-rgb),0.44)}
+  .pill.manual{color:var(--mauve);background:rgba(var(--mauve-rgb),0.15);border:1px solid rgba(var(--mauve-rgb),0.44)}
+  .sys-what{color:var(--ink);font-size:15.5px;font-weight:500;margin-top:5px;line-height:1.45}
+  .sys-meta{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:12px;font-family:var(--mono);font-size:11.5px}
+  .where{color:var(--copper-lt);background:rgba(var(--violet-rgb),0.1);border:1px solid var(--edge2);border-radius:7px;padding:3px 9px}
+  .checked{color:var(--ink-faint)}
+  .checked.stale{color:var(--amber)}
+  .checked.stale::before{content:"⚠ ";}
+  .sys-notes{color:var(--ink-faint);font-size:13px;margin-top:10px;line-height:1.5;font-style:italic}
+  .sys-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:13px;padding-top:12px;border-top:1px solid rgba(var(--violet-rgb),0.14)}
+  .chip{font-family:var(--mono);font-size:11px;letter-spacing:.03em;color:var(--ink-dim);
+    background:none;border:1px solid var(--edge);border-radius:8px;padding:6px 11px;cursor:pointer;transition:all .15s}
+  .chip:hover{border-color:var(--copper);color:var(--ink)}
+  .chip.warn:hover{border-color:var(--red);color:var(--red)}
+
+  .empty{text-align:center;color:var(--ink-faint);font-family:var(--mono);font-size:13px;padding:34px 20px;
+    border:1px dashed var(--edge);border-radius:14px}
+
+  footer{margin-top:38px;text-align:center;font-family:var(--mono);font-size:10.5px;
+    color:var(--ink-dim);opacity:.7;letter-spacing:.06em}
+
+  @media(max-width:640px){
+    .health{grid-template-columns:1fr 1fr 1fr;gap:9px}
+    .tile{padding:13px 12px}.tile .n{font-size:28px}
+    .grid2{grid-template-columns:1fr}
+    .sys-top{flex-direction:column;gap:8px}
+  }
+  @media(prefers-reduced-motion:reduce){.btn.primary{animation:none}}
+</style>
+</head>
+<body>
+<canvas id="cinders"></canvas>
+<div class="wrap">
+
+  <header>
+    <div class="kicker">Soul-Forged Founders · Set It &amp; Forget It</div>
+    <h1>The Automation Tracker</h1>
+    <p class="lede">Every system you set up is one less thing you do by hand. But the quiet danger of <b>set it and forget it</b> is the forgetting: a routine pauses, a connection drops, and you find out weeks later. This is the one place your systems live, so none of them break in the dark.</p>
+  </header>
+
+  <section class="health" id="health" aria-label="Your systems at a glance">
+    <div class="tile run"><div class="n" id="c-run">0</div><div class="lab">Running</div><div class="sub" id="s-run"></div></div>
+    <div class="tile look"><div class="n" id="c-look">0</div><div class="lab">Needs a look</div><div class="sub" id="s-look"></div></div>
+    <div class="tile man"><div class="n" id="c-man">0</div><div class="lab">Still by hand</div><div class="sub" id="s-man"></div></div>
+  </section>
+
+  <div class="attn" id="attn"></div>
+
+  <div class="examples-note" id="ex-note">
+    <span><b>Loaded with the 24 automations from your September board</b>, plus your Biz Brain. Mark each one Running as you build it, or clear them to start from a blank page.</span>
+    <button class="btn ghost" id="clear-ex" style="font-family:var(--mono);font-size:12px">Clear examples</button>
+  </div>
+
+  <section class="panel">
+    <h2 id="form-title">Add a system</h2>
+    <div class="grid2">
+      <div class="field"><label for="f-name">Name</label>
+        <input type="text" id="f-name" placeholder="Weekly content to Buffer" autocomplete="off"></div>
+      <div class="field"><label for="f-where">Where it lives</label>
+        <input type="text" id="f-where" placeholder="Claude routine, Make, Zapier…" list="tools" autocomplete="off">
+        <datalist id="tools"><option>Claude routine</option><option>Make</option><option>Zapier</option><option>Buffer</option><option>MailerLite</option><option>Wix</option><option>Substack</option><option>Google Drive</option><option>Skool</option><option>Calendly</option><option>Stripe</option><option>By hand</option></datalist></div>
+      <div class="field full"><label for="f-what">What it does</label>
+        <input type="text" id="f-what" placeholder="One line: what happens, on its own" autocomplete="off"></div>
+      <div class="field full"><label>Status</label>
+        <div class="seg" id="f-status" role="group" aria-label="Status">
+          <button type="button" data-s="running" aria-pressed="true"><span class="dot"></span>Running</button>
+          <button type="button" data-s="look" aria-pressed="false"><span class="dot"></span>Needs a look</button>
+          <button type="button" data-s="manual" aria-pressed="false"><span class="dot"></span>Still by hand</button>
+        </div></div>
+      <div class="field full"><label for="f-notes">Notes <span style="text-transform:none;letter-spacing:0;color:var(--ink-faint)">(optional)</span></label>
+        <textarea id="f-notes" placeholder="Where to check it, what breaks it, what you'd automate next…"></textarea></div>
+    </div>
+    <div class="row-actions">
+      <button class="btn primary" id="save-btn">Add system</button>
+      <button class="btn ghost" id="cancel-btn" hidden>Cancel</button>
+    </div>
+  </section>
+
+  <div class="barhead">
+    <h2>Your systems</h2>
+    <div class="filters" id="filters" role="group" aria-label="Filter systems">
+      <button data-f="all" aria-pressed="true">All <b id="f-all">0</b></button>
+      <button data-f="running" aria-pressed="false">Running <b id="f-run">0</b></button>
+      <button data-f="look" aria-pressed="false">Needs a look <b id="f-look">0</b></button>
+      <button data-f="manual" aria-pressed="false">Automate next <b id="f-man">0</b></button>
+    </div>
+  </div>
+
+  <div class="list" id="list"></div>
+
+  <footer>SEPTEMBER · SET IT &amp; FORGET IT · A FREE SPARK INSIDE SOUL-FORGED FOUNDERS</footer>
+
+</div>
+
+<script>
+  var KEY = 'sff-automation-tracker-v2';
+  var STALE_DAYS = 21;
+  var STATUS = {
+    running:{label:'Running', cls:'running'},
+    look:{label:'Needs a look', cls:'look'},
+    manual:{label:'Still by hand', cls:'manual'}
+  };
+
+  var EXAMPLES = [
+    {name:'Your Biz Brain', what:'Start here. The one home your whole board reads and writes to.', where:'Google Drive', status:'running', notes:'Everything else reads and writes to this folder.', checked:daysAgo(2), example:true},
+    {name:'The Weekly Content Routine', what:'One prompt that plans your whole week.', where:'Claude', status:'running', notes:'', checked:daysAgo(3), example:true},
+    {name:'The Repurpose Engine', what:'One piece in, a week of posts out.', where:'Claude', status:'manual', notes:'', checked:'', example:true},
+    {name:'The Voice Skill', what:'Teach Claude to sound like you, once.', where:'Claude', status:'running', notes:'Re-check it still sounds like me after the last rewrite.', checked:daysAgo(24), example:true},
+    {name:'The Idea Well', what:'An idea bank that refills itself.', where:'Claude', status:'manual', notes:'', checked:'', example:true},
+    {name:'The Swipe File', what:'Your best lines, always within reach.', where:'Claude', status:'manual', notes:'', checked:'', example:true},
+    {name:'The Booking Confirmation', what:'Prep and links that go out without you.', where:'Booking tool', status:'manual', notes:'', checked:'', example:true},
+    {name:'The Intake That Fills Itself', what:'The form does the sorting.', where:'Claude', status:'manual', notes:'', checked:'', example:true},
+    {name:'The Delivery Template', what:'Every client gets the same clean handoff.', where:'Claude', status:'manual', notes:'', checked:'', example:true},
+    {name:'The Session Recap', what:'Notes and next steps after every call, in one run.', where:'Claude', status:'manual', notes:'', checked:'', example:true},
+    {name:'The Follow-Up That Runs', what:'The message that used to slip, on time.', where:'MailerLite', status:'manual', notes:'', checked:'', example:true},
+    {name:'The Self-Sending Welcome', what:'The first email a new subscriber gets, on its own.', where:'MailerLite', status:'look', notes:'Make sure it’s still firing after the list change.', checked:daysAgo(6), example:true},
+    {name:'The Reader Segment', what:'Find the people who actually open.', where:'MailerLite', status:'manual', notes:'', checked:'', example:true},
+    {name:'The Re-Engagement Note', what:'One real reach to the ones who went quiet.', where:'MailerLite', status:'manual', notes:'', checked:'', example:true},
+    {name:'The Testimonial Ask, Automated', what:'Proof that collects itself after every client.', where:'MailerLite', status:'manual', notes:'', checked:'', example:true},
+    {name:'The Nurture Sequence', what:'The emails after your freebie that warm people without you.', where:'MailerLite', status:'manual', notes:'', checked:'', example:true},
+    {name:'The Canned Reply', what:'The message you rewrite every time, written once.', where:'Claude', status:'manual', notes:'', checked:'', example:true},
+    {name:'The Renewal Watch', what:'Nothing expensive surprises you again.', where:'Calendar', status:'manual', notes:'', checked:'', example:true},
+    {name:'The Process, Documented', what:'Get one workflow out of your head.', where:'Claude', status:'manual', notes:'', checked:'', example:true},
+    {name:'The Task You Dread', what:'Turn the chore you avoid into a saved prompt.', where:'Claude', status:'manual', notes:'', checked:'', example:true},
+    {name:'The Handoff', what:'Give a task to a system you’d normally white-knuckle.', where:'Claude', status:'manual', notes:'', checked:'', example:true},
+    {name:'The Cleanup', what:'Turn off a system that stopped earning its keep.', where:'Review', status:'manual', notes:'', checked:'', example:true},
+    {name:'The Appointment Reminder', what:'The nudge that shows up so they do too.', where:'Booking tool', status:'manual', notes:'', checked:'', example:true},
+    {name:'The New-Client Onboarding', what:'The welcome that runs the moment someone buys.', where:'MailerLite', status:'manual', notes:'', checked:'', example:true},
+    {name:'The List That Sorts Itself', what:'Your list tags people by what they care about, on its own.', where:'MailerLite', status:'manual', notes:'', checked:'', example:true}
+  ];
+
+  function daysAgo(n){ var d=new Date(); d.setDate(d.getDate()-n); return d.toISOString().slice(0,10); }
+  function today(){ return new Date().toISOString().slice(0,10); }
+  function uid(){ return 'a'+Math.random().toString(36).slice(2,9); }
+
+  var state = load();
+  var editingId = null;
+  var formStatus = 'running';
+  var filter = 'all';
+
+  function load(){
+    try{ var raw=localStorage.getItem(KEY); if(raw){ return JSON.parse(raw); } }catch(e){}
+    return { systems: EXAMPLES.map(function(e){ return Object.assign({id:uid()}, e); }), seeded:true };
+  }
+  function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
+
+  function ageText(iso){
+    if(!iso) return {txt:'never checked', stale:true};
+    var then=new Date(iso+'T00:00:00'), now=new Date(today()+'T00:00:00');
+    var d=Math.round((now-then)/86400000);
+    var txt = d<=0 ? 'checked today' : d===1 ? 'checked yesterday' : 'checked '+d+' days ago';
+    return {txt:txt, stale:d>STALE_DAYS};
+  }
+
+  var $=function(id){ return document.getElementById(id); };
+
+  function render(){
+    var sys = state.systems;
+    var counts={running:0,look:0,manual:0};
+    sys.forEach(function(s){ counts[s.status]++; });
+
+    $('c-run').textContent=counts.running; $('c-look').textContent=counts.look; $('c-man').textContent=counts.manual;
+    $('f-all').textContent=sys.length; $('f-run').textContent=counts.running; $('f-look').textContent=counts.look; $('f-man').textContent=counts.manual;
+
+    var staleRun = sys.filter(function(s){ return s.status!=='manual' && ageText(s.checked).stale; }).length;
+    $('s-run').textContent = counts.running ? 'set and holding' : 'none yet';
+    $('s-look').textContent = counts.look ? 'give these a check' : 'all clear';
+    $('s-man').textContent = counts.manual ? 'your automate-next list' : '';
+
+    var attn=$('attn'); var needs=counts.look+staleRun;
+    if(needs>0){
+      attn.classList.add('show');
+      var bits=[];
+      if(counts.look) bits.push('<b>'+counts.look+'</b> '+(counts.look===1?'system needs':'systems need')+' a look');
+      if(staleRun) bits.push('<b>'+staleRun+'</b> haven’t been checked in over '+STALE_DAYS+' days');
+      attn.innerHTML = bits.join(' · ') + '. A system you never look at is one that breaks quietly.';
+    } else { attn.classList.remove('show'); }
+
+    var hasEx = sys.some(function(s){ return s.example; });
+    $('ex-note').classList.toggle('show', hasEx);
+
+    var shown = sys.filter(function(s){ return filter==='all' || s.status===filter; });
+    var list=$('list');
+    if(!sys.length){
+      list.innerHTML='<div class="empty">No systems yet. Add the first thing you’ve set up (or the first thing you do by hand and want to).</div>';
+      return;
+    }
+    if(!shown.length){
+      list.innerHTML='<div class="empty">Nothing in this view. Every system is somewhere else on the list.</div>';
+      return;
+    }
+    list.innerHTML = shown.map(function(s){
+      var st=STATUS[s.status]; var age=ageText(s.checked);
+      var checkedCls = (s.status!=='manual' && age.stale) ? 'checked stale' : 'checked';
+      var showCheck = s.status!=='manual';
+      return '<div class="sys" data-s="'+s.status+'">'+
+        '<div class="sys-top">'+
+          '<div class="sys-name">'+esc(s.name)+'</div>'+
+          '<span class="pill '+st.cls+'"><span class="dot"></span>'+st.label+'</span>'+
+        '</div>'+
+        (s.what?'<div class="sys-what">'+esc(s.what)+'</div>':'')+
+        '<div class="sys-meta">'+
+          (s.where?'<span class="where">'+esc(s.where)+'</span>':'')+
+          (showCheck?'<span class="'+checkedCls+'">'+age.txt+'</span>':'<span class="checked">not automated yet</span>')+
+        '</div>'+
+        (s.notes?'<div class="sys-notes">'+esc(s.notes)+'</div>':'')+
+        '<div class="sys-actions">'+
+          (showCheck?'<button class="chip" data-act="check" data-id="'+s.id+'">Mark checked today</button>':'')+
+          '<button class="chip" data-act="edit" data-id="'+s.id+'">Edit</button>'+
+          '<button class="chip warn" data-act="del" data-id="'+s.id+'">Remove</button>'+
+        '</div>'+
+      '</div>';
+    }).join('');
+  }
+
+  function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+
+  Array.prototype.forEach.call($('f-status').children, function(b){
+    b.addEventListener('click', function(){
+      formStatus=b.getAttribute('data-s');
+      Array.prototype.forEach.call($('f-status').children, function(x){ x.setAttribute('aria-pressed', x===b?'true':'false'); });
+    });
+  });
+
+  function setFormStatus(s){
+    formStatus=s;
+    Array.prototype.forEach.call($('f-status').children, function(x){ x.setAttribute('aria-pressed', x.getAttribute('data-s')===s?'true':'false'); });
+  }
+  function clearForm(){
+    $('f-name').value=''; $('f-where').value=''; $('f-what').value=''; $('f-notes').value='';
+    setFormStatus('running'); editingId=null;
+    $('form-title').textContent='Add a system'; $('save-btn').textContent='Add system'; $('cancel-btn').hidden=true;
+  }
+
+  $('save-btn').addEventListener('click', function(){
+    var name=$('f-name').value.trim();
+    if(!name){ $('f-name').focus(); $('f-name').style.borderColor='var(--red)'; return; }
+    var data={ name:name, where:$('f-where').value.trim(), what:$('f-what').value.trim(), status:formStatus, notes:$('f-notes').value.trim() };
+    if(editingId){
+      var s=state.systems.find(function(x){return x.id===editingId;});
+      if(s){ Object.assign(s,data); delete s.example; }
+    } else {
+      data.id=uid(); data.checked = data.status==='manual' ? '' : today(); data.example=false;
+      state.systems.unshift(data);
+    }
+    save(); clearForm(); render();
+  });
+  $('cancel-btn').addEventListener('click', clearForm);
+  $('f-name').addEventListener('input', function(){ this.style.borderColor=''; });
+
+  $('list').addEventListener('click', function(e){
+    var btn=e.target.closest('[data-act]'); if(!btn) return;
+    var id=btn.getAttribute('data-id'), act=btn.getAttribute('data-act');
+    var s=state.systems.find(function(x){return x.id===id;}); if(!s) return;
+    if(act==='check'){ s.checked=today(); delete s.example; save(); render(); }
+    else if(act==='del'){ state.systems=state.systems.filter(function(x){return x.id!==id;}); save(); render(); }
+    else if(act==='edit'){
+      editingId=id;
+      $('f-name').value=s.name||''; $('f-where').value=s.where||''; $('f-what').value=s.what||''; $('f-notes').value=s.notes||'';
+      setFormStatus(s.status);
+      $('form-title').textContent='Edit system'; $('save-btn').textContent='Save changes'; $('cancel-btn').hidden=false;
+      document.querySelector('.panel').scrollIntoView({behavior:'smooth',block:'center'}); $('f-name').focus();
+    }
+  });
+
+  $('filters').addEventListener('click', function(e){
+    var b=e.target.closest('button'); if(!b) return;
+    filter=b.getAttribute('data-f');
+    Array.prototype.forEach.call($('filters').children, function(x){ x.setAttribute('aria-pressed', x===b?'true':'false'); });
+    render();
+  });
+
+  $('clear-ex').addEventListener('click', function(){
+    state.systems=state.systems.filter(function(s){ return !s.example; });
+    save(); render();
+  });
+
+  render();
+
+  /* drifting embers — magenta, matching the board */
+  (function(){
+    var c=$('cinders'), ctx=c.getContext('2d'), w,h,parts=[];
+    var reduce=window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function size(){ w=c.width=window.innerWidth; h=c.height=window.innerHeight; }
+    function make(){ return {x:Math.random()*w,y:h+Math.random()*h,r:Math.random()*1.5+0.4,
+      vy:-(Math.random()*0.25+0.07),vx:(Math.random()-0.5)*0.12,a:Math.random()*0.5+0.12,t:Math.random()*Math.PI*2}; }
+    function init(){ size(); var n=Math.max(14,Math.min(40,Math.round(w/40))); parts=[]; for(var i=0;i<n;i++) parts.push(make()); }
+    function draw(){
+      ctx.clearRect(0,0,w,h);
+      for(var i=0;i<parts.length;i++){
+        var p=parts[i]; p.y+=p.vy; p.t+=0.011; p.x+=p.vx+Math.sin(p.t)*0.14;
+        if(p.y<-12){ parts[i]=make(); parts[i].y=h+10; continue; }
+        var fl=0.6+Math.sin(p.t*2.1)*0.4;
+        var g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*4.5);
+        g.addColorStop(0,'rgba(255,111,200,'+(p.a*fl)+')');
+        g.addColorStop(0.4,'rgba(232,111,216,'+(p.a*fl*0.4)+')');
+        g.addColorStop(1,'rgba(232,111,216,0)');
+        ctx.fillStyle=g; ctx.beginPath(); ctx.arc(p.x,p.y,p.r*4.5,0,Math.PI*2); ctx.fill();
+      }
+      requestAnimationFrame(draw);
+    }
+    init(); window.addEventListener('resize',init); if(!reduce) draw();
+  })();
+</script>
+</body>
+</html>
