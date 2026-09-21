@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saved Replies Bank</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#07050F; --bg2:#130B22; --card-rgb:28,16,48;
+    --ink:#F3EAFF; --ink-dim:#C2ACE2; --well-ink:#E9DEFF;
+    --violet:#A76BFF; --violet-lt:#C9A5FF; --violet-rgb:167,107,255;
+    --orchid:#E86FD8; --orchid-glow:#FF6FC8; --orchid-rgb:232,111,216;
+    --aqua:#5FE3D0; --aqua-rgb:95,227,208;
+    --mauve:#C79BE8; --gold:#FFE3A3; --gold-rgb:255,227,163;
+    --rose:#FF8FB6; --on-accent:#160726;
+    --edge:rgba(var(--violet-rgb),0.24);
+    --serif:'Cormorant Garamond','Hoefler Text',Georgia,serif;
+    --sans:'Hanken Grotesk',system-ui,-apple-system,sans-serif;
+    --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink); font-family:var(--sans);
+    font-size:15px; line-height:1.55; -webkit-font-smoothing:antialiased; min-height:100vh;
+    background-image:
+      radial-gradient(900px 520px at 10% -10%, rgba(var(--orchid-rgb),0.16), transparent 60%),
+      radial-gradient(820px 500px at 100% 0%, rgba(var(--aqua-rgb),0.13), transparent 55%),
+      radial-gradient(760px 620px at 55% 120%, rgba(var(--violet-rgb),0.14), transparent 60%);
+  }
+  #embers{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+  .wrap{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:40px 16px 64px}
+
+  header{margin-bottom:22px}
+  .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--violet-lt);font-weight:600;margin-bottom:9px}
+  h1{font-family:var(--serif);font-size:clamp(32px,6vw,48px);line-height:1.03;font-weight:600;letter-spacing:.5px;
+    background:linear-gradient(92deg,var(--violet-lt),var(--orchid-glow) 38%,var(--gold) 70%,var(--violet));
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .lede{color:var(--ink-dim);margin-top:11px;font-size:14.5px;max-width:60ch}
+  .lede b{color:var(--violet-lt)}
+
+  .panel{background:linear-gradient(155deg,rgba(var(--violet-rgb),.12),rgba(var(--card-rgb),.84));
+    border:1px solid var(--edge);border-radius:14px;padding:20px;margin:0 0 16px;backdrop-filter:blur(8px)}
+  .panel h2{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--violet-lt);font-weight:700;margin-bottom:14px}
+
+  label.fld{display:block;margin-bottom:12px}
+  label.fld span{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-dim);font-weight:600;margin-bottom:6px}
+  input[type=text], textarea, select{
+    width:100%;background:rgba(6,3,12,0.55);border:1px solid var(--edge);border-radius:9px;color:var(--ink);
+    font-family:var(--sans);font-size:14.5px;padding:11px 13px;transition:border-color .15s}
+  input[type=text]:focus, textarea:focus, select:focus{outline:none;border-color:var(--orchid)}
+  input::placeholder, textarea::placeholder{color:rgba(194,172,226,.5)}
+  textarea{min-height:96px;resize:vertical;line-height:1.5}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .subhint{font-family:var(--mono);font-size:10px;color:var(--ink-dim);opacity:.75;margin-top:5px}
+
+  .btn{font-family:var(--sans);font-weight:600;font-size:14px;border:none;border-radius:9px;padding:11px 18px;cursor:pointer;transition:transform .1s,filter .15s}
+  .btn:active{transform:translateY(1px)}
+  .btn.primary{background:linear-gradient(150deg,var(--gold),var(--orchid));color:var(--on-accent)}
+  .btn.primary:hover{filter:brightness(1.07)}
+  .btn.ghost{background:transparent;border:1px solid var(--edge);color:var(--violet-lt)}
+  .btn.ghost:hover{border-color:var(--orchid);color:var(--ink)}
+  .btnrow{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:4px}
+
+  .tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:0 0 14px}
+  .search{flex:1;min-width:180px;position:relative}
+  .search input{padding-left:36px}
+  .search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:15px;height:15px;opacity:.55}
+  .chips{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 16px}
+  .chip{font-family:var(--mono);font-size:11px;letter-spacing:.03em;color:var(--ink-dim);background:rgba(var(--card-rgb),.6);
+    border:1px solid var(--edge);border-radius:20px;padding:5px 12px;cursor:pointer;transition:all .15s}
+  .chip:hover{color:var(--ink);border-color:var(--orchid)}
+  .chip.on{color:var(--on-accent);background:var(--violet-lt);border-color:var(--violet-lt);font-weight:600}
+
+  .count{font-family:var(--mono);font-size:11px;color:var(--ink-dim);margin-left:auto}
+  .count b{color:var(--orchid-glow)}
+
+  .reply{background:linear-gradient(150deg,rgba(var(--orchid-rgb),.10),rgba(var(--card-rgb),.82));
+    border:1px solid var(--edge);border-radius:13px;padding:16px 18px;margin-bottom:12px;backdrop-filter:blur(8px)}
+  .reply .top{display:flex;align-items:baseline;gap:10px;justify-content:space-between;margin-bottom:8px}
+  .reply .lbl{font-family:var(--serif);font-size:20px;font-weight:600;color:var(--ink);line-height:1.2}
+  .reply .cat{font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);border:1px solid rgba(var(--gold-rgb),.4);border-radius:20px;padding:2px 9px;white-space:nowrap;flex:0 0 auto}
+  .reply .body{color:var(--well-ink);opacity:.94;font-size:14px;line-height:1.55;white-space:pre-wrap}
+  .reply .acts{display:flex;gap:8px;margin-top:13px;flex-wrap:wrap}
+  .mini{font-family:var(--mono);font-size:11px;letter-spacing:.04em;border:1px solid var(--edge);background:transparent;color:var(--ink-dim);border-radius:7px;padding:6px 11px;cursor:pointer;transition:all .15s}
+  .mini:hover{color:var(--ink);border-color:var(--orchid)}
+  .mini.copy{color:var(--aqua);border-color:rgba(var(--aqua-rgb),.45)}
+  .mini.copy:hover{background:rgba(var(--aqua-rgb),.14);color:var(--ink)}
+  .mini.del:hover{color:var(--rose);border-color:var(--rose)}
+  .mini.copied{background:var(--aqua);border-color:var(--aqua);color:var(--on-accent);font-weight:600}
+
+  .empty{text-align:center;color:var(--ink-dim);padding:34px 18px;border:1px dashed var(--edge);border-radius:13px}
+  .empty b{color:var(--ink)}
+
+  footer{margin-top:26px;padding-top:15px;border-top:1px solid var(--edge);color:var(--ink-dim);font-family:var(--mono);font-size:11px;line-height:1.7}
+  .savebar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:6px}
+  .hint{font-family:var(--mono);font-size:10.5px;color:var(--ink-dim);opacity:.8}
+  @media(max-width:560px){.row2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<canvas id="embers"></canvas>
+<div class="wrap">
+
+  <header>
+    <div class="kicker">A Soul-Forged Founders Tool</div>
+    <h1>Saved Replies Bank</h1>
+    <p class="lede">Write the answer once, keep it here, and paste it every time the same question comes in. <b>Build it once, reuse it forever.</b> Everything saves in this browser on your own device. No account, nothing sent anywhere.</p>
+  </header>
+
+  <!-- ADD / EDIT -->
+  <section class="panel">
+    <h2 id="formTitle">Add a reply</h2>
+    <form id="form" autocomplete="off">
+      <div class="row2">
+        <label class="fld"><span>Label (what it's for)</span>
+          <input type="text" id="label" placeholder="e.g. What do you charge?" required></label>
+        <label class="fld"><span>Category</span>
+          <input type="text" id="category" list="cats" placeholder="Pick one or type a new one" required>
+          <datalist id="cats"></datalist>
+          <span class="subhint">Type any word to start a new category.</span></label>
+      </div>
+      <label class="fld"><span>The reply</span>
+        <textarea id="text" placeholder="Paste or write the answer you send every time..." required></textarea></label>
+      <div class="btnrow">
+        <button type="submit" class="btn primary" id="saveBtn">Save reply</button>
+        <button type="button" class="btn ghost" id="cancelBtn" style="display:none">Cancel</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- LIST -->
+  <div class="tools">
+    <div class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#C2ACE2" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3" stroke-linecap="round"/></svg>
+      <input type="text" id="search" placeholder="Search your replies...">
+    </div>
+    <div class="count"><b id="num">0</b> saved</div>
+  </div>
+  <div class="chips" id="chips"></div>
+
+  <div id="list"></div>
+
+  <div class="panel" style="margin-top:18px">
+    <h2>Keep it safe</h2>
+    <p class="hint" style="margin-bottom:12px">Your bank lives in this browser. Clearing site data or switching devices loses it, so back it up. The text export drops straight into your Biz Brain folder.</p>
+    <div class="savebar">
+      <button type="button" class="btn ghost" id="exportTxt">Export for Biz Brain (.txt)</button>
+      <button type="button" class="btn ghost" id="backupBtn">Back up (.json)</button>
+      <button type="button" class="btn ghost" id="restoreBtn">Restore backup</button>
+      <input type="file" id="restoreFile" accept="application/json,.json" style="display:none">
+    </div>
+  </div>
+
+  <footer>
+    Saved Replies Bank · a Soul-Forged Founders tool · your data stays on your device
+  </footer>
+
+</div>
+
+<script>
+  var KEY='saved-replies-bank-v2';
+  var replies=[];
+  var activeCat='All';
+  var editingId=null;
+
+  var SAMPLES=[
+    {label:"What do you charge?", category:"Pricing", text:"Happy to share. Everything I offer and what it costs is right here: [link]. Tell me what you're working on and I'll point you to the one that fits."},
+    {label:"Your guarantee", category:"Policies", text:"You're covered by my [X-day] guarantee. Full terms are here: [link]. Any questions before you jump in, reply right here and I'll answer straight."},
+    {label:"Can I pick your brain / collab?", category:"Boundaries", text:"Thank you for thinking of me. My time right now goes to my clients and members, so I'm not taking calls or collabs outside of that. If that changes, I'll reach out."},
+    {label:"How do I get started?", category:"Onboarding", text:"So glad you're here. Start with this: [first step or link]. Once that's done, you'll know exactly what comes next. Get stuck anywhere and message me."},
+    {label:"Keyword reply: the freebie link", category:"DM Keywords", text:"Here's the link I promised: [link]. This is the [tool or freebie] from the video. Open it, make it yours, and come tell me what you built. 👇"}
+  ];
+
+  function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
+
+  function load(){
+    try{ var raw=localStorage.getItem(KEY); if(raw){ replies=JSON.parse(raw)||[]; return; } }catch(e){}
+    replies=SAMPLES.map(function(s){ return {id:uid(),label:s.label,category:s.category,text:s.text}; });
+    save();
+  }
+  function save(){ try{ localStorage.setItem(KEY,JSON.stringify(replies)); }catch(e){} }
+
+  var $=function(id){ return document.getElementById(id); };
+  function esc(s){ return (s||'').replace(/[&<>"]/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+
+  function categories(){
+    var seen={}, out=[];
+    replies.forEach(function(r){ var c=(r.category||'').trim()||'Uncategorized'; if(!seen[c]){ seen[c]=1; out.push(c); } });
+    out.sort(function(a,b){ return a.toLowerCase()<b.toLowerCase()?-1:1; });
+    return out;
+  }
+
+  function renderChips(){
+    var cats=categories();
+    if(activeCat!=='All' && cats.indexOf(activeCat)<0) activeCat='All';
+    var html='<div class="chip'+(activeCat==='All'?' on':'')+'" data-c="All">All</div>';
+    cats.forEach(function(c){ html+='<div class="chip'+(activeCat===c?' on':'')+'" data-c="'+esc(c)+'">'+esc(c)+'</div>'; });
+    $('chips').innerHTML=html;
+    [].forEach.call($('chips').querySelectorAll('.chip'),function(el){
+      el.addEventListener('click',function(){ activeCat=el.getAttribute('data-c'); render(); });
+    });
+    $('cats').innerHTML=cats.map(function(c){ return '<option value="'+esc(c)+'">'; }).join('');
+  }
+
+  function render(){
+    renderChips();
+    var q=($('search').value||'').toLowerCase().trim();
+    var shown=replies.filter(function(r){
+      var c=(r.category||'').trim()||'Uncategorized';
+      if(activeCat!=='All' && c!==activeCat) return false;
+      if(q){ return (r.label+' '+r.category+' '+r.text).toLowerCase().indexOf(q)>=0; }
+      return true;
+    });
+    $('num').textContent=replies.length;
+    var box=$('list');
+    if(!replies.length){
+      box.innerHTML='<div class="empty"><b>Your bank is empty.</b><br>Add the first answer you find yourself typing over and over.</div>';
+      return;
+    }
+    if(!shown.length){
+      box.innerHTML='<div class="empty">Nothing matches that. Try another word or clear the filter.</div>';
+      return;
+    }
+    box.innerHTML=shown.map(function(r){
+      var c=(r.category||'').trim()||'Uncategorized';
+      return '<div class="reply" data-id="'+r.id+'">'
+        +'<div class="top"><div class="lbl">'+esc(r.label)+'</div><div class="cat">'+esc(c)+'</div></div>'
+        +'<div class="body">'+esc(r.text)+'</div>'
+        +'<div class="acts">'
+        +'<button class="mini copy" data-act="copy">Copy</button>'
+        +'<button class="mini" data-act="edit">Edit</button>'
+        +'<button class="mini del" data-act="del">Delete</button>'
+        +'</div></div>';
+    }).join('');
+    [].forEach.call(box.querySelectorAll('.reply'),function(card){
+      var id=card.getAttribute('data-id');
+      card.querySelector('[data-act=copy]').addEventListener('click',function(e){ copyReply(id,e.target); });
+      card.querySelector('[data-act=edit]').addEventListener('click',function(){ startEdit(id); });
+      card.querySelector('[data-act=del]').addEventListener('click',function(){ del(id); });
+    });
+  }
+
+  function copyReply(id,btn){
+    var r=replies.filter(function(x){ return x.id===id; })[0]; if(!r) return;
+    var done=function(){ btn.textContent='Copied!'; btn.classList.add('copied'); setTimeout(function(){ btn.textContent='Copy'; btn.classList.remove('copied'); },1400); };
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(r.text).then(done,function(){ fallbackCopy(r.text); done(); });
+    } else { fallbackCopy(r.text); done(); }
+  }
+  function fallbackCopy(t){
+    var ta=document.createElement('textarea'); ta.value=t; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); }catch(e){} document.body.removeChild(ta);
+  }
+
+  function startEdit(id){
+    var r=replies.filter(function(x){ return x.id===id; })[0]; if(!r) return;
+    editingId=id;
+    $('label').value=r.label; $('category').value=r.category; $('text').value=r.text;
+    $('formTitle').textContent='Edit reply';
+    $('saveBtn').textContent='Update reply';
+    $('cancelBtn').style.display='';
+    window.scrollTo({top:0,behavior:'smooth'});
+    $('label').focus();
+  }
+  function resetForm(){
+    editingId=null; $('form').reset();
+    $('formTitle').textContent='Add a reply';
+    $('saveBtn').textContent='Save reply';
+    $('cancelBtn').style.display='none';
+  }
+  function del(id){
+    var r=replies.filter(function(x){ return x.id===id; })[0]; if(!r) return;
+    if(!confirm('Delete "'+r.label+'"? This can’t be undone.')) return;
+    replies=replies.filter(function(x){ return x.id!==id; });
+    if(editingId===id) resetForm();
+    save(); render();
+  }
+
+  $('form').addEventListener('submit',function(e){
+    e.preventDefault();
+    var label=$('label').value.trim(), category=$('category').value.trim(), text=$('text').value.trim();
+    if(!label||!category||!text) return;
+    if(editingId){
+      replies=replies.map(function(x){ return x.id===editingId?{id:x.id,label:label,category:category,text:text}:x; });
+    } else {
+      replies.unshift({id:uid(),label:label,category:category,text:text});
+    }
+    save(); resetForm(); render();
+  });
+  $('cancelBtn').addEventListener('click',resetForm);
+  $('search').addEventListener('input',render);
+
+  function blobDownload(name,content,type){
+    var blob=new Blob([content],{type:type}); var url=URL.createObjectURL(blob);
+    var a=document.createElement('a'); a.href=url; a.download=name; document.body.appendChild(a); a.click();
+    document.body.removeChild(a); setTimeout(function(){ URL.revokeObjectURL(url); },800);
+  }
+  function dl(name,content,type){
+    // Inside the claude.ai viewer, a plain download does nothing, so use the runtime save.
+    // Hosted on GitHub Pages or opened as a file, window.claude is absent and we download normally.
+    if(window.claude && window.claude.use){
+      claude.use('downloads').then(function(d){
+        if(d && d.save){ d.save({filename:name,data:content}).catch(function(){}); }
+        else { blobDownload(name,content,type); }
+      }).catch(function(){ blobDownload(name,content,type); });
+    } else {
+      blobDownload(name,content,type);
+    }
+  }
+  $('exportTxt').addEventListener('click',function(){
+    if(!replies.length){ alert('Nothing to export yet.'); return; }
+    var byCat={};
+    replies.forEach(function(r){ var c=(r.category||'Uncategorized').trim(); (byCat[c]=byCat[c]||[]).push(r); });
+    var out='SAVED REPLIES BANK\nExported '+new Date().toLocaleDateString()+'\n\n';
+    Object.keys(byCat).sort().forEach(function(c){
+      out+='== '+c.toUpperCase()+' ==\n\n';
+      byCat[c].forEach(function(r){ out+=r.label+'\n'+r.text+'\n\n'; });
+    });
+    dl('saved-replies-bank.txt',out,'text/plain');
+  });
+  $('backupBtn').addEventListener('click',function(){
+    dl('saved-replies-bank-backup.json',JSON.stringify(replies,null,2),'application/json');
+  });
+  $('restoreBtn').addEventListener('click',function(){ $('restoreFile').click(); });
+  $('restoreFile').addEventListener('change',function(e){
+    var f=e.target.files[0]; if(!f) return;
+    var reader=new FileReader();
+    reader.onload=function(){
+      try{
+        var data=JSON.parse(reader.result);
+        if(!Array.isArray(data)) throw 0;
+        var clean=data.filter(function(r){ return r&&r.label&&r.text; }).map(function(r){
+          return {id:r.id||uid(),label:String(r.label),category:String(r.category||'Uncategorized'),text:String(r.text)};
+        });
+        if(!clean.length) throw 0;
+        if(replies.length && !confirm('Replace your current '+replies.length+' replies with the '+clean.length+' from this backup?')) return;
+        replies=clean; save(); resetForm(); render();
+      }catch(err){ alert('That file could not be read as a backup.'); }
+    };
+    reader.readAsText(f); e.target.value='';
+  });
+
+  load(); render();
+
+  /* rising embers */
+  (function(){
+    var c=document.getElementById('embers'); if(!c) return; var ctx=c.getContext('2d'), w,h,parts=[];
+    var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var tints=[[255,111,200],[201,165,255],[255,227,163],[95,227,208]];
+    function size(){ w=c.width=window.innerWidth; h=c.height=window.innerHeight; }
+    function make(){ var t=tints[Math.floor(Math.random()*tints.length)]; return {x:Math.random()*w,y:h+Math.random()*h,r:Math.random()*1.4+0.4,vy:-(Math.random()*0.24+0.07),vx:(Math.random()-0.5)*0.12,a:Math.random()*0.45+0.12,t:Math.random()*Math.PI*2,col:t}; }
+    function init(){ size(); var n=Math.max(14,Math.min(34,Math.round(w/42))); parts=[]; for(var i=0;i<n;i++) parts.push(make()); }
+    function draw(){
+      ctx.clearRect(0,0,w,h);
+      for(var i=0;i<parts.length;i++){ var p=parts[i]; p.y+=p.vy; p.t+=0.012; p.x+=p.vx+Math.sin(p.t)*0.14;
+        if(p.y<-12){ parts[i]=make(); parts[i].y=h+10; continue; }
+        var fl=0.65+Math.sin(p.t*2.1)*0.35, col=p.col;
+        var g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*4.5);
+        g.addColorStop(0,'rgba('+col[0]+','+col[1]+','+col[2]+','+(p.a*fl)+')');
+        g.addColorStop(0.4,'rgba('+col[0]+','+col[1]+','+col[2]+','+(p.a*fl*0.4)+')');
+        g.addColorStop(1,'rgba('+col[0]+','+col[1]+','+col[2]+',0)');
+        ctx.fillStyle=g; ctx.beginPath(); ctx.arc(p.x,p.y,p.r*4.5,0,Math.PI*2); ctx.fill();
+      }
+      requestAnimationFrame(draw);
+    }
+    init(); window.addEventListener('resize',init); if(!reduce) draw();
+  })();
+</script>
+</body>
+</html>
