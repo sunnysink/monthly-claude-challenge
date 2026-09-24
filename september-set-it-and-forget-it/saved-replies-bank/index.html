@@ -72,7 +72,9 @@
   .chip{font-family:var(--mono);font-size:11px;letter-spacing:.03em;color:var(--ink-dim);background:rgba(var(--card-rgb),.6);
     border:1px solid var(--edge);border-radius:20px;padding:5px 12px;cursor:pointer;transition:all .15s}
   .chip:hover{color:var(--ink);border-color:var(--orchid)}
-  .chip.on{color:var(--on-accent);background:var(--violet-lt);border-color:var(--violet-lt);font-weight:600}
+  .chipx{margin-left:7px;opacity:.6;font-weight:700;padding:0 2px}
+ .chipx:hover{opacity:1;color:var(--rose)}
+ .chip.on{color:var(--on-accent);background:var(--violet-lt);border-color:var(--violet-lt);font-weight:600}
 
   .count{font-family:var(--mono);font-size:11px;color:var(--ink-dim);margin-left:auto}
   .count b{color:var(--orchid-glow)}
@@ -162,7 +164,10 @@
 
 <script>
   var KEY='saved-replies-bank-v2';
+  var CAT_KEY='saved-replies-bank-cats';
+  var DEFAULT_CATS=['Pricing','Policies','Boundaries','Onboarding','DM Keywords'];
   var replies=[];
+  var savedCats=[];
   var activeCat='All';
   var editingId=null;
 
@@ -177,17 +182,38 @@
   function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
 
   function load(){
-    try{ var raw=localStorage.getItem(KEY); if(raw){ replies=JSON.parse(raw)||[]; return; } }catch(e){}
-    replies=SAMPLES.map(function(s){ return {id:uid(),label:s.label,category:s.category,text:s.text}; });
+    var found=false;
+    try{ var raw=localStorage.getItem(KEY); if(raw){ replies=JSON.parse(raw)||[]; found=true; } }catch(e){}
+    if(!found) replies=SAMPLES.map(function(s){ return {id:uid(),label:s.label,category:s.category,text:s.text}; });
+    savedCats=null;
+    try{ var rc=localStorage.getItem(CAT_KEY); if(rc) savedCats=JSON.parse(rc); }catch(e){}
+    if(!Array.isArray(savedCats)) savedCats=DEFAULT_CATS.slice();
+    replies.forEach(function(r){ addCat(r.category); });
     save();
   }
-  function save(){ try{ localStorage.setItem(KEY,JSON.stringify(replies)); }catch(e){} }
+  function addCat(c){
+    c=(c||'').trim(); if(!c) return;
+    var lc=c.toLowerCase();
+    if(!savedCats.some(function(x){ return x.toLowerCase()===lc; })) savedCats.push(c);
+  }
+  function countIn(c){ return replies.filter(function(r){ return ((r.category||'').trim()||'Uncategorized')===c; }).length; }
+  function removeCat(c){
+    if(countIn(c)) return;
+    savedCats=savedCats.filter(function(x){ return x!==c; });
+    if(activeCat===c) activeCat='All';
+    save(); render();
+  }
+  function save(){
+    try{ localStorage.setItem(KEY,JSON.stringify(replies)); }catch(e){}
+    try{ localStorage.setItem(CAT_KEY,JSON.stringify(savedCats)); }catch(e){}
+  }
 
   var $=function(id){ return document.getElementById(id); };
   function esc(s){ return (s||'').replace(/[&<>"]/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
 
   function categories(){
     var seen={}, out=[];
+    savedCats.forEach(function(c){ if(!seen[c]){ seen[c]=1; out.push(c); } });
     replies.forEach(function(r){ var c=(r.category||'').trim()||'Uncategorized'; if(!seen[c]){ seen[c]=1; out.push(c); } });
     out.sort(function(a,b){ return a.toLowerCase()<b.toLowerCase()?-1:1; });
     return out;
@@ -197,10 +223,17 @@
     var cats=categories();
     if(activeCat!=='All' && cats.indexOf(activeCat)<0) activeCat='All';
     var html='<div class="chip'+(activeCat==='All'?' on':'')+'" data-c="All">All</div>';
-    cats.forEach(function(c){ html+='<div class="chip'+(activeCat===c?' on':'')+'" data-c="'+esc(c)+'">'+esc(c)+'</div>'; });
+    cats.forEach(function(c){
+      var x=countIn(c)?'':'<span class="chipx" data-rm="'+esc(c)+'" title="Remove this empty category">×</span>';
+      html+='<div class="chip'+(activeCat===c?' on':'')+'" data-c="'+esc(c)+'">'+esc(c)+x+'</div>';
+    });
     $('chips').innerHTML=html;
     [].forEach.call($('chips').querySelectorAll('.chip'),function(el){
-      el.addEventListener('click',function(){ activeCat=el.getAttribute('data-c'); render(); });
+      el.addEventListener('click',function(e){
+        var rm=e.target.getAttribute && e.target.getAttribute('data-rm');
+        if(rm){ e.stopPropagation(); removeCat(rm); return; }
+        activeCat=el.getAttribute('data-c'); render();
+      });
     });
     $('cats').innerHTML=cats.map(function(c){ return '<option value="'+esc(c)+'">'; }).join('');
   }
@@ -217,7 +250,11 @@
     $('num').textContent=replies.length;
     var box=$('list');
     if(!replies.length){
-      box.innerHTML='<div class="empty"><b>Your bank is empty.</b><br>Add the first answer you find yourself typing over and over.</div>';
+      box.innerHTML='<div class="empty"><b>Your bank is empty.</b><br>Add the first answer you find yourself typing over and over. Your categories are still here, ready to pick.</div>';
+      return;
+    }
+    if(!shown.length && activeCat!=='All' && !q){
+      box.innerHTML='<div class="empty">No replies in <b>'+esc(activeCat)+'</b> yet. Add one above and pick this category.</div>';
       return;
     }
     if(!shown.length){
@@ -283,6 +320,7 @@
     e.preventDefault();
     var label=$('label').value.trim(), category=$('category').value.trim(), text=$('text').value.trim();
     if(!label||!category||!text) return;
+    addCat(category);
     if(editingId){
       replies=replies.map(function(x){ return x.id===editingId?{id:x.id,label:label,category:category,text:text}:x; });
     } else {
@@ -322,7 +360,7 @@
     dl('saved-replies-bank.txt',out,'text/plain');
   });
   $('backupBtn').addEventListener('click',function(){
-    dl('saved-replies-bank-backup.json',JSON.stringify(replies,null,2),'application/json');
+    dl('saved-replies-bank-backup.json',JSON.stringify({replies:replies,categories:savedCats},null,2),'application/json');
   });
   $('restoreBtn').addEventListener('click',function(){ $('restoreFile').click(); });
   $('restoreFile').addEventListener('change',function(e){
@@ -330,14 +368,19 @@
     var reader=new FileReader();
     reader.onload=function(){
       try{
-        var data=JSON.parse(reader.result);
-        if(!Array.isArray(data)) throw 0;
+        var parsed=JSON.parse(reader.result);
+        var data=Array.isArray(parsed)?parsed:(parsed&&Array.isArray(parsed.replies)?parsed.replies:null);
+        if(!data) throw 0;
+        var bcats=(parsed&&Array.isArray(parsed.categories))?parsed.categories:null;
         var clean=data.filter(function(r){ return r&&r.label&&r.text; }).map(function(r){
           return {id:r.id||uid(),label:String(r.label),category:String(r.category||'Uncategorized'),text:String(r.text)};
         });
-        if(!clean.length) throw 0;
+        if(!clean.length && !bcats) throw 0;
         if(replies.length && !confirm('Replace your current '+replies.length+' replies with the '+clean.length+' from this backup?')) return;
-        replies=clean; save(); resetForm(); render();
+        replies=clean;
+        if(bcats) savedCats=bcats.filter(function(c){ return typeof c==='string' && c.trim(); }).map(function(c){ return c.trim(); });
+        replies.forEach(function(r){ addCat(r.category); });
+        save(); resetForm(); render();
       }catch(err){ alert('That file could not be read as a backup.'); }
     };
     reader.readAsText(f); e.target.value='';
