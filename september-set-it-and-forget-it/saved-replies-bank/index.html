@@ -165,7 +165,8 @@
 <script>
   var KEY='saved-replies-bank-v2';
   var CAT_KEY='saved-replies-bank-cats';
-  var DEFAULT_CATS=['Pricing','Policies','Boundaries','Onboarding','DM Keywords'];
+  var DEFAULT_CATS=['DM Keywords','Pricing','Policies','Boundaries','Onboarding'];
+  var PIN='DM Keywords';
   var replies=[];
   var savedCats=[];
   var activeCat='All';
@@ -215,7 +216,10 @@
     var seen={}, out=[];
     savedCats.forEach(function(c){ if(!seen[c]){ seen[c]=1; out.push(c); } });
     replies.forEach(function(r){ var c=(r.category||'').trim()||'Uncategorized'; if(!seen[c]){ seen[c]=1; out.push(c); } });
-    out.sort(function(a,b){ return a.toLowerCase()<b.toLowerCase()?-1:1; });
+    out.sort(function(a,b){
+      if(a===PIN) return -1; if(b===PIN) return 1;
+      return a.toLowerCase()<b.toLowerCase()?-1:1;
+    });
     return out;
   }
 
@@ -247,6 +251,8 @@
       if(q){ return (r.label+' '+r.category+' '+r.text).toLowerCase().indexOf(q)>=0; }
       return true;
     });
+    shown=shown.filter(function(r){ return (r.category||'').trim()===PIN; })
+      .concat(shown.filter(function(r){ return (r.category||'').trim()!==PIN; }));
     $('num').textContent=replies.length;
     var box=$('list');
     if(!replies.length){
