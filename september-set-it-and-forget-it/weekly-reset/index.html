@@ -58,6 +58,14 @@
   .weekhead{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px}
   .wk{font-family:var(--serif);font-size:24px;font-weight:600;color:var(--ink)}
   .season{font-family:var(--mono);font-size:11px;letter-spacing:.05em;color:var(--mauve)}
+  .weeknav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+  .navmid{text-align:center;flex:1}
+  .wklbl{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--aqua);margin-bottom:2px}
+  .navbtn{flex:none;width:40px;height:40px;border-radius:50%;border:1px solid var(--edge2);background:rgba(7,5,15,0.5);color:var(--ink);
+    font-size:22px;line-height:1;cursor:pointer;transition:all .15s}
+  .navbtn:hover:not(:disabled){border-color:var(--ember-glow);color:var(--ember-glow)}
+  .navbtn:disabled{opacity:.25;cursor:default}
+  .weekmeta{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:16px;text-align:center}
   .focus-lbl{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
   .focus-input{font-family:var(--serif);font-size:20px;font-weight:500;color:var(--ink);width:100%;
     background:rgba(7,5,15,0.4);border:1px solid var(--edge);border-radius:11px;padding:12px 14px;transition:border-color .15s,box-shadow .15s}
@@ -180,7 +188,7 @@
   <header>
     <div class="kicker">Soul-Forged Founders · Set It &amp; Forget It</div>
     <h1>The Weekly Reset</h1>
-    <p class="lede">Set your week once, run it on repeat. The rhythm you already know lives here, so Monday starts with a plan instead of a blank page. Set it, and the same week comes back every week.</p>
+    <p class="lede">Set your week once, run it on repeat. The rhythm you already know lives here, so Monday starts with a plan instead of a blank page. Plan next week from the weekend, and every Monday it rolls over on its own.</p>
   </header>
 
   <nav class="tabs" role="tablist">
@@ -190,16 +198,17 @@
 
   <div class="view" id="view-week">
   <section class="weekcard">
-    <div class="weekhead">
-      <span class="wk" id="wk">This week</span>
-      <span class="season" id="season"></span>
+    <div class="weeknav">
+      <button class="navbtn" id="wk-prev" aria-label="Previous week">‹</button>
+      <div class="navmid"><span class="wklbl" id="wk-lbl">This week</span><span class="wk" id="wk">This week</span></div>
+      <button class="navbtn" id="wk-next" aria-label="Next week">›</button>
     </div>
-    <label class="focus-lbl" for="focus">This week's one focus</label>
+    <div class="weekmeta"><span class="season" id="season"></span><button class="btn ghost" id="wk-today">Back to this week</button></div>
+    <label class="focus-lbl" id="focus-lbl" for="focus">This week's one focus</label>
     <input type="text" id="focus" class="focus-input" placeholder="The one thing that matters this week" autocomplete="off">
     <div class="bar"><span id="fill"></span></div>
     <div class="barrow">
-      <span class="count"><b id="done">0</b> of <span id="total">0</span> done this week</span>
-      <button class="btn ghost" id="fresh">Start a fresh week ↺</button>
+      <span class="count"><b id="done">0</b> of <span id="total">0</span> done</span>
     </div>
   </section>
 
@@ -207,7 +216,7 @@
   </div>
 
   <div class="view" id="view-setup">
-  <p class="setup-note">Set your <b>weekly rhythm</b> once and it lands on the right day every week. Add anything that's <b>just for this week</b> below it. Then check it all off on <b>This Week</b>.</p>
+  <p class="setup-note">Set your <b>weekly rhythm</b> once and it lands on the right day every week. Add anything that's <b>just for one week</b> below it. Then check it all off on <b>This Week</b>.</p>
 
   <div class="examples-note" id="ex-note">
     <span><b>This is an example week</b> so you can see the shape. Clear it and set your own.</span>
@@ -229,7 +238,7 @@
   </section>
 
   <section class="block">
-    <div class="section-label">This week only <span class="hint">clears when you start fresh</span></div>
+    <div class="section-label">Just for one week <span class="hint">adding to <span id="setup-wk">this week</span>. Switch weeks with the arrows on This Week.</span></div>
     <div class="addrow">
       <input type="text" id="t-name" placeholder="Something just for this week" autocomplete="off">
       <select id="t-day" aria-label="Day">
@@ -248,15 +257,23 @@
 </div>
 
 <script>
-  var KEY='sff-weekly-reset-v1';
+  var KEY='sff-weekly-reset-v2', OLDKEY='sff-weekly-reset-v1';
   var DAYS=['Mon','Tue','Wed','Thu','Fri','Sat','Sun','Anytime'];
+  var WEEK=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  var OPTS=['Daily','Mon','Tue','Wed','Thu','Fri','Sat','Sun','Anytime'];
+  var FULL={Mon:'Monday',Tue:'Tuesday',Wed:'Wednesday',Thu:'Thursday',Fri:'Friday',Sat:'Saturday',Sun:'Sunday',Anytime:'Anytime'};
   var MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   var CHK='<svg viewBox="0 0 12 12" fill="none"><path d="M1.5 6.2 4.4 9 10.5 2.8" stroke="#07050F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  var $=function(id){ return document.getElementById(id); };
 
   function uid(){ return 'w'+Math.random().toString(36).slice(2,9); }
   function mondayOf(d){ var x=new Date(d); var k=(x.getDay()+6)%7; x.setDate(x.getDate()-k); x.setHours(0,0,0,0); return x; }
-  function iso(d){ return d.toISOString().slice(0,10); }
+  function pad(n){ return (n<10?'0':'')+n; }
+  function iso(d){ return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+  function fromIso(s){ var p=s.split('-'); return new Date(+p[0],+p[1]-1,+p[2]); }
+  function addWeeks(k,n){ var d=fromIso(k); d.setDate(d.getDate()+7*n); return iso(d); }
   function fmt(d){ return MON[d.getMonth()]+' '+d.getDate(); }
+  function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
 
   function zodiac(d){
     var day=d.getDate(), m=d.getMonth();
@@ -277,76 +294,114 @@
   var EXAMPLE={
     focus:'Book two calls and get the newsletter out.',
     rhythm:[
-      {name:"Plan the week's content", day:'Mon', done:false, example:true},
-      {name:'Approve and schedule it', day:'Tue', done:false, example:true},
-      {name:'Check my systems are still running', day:'Wed', done:false, example:true},
-      {name:'Reach out to one warm lead', day:'Thu', done:false, example:true},
-      {name:'Reflect: what worked, what stalled', day:'Fri', done:false, example:true},
-      {name:'Drop one idea into my Biz Brain', day:'Anytime', done:false, example:true}
+      {name:"Plan the week's content", day:'Mon'},
+      {name:'Approve and schedule it', day:'Tue'},
+      {name:'Check my systems are still running', day:'Wed'},
+      {name:'Reach out to one warm lead', day:'Thu'},
+      {name:'Reflect: what worked, what stalled', day:'Fri'},
+      {name:'Drop one idea into my Biz Brain', day:'Anytime'}
     ],
     tasks:[
-      {name:"Write this week's newsletter", day:'Wed', done:false, example:true},
-      {name:'Follow up with the two who asked about a session', day:'Anytime', done:false, example:true}
+      {name:"Write this week's newsletter", day:'Wed'},
+      {name:'Follow up with the two who asked about a session', day:'Anytime'}
     ]
   };
 
+  /* state: rhythm is shared by every week; each week keeps its own focus, one-off tasks and checkmarks */
+  var CUR=iso(mondayOf(new Date()));
+  function blankWeek(){ return {focus:'', tasks:[], done:{}}; }
   function seed(){
-    return { focus:EXAMPLE.focus, weekStart:iso(mondayOf(new Date())),
-      rhythm:EXAMPLE.rhythm.map(function(r){return Object.assign({id:uid()},r);}),
-      tasks:EXAMPLE.tasks.map(function(t){return Object.assign({id:uid()},t);}), seeded:true };
+    var w=blankWeek(); w.focus=EXAMPLE.focus;
+    w.tasks=EXAMPLE.tasks.map(function(t){ return {id:uid(), name:t.name, day:t.day, done:false, example:true}; });
+    var s={ rhythm:EXAMPLE.rhythm.map(function(r){ return {id:uid(), name:r.name, day:r.day, example:true}; }), weeks:{} };
+    s.weeks[CUR]=w; return s;
   }
-  function load(){ try{ var r=localStorage.getItem(KEY); if(r) return JSON.parse(r); }catch(e){} return seed(); }
+  function migrate(o){
+    /* v1 held one week at a time: everything saved lands on the current week */
+    var w=blankWeek(); w.focus=o.focus||'';
+    w.tasks=(o.tasks||[]).map(function(t){ return {id:t.id||uid(), name:t.name, day:t.day||'Anytime', done:!!t.done, example:!!t.example}; });
+    var rh=(o.rhythm||[]).map(function(r){
+      if(r.day==='Daily' && r.doneDays) w.done[r.id]=r.doneDays; else if(r.done) w.done[r.id]=true;
+      return {id:r.id, name:r.name, day:r.day, example:!!r.example};
+    });
+    var s={rhythm:rh, weeks:{}}; s.weeks[CUR]=w; return s;
+  }
+  function load(){
+    try{ var r=localStorage.getItem(KEY); if(r) return JSON.parse(r); }catch(e){}
+    try{ var o=localStorage.getItem(OLDKEY); if(o) return migrate(JSON.parse(o)); }catch(e){}
+    return seed();
+  }
   function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
 
   var state=load();
-  state.tasks.forEach(function(t){ if(!t.day) t.day='Anytime'; });
-  var FULL={Mon:'Monday',Tue:'Tuesday',Wed:'Wednesday',Thu:'Thursday',Fri:'Friday',Sat:'Saturday',Sun:'Sunday',Anytime:'Anytime'};
-  var WEEK=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-  var OPTS=['Daily','Mon','Tue','Wed','Thu','Fri','Sat','Sun','Anytime'];
+  /* keep last week, this week and next; older weeks drop off */
+  Object.keys(state.weeks).forEach(function(k){ if(k<addWeeks(CUR,-1)) delete state.weeks[k]; });
+  var viewWeek=CUR;
+  function wk(k){ k=k||viewWeek; if(!state.weeks[k]) state.weeks[k]=blankWeek(); return state.weeks[k]; }
+
   function todayKey(){ return WEEK[(new Date().getDay()+6)%7]; }
   function isDaily(it){ return it.day==='Daily'; }
-  function isDone(it,d){ return isDaily(it) ? !!(it.doneDays&&it.doneDays[d||todayKey()]) : !!it.done; }
-  function toggleDone(it,d){ if(isDaily(it)){ it.doneDays=it.doneDays||{}; var k=d||todayKey(); it.doneDays[k]=!it.doneDays[k]; } else it.done=!it.done; }
-  function onlyExamples(){ var all=state.rhythm.concat(state.tasks); return !all.length || all.every(function(x){return x.example;}); }
+  function isRhythm(it){ return state.rhythm.indexOf(it)>-1; }
+  function isDone(it,d){
+    if(!isRhythm(it)) return !!it.done;
+    var v=wk().done[it.id];
+    return isDaily(it) ? !!(v && v[d||todayKey()]) : !!v;
+  }
+  function toggleDone(it,d){
+    if(!isRhythm(it)){ it.done=!it.done; return; }
+    var w=wk();
+    if(isDaily(it)){ var v=w.done[it.id]||{}; var k=d||todayKey(); v[k]=!v[k]; w.done[it.id]=v; }
+    else w.done[it.id]=!w.done[it.id];
+  }
+  function onlyExamples(){ var all=state.rhythm.concat(wk(CUR).tasks); return !all.length || all.every(function(x){return x.example;}); }
+  function find(id){ return state.rhythm.find(function(x){return x.id===id;}) || wk().tasks.find(function(x){return x.id===id;}); }
+
   var view = onlyExamples() ? 'setup' : 'week';
   function show(v){ view=v; ['week','setup'].forEach(function(k){ $('view-'+k).classList.toggle('on',k===v); $('tab-'+k).classList.toggle('on',k===v); $('tab-'+k).setAttribute('aria-selected',k===v); }); }
-  var editingId=null;
-  var $=function(id){ return document.getElementById(id); };
-  function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  var editingId=null, addingDay=null;
+
+  function weekLabel(k){ return k===CUR?'This week':(k>CUR?'Next week':'Last week'); }
+  function range(k){ var s=fromIso(k), e=fromIso(k); e.setDate(e.getDate()+6); return fmt(s)+' – '+fmt(e); }
 
   function render(){
-    var start=new Date(state.weekStart+'T00:00:00'); var end=new Date(start); end.setDate(end.getDate()+6);
-    $('wk').textContent='Week of '+fmt(start)+' – '+fmt(end);
+    var w=wk();
+    $('wk-lbl').textContent=weekLabel(viewWeek);
+    $('wk').textContent=range(viewWeek);
+    $('wk-prev').disabled = viewWeek<=addWeeks(CUR,-1);
+    $('wk-next').disabled = viewWeek>=addWeeks(CUR,1);
+    $('wk-today').style.display = viewWeek===CUR?'none':'';
     var now=new Date(); $('season').textContent=zodiac(now)+' · '+moon(now);
-    $('focus').value=state.focus||'';
+    if(document.activeElement!==$('focus')) $('focus').value=w.focus||'';
+    $('focus-lbl').textContent=(viewWeek===CUR?"This week's":viewWeek>CUR?"Next week's":"Last week's")+' one focus';
+    $('setup-wk').textContent=weekLabel(viewWeek).toLowerCase()+', '+range(viewWeek);
 
-    var all=state.rhythm.concat(state.tasks);
     var total=0, done=0;
-    all.forEach(function(x){ if(isDaily(x)){ total+=7; WEEK.forEach(function(d){ if(isDone(x,d)) done++; }); } else { total++; if(x.done) done++; } });
+    state.rhythm.concat(w.tasks).forEach(function(x){
+      if(isDaily(x)){ total+=7; WEEK.forEach(function(d){ if(isDone(x,d)) done++; }); }
+      else { total++; if(isDone(x)) done++; }
+    });
     $('done').textContent=done; $('total').textContent=total;
     $('fill').style.width=(total?(done/total*100):0)+'%';
 
-    var hasEx=all.some(function(x){return x.example;});
-    $('ex-note').classList.toggle('show', hasEx);
+    $('ex-note').classList.toggle('show', state.rhythm.concat(w.tasks).some(function(x){return x.example;}));
 
-    // rhythm, sorted by day
-    var r=state.rhythm.slice().sort(function(a,b){ return DAYS.indexOf(a.day)-DAYS.indexOf(b.day); });
-    $('rhythm').innerHTML = r.length ? r.map(function(it){ return itemHTML(it,true); }).join('')
+    var byDay=function(a,b){ return OPTS.indexOf(a.day)-OPTS.indexOf(b.day); };
+    var r=state.rhythm.slice().sort(byDay);
+    $('rhythm').innerHTML = r.length ? r.map(itemHTML).join('')
       : '<div class="empty">No rhythm yet. Add the moves you make every week.</div>';
-    var t=state.tasks.slice().sort(function(a,b){ return DAYS.indexOf(a.day)-DAYS.indexOf(b.day); });
-    $('tasks').innerHTML = t.length ? t.map(function(it){ return itemHTML(it,true); }).join('')
+    var t=w.tasks.slice().sort(byDay);
+    $('tasks').innerHTML = t.length ? t.map(itemHTML).join('')
       : '<div class="empty">Nothing extra this week. Add a one-off if you have one.</div>';
-    renderDays(start);
+    renderDays();
   }
 
-  function renderDays(start){
-    var todayKey=DAYS[(new Date().getDay()+6)%7];
-    var thisWeek=iso(mondayOf(new Date()))===state.weekStart;
+  function renderDays(){
+    var w=wk(), start=fromIso(viewWeek), tk=todayKey();
     $('days').innerHTML = DAYS.map(function(d,i){
-      var daily=d==='Anytime'?[]:state.rhythm.concat(state.tasks).filter(isDaily);
-      var its=daily.concat(state.rhythm.filter(function(x){return x.day===d;}), state.tasks.filter(function(x){return x.day===d;}));
+      var daily=d==='Anytime'?[]:state.rhythm.concat(w.tasks).filter(isDaily);
+      var its=daily.concat(state.rhythm.filter(function(x){return x.day===d;}), w.tasks.filter(function(x){return x.day===d;}));
       var date=''; if(d!=='Anytime'){ var dt=new Date(start); dt.setDate(dt.getDate()+i); date=fmt(dt); }
-      var isToday=thisWeek && d===todayKey;
+      var isToday=viewWeek===CUR && d===tk;
       var dn=its.filter(function(x){return isDone(x,d);}).length;
       return '<div class="day'+(isToday?' today':'')+'">'+
         '<div class="dayhead"><span class="dayname">'+FULL[d]+(date?'<span class="daydate">'+date+'</span>':'')+'</span>'+
@@ -361,36 +416,32 @@
     }).join('');
   }
   function dayItemHTML(it,d){
-    var once=state.tasks.indexOf(it)>-1;
-    var tag=isDaily(it)?'<span class="kind every">every day</span>':(once?'<span class="kind">this week</span>':'<span class="kind every">every week</span>');
+    var tag=isDaily(it)?'<span class="kind every">every day</span>':(isRhythm(it)?'<span class="kind every">every week</span>':'<span class="kind">this week</span>');
     return '<div class="item'+(isDone(it,d)?' done':'')+'" data-id="'+it.id+'" data-day="'+d+'">'+
       '<span class="box" data-act="toggle">'+CHK+'</span>'+
-      '<span class="lbl" data-act="toggle" style="cursor:pointer">'+esc(it.name)+'</span>'+
-      tag+'</div>';
+      '<span class="lbl" data-act="toggle" style="cursor:pointer">'+esc(it.name)+'</span>'+tag+'</div>';
   }
-
-  function itemHTML(it,isRhythm){
+  function itemHTML(it){
     if(editingId===it.id){
-      return '<div class="item'+(it.done?' done':'')+'" data-id="'+it.id+'">'+
-        '<span class="box" data-act="toggle"><span></span></span>'+
+      return '<div class="item" data-id="'+it.id+'">'+
         '<input class="edit-in" id="edit-in" value="'+esc(it.name)+'">'+
         '<button class="btn ghost" data-act="save" style="padding:6px 10px">Save</button></div>';
     }
-    return '<div class="item'+(isDone(it)?' done':'')+'" data-id="'+it.id+'">'+
-      '<span class="box" data-act="toggle">'+CHK+'</span>'+
-      '<span class="lbl" data-act="edit">'+esc(it.name)+'</span>'+
-      (isRhythm?'<select class="daysel" data-act="day" aria-label="Day">'+OPTS.map(function(d){return '<option value="'+d+'"'+(d===it.day?' selected':'')+'>'+(d==='Daily'?'Every day':d)+'</option>';}).join('')+'</select>':'')+
+    return '<div class="item" data-id="'+it.id+'">'+
+      '<span class="lbl" data-act="edit" title="Tap to rename">'+esc(it.name)+'</span>'+
+      '<select class="daysel" data-act="day" aria-label="Day">'+OPTS.map(function(d){return '<option value="'+d+'"'+(d===it.day?' selected':'')+'>'+(d==='Daily'?'Every day':d)+'</option>';}).join('')+'</select>'+
       '<button class="x" data-act="del" aria-label="Remove">×</button></div>';
   }
-
-  function find(id){ return state.rhythm.find(function(x){return x.id===id;}) || state.tasks.find(function(x){return x.id===id;}); }
 
   function listClick(e){
     var row=e.target.closest('.item'); if(!row) return;
     var id=row.getAttribute('data-id'), act=e.target.closest('[data-act]');
     act=act?act.getAttribute('data-act'):''; var it=find(id); if(!it) return;
     if(act==='toggle'){ toggleDone(it,row.getAttribute('data-day')); delete it.example; editingId=null; save(); render(); }
-    else if(act==='del'){ state.rhythm=state.rhythm.filter(function(x){return x.id!==id;}); state.tasks=state.tasks.filter(function(x){return x.id!==id;}); save(); render(); }
+    else if(act==='del'){
+      state.rhythm=state.rhythm.filter(function(x){return x.id!==id;});
+      var w=wk(); w.tasks=w.tasks.filter(function(x){return x.id!==id;});
+      save(); render(); }
     else if(act==='edit'){ editingId=id; render(); var inp=$('edit-in'); if(inp){ inp.focus(); inp.select(); } }
     else if(act==='save'){ var v=$('edit-in').value.trim(); if(v){ it.name=v; delete it.example; } editingId=null; save(); render(); }
   }
@@ -404,60 +455,55 @@
   }
   $('rhythm').addEventListener('change', dayChange);
   $('tasks').addEventListener('change', dayChange);
-  var addingDay=null;
+  $('tab-week').addEventListener('click', function(){ show('week'); });
+  $('tab-setup').addEventListener('click', function(){ show('setup'); });
+
+  function goWeek(n){ var k=addWeeks(viewWeek,n); if(k<addWeeks(CUR,-1)||k>addWeeks(CUR,1)) return; viewWeek=k; addingDay=null; editingId=null; render(); }
+  $('wk-prev').addEventListener('click', function(){ goWeek(-1); });
+  $('wk-next').addEventListener('click', function(){ goWeek(1); });
+  $('wk-today').addEventListener('click', function(){ viewWeek=CUR; addingDay=null; render(); });
+
   function quickSave(){
     var inp=$('qa-in'); if(!inp) return; var n=inp.value.trim(); if(!n){ inp.focus(); return; }
-    var item={id:uid(), name:n, day:addingDay, done:false, example:false};
-    if($('qa-rep').checked) state.rhythm.push(item); else state.tasks.push(item);
-    var d=addingDay; save(); render(); addingDay=d; renderDays(new Date(state.weekStart+'T00:00:00')); $('qa-in').focus();
+    if($('qa-rep').checked) state.rhythm.push({id:uid(), name:n, day:addingDay, example:false});
+    else wk().tasks.push({id:uid(), name:n, day:addingDay, done:false, example:false});
+    save(); render(); $('qa-in').focus();
   }
   $('days').addEventListener('click', function(e){
     var a=e.target.closest('[data-add]');
-    if(a){ addingDay=a.getAttribute('data-add'); renderDays(new Date(state.weekStart+'T00:00:00')); $('qa-in').focus(); return; }
+    if(a){ addingDay=a.getAttribute('data-add'); renderDays(); $('qa-in').focus(); return; }
     var q=e.target.closest('[data-qa]'); if(!q) return;
-    if(q.getAttribute('data-qa')==='save') quickSave();
-    else { addingDay=null; renderDays(new Date(state.weekStart+'T00:00:00')); }
+    if(q.getAttribute('data-qa')==='save') quickSave(); else { addingDay=null; renderDays(); }
   });
   $('days').addEventListener('keydown', function(e){
     if(e.target.id!=='qa-in') return;
     if(e.key==='Enter') quickSave();
-    if(e.key==='Escape'){ addingDay=null; renderDays(new Date(state.weekStart+'T00:00:00')); }
+    if(e.key==='Escape'){ addingDay=null; renderDays(); }
   });
-  $('tab-week').addEventListener('click', function(){ show('week'); });
-  $('tab-setup').addEventListener('click', function(){ show('setup'); });
   document.addEventListener('keydown', function(e){ if(e.key==='Enter' && editingId && document.activeElement && document.activeElement.id==='edit-in'){ var it=find(editingId); var v=$('edit-in').value.trim(); if(it&&v){it.name=v;delete it.example;} editingId=null; save(); render(); } });
 
-  $('focus').addEventListener('input', function(){ state.focus=this.value; save(); });
+  $('focus').addEventListener('input', function(){ wk().focus=this.value; save(); });
 
   $('r-add').addEventListener('click', function(){
     var n=$('r-name').value.trim(); if(!n){ $('r-name').focus(); return; }
-    state.rhythm.push({id:uid(), name:n, day:$('r-day').value, done:false, example:false});
+    state.rhythm.push({id:uid(), name:n, day:$('r-day').value, example:false});
     $('r-name').value=''; save(); render(); $('r-name').focus();
   });
   $('r-name').addEventListener('keydown', function(e){ if(e.key==='Enter') $('r-add').click(); });
   $('t-add').addEventListener('click', function(){
     var n=$('t-name').value.trim(); if(!n){ $('t-name').focus(); return; }
-    state.tasks.push({id:uid(), name:n, day:$('t-day').value, done:false, example:false});
+    wk().tasks.push({id:uid(), name:n, day:$('t-day').value, done:false, example:false});
     $('t-name').value=''; save(); render(); $('t-name').focus();
   });
   $('t-name').addEventListener('keydown', function(e){ if(e.key==='Enter') $('t-add').click(); });
 
-  $('fresh').addEventListener('click', function(){
-    if(!confirm('Start a fresh week? This unchecks your rhythm and clears this week\'s one-off tasks. Your rhythm itself stays.')) return;
-    state.rhythm.forEach(function(x){ x.done=false; x.doneDays={}; });
-    state.tasks=[];
-    state.weekStart=iso(mondayOf(new Date()));
-    editingId=null; save(); render();
-  });
-
   $('clear-ex').addEventListener('click', function(){
     state.rhythm=state.rhythm.filter(function(x){return !x.example;});
-    state.tasks=state.tasks.filter(function(x){return !x.example;});
-    if(state.focus===EXAMPLE.focus) state.focus='';
+    Object.keys(state.weeks).forEach(function(k){ var w=state.weeks[k]; w.tasks=w.tasks.filter(function(x){return !x.example;}); if(w.focus===EXAMPLE.focus) w.focus=''; });
     save(); render();
   });
 
-  render();
+  save(); render();
   show(view);
 
   /* drifting embers */
