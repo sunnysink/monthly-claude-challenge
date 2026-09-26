@@ -130,8 +130,9 @@
   .daysel:hover{border-color:var(--mauve)}
   .x{flex:0 0 auto;background:none;border:none;color:var(--ink-faint);cursor:pointer;font-size:16px;line-height:1;padding:4px 6px;border-radius:7px;transition:color .15s}
   .x:hover{color:var(--red)}
-  .mv{flex:0 0 auto;background:none;border:none;color:var(--ink-faint);cursor:pointer;font-size:15px;line-height:1;padding:4px 6px;border-radius:7px;transition:color .15s}
-  .mv:hover{color:var(--aqua)}
+  .mvsel{flex:none;width:auto;max-width:92px;font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:var(--ink-dim);
+    background:transparent;border:1px solid var(--edge2);border-radius:20px;padding:5px 8px;cursor:pointer}
+  .mvsel:hover{color:var(--aqua);border-color:var(--aqua)}
   .edit-in{flex:1;font-family:var(--sans);font-size:15px;color:var(--ink);background:rgba(7,5,15,0.6);border:1px solid var(--copper);border-radius:8px;padding:6px 10px}
   .edit-in:focus{outline:none}
   .empty{text-align:center;color:var(--ink-faint);font-family:var(--mono);font-size:12.5px;padding:22px 18px;
@@ -444,12 +445,36 @@
     }).join('');
   }
   function dayItemHTML(it,d){
-    var tag=isDaily(it)?'<span class="kind every">every day</span>':(isRhythm(it)?'<span class="kind every">every week</span>':'<span class="kind">this week</span>');
+    var tag=isDaily(it)?'<span class="kind every">every day</span>':(isRhythm(it)?'<span class="kind every">every week</span>':'<span class="kind">one time</span>');
     return '<div class="item'+(isDone(it,d)?' done':'')+'" data-id="'+it.id+'" data-day="'+d+'">'+
       '<span class="box" data-act="toggle">'+CHK+'</span>'+
       '<span class="lbl" data-act="toggle" style="cursor:pointer">'+esc(it.name)+'</span>'+tag+
-      (!isRhythm(it) && viewWeek<addWeeks(CUR,1) ? '<button class="mv" data-act="move" title="Move to next week" aria-label="Move to next week">→</button>' : '')+
+      moveHTML(d)+
       '<button class="x" data-act="'+(isRhythm(it)?'skip':'del')+'" title="'+(isRhythm(it)?'Skip it '+(isDaily(it)?'today':'this week')+' (it stays in your routine)':'Delete')+'" aria-label="Remove">×</button></div>';
+  }
+  function moveHTML(from){
+    var weeks=[CUR, addWeeks(CUR,1)], o='<option value="" selected>Move ⇢</option>';
+    weeks.forEach(function(k){
+      o+='<optgroup label="'+weekLabel(k)+' · '+range(k)+'">';
+      DAYS.forEach(function(d,i){
+        if(k===viewWeek && d===from) return;
+        var lbl=FULL[d]; if(d!=='Anytime'){ var dt=fromIso(k); dt.setDate(dt.getDate()+i); lbl+=' '+fmt(dt); }
+        o+='<option value="'+k+'|'+d+'">'+lbl+'</option>';
+      });
+      o+='</optgroup>';
+    });
+    return '<select class="mvsel" data-act="movesel" aria-label="Move to another day">'+o+'</select>';
+  }
+  function moveTask(it,from,k,d){
+    if(isRhythm(it)){
+      /* a routine task moves for this week only: skip it here, add a one-off copy on the new day */
+      skip(it,from);
+      wk(k).tasks.push({id:uid(), name:it.name, day:d, done:false, example:false});
+    } else {
+      var w=wk(); w.tasks=w.tasks.filter(function(x){return x.id!==it.id;});
+      it.day=d; it.done=false; delete it.example; wk(k).tasks.push(it);
+    }
+    save(); render();
   }
   function itemHTML(it){
     if(editingId===it.id){
@@ -508,6 +533,11 @@
     if(a){ addingDay=a.getAttribute('data-add'); renderDays(); $('qa-in').focus(); return; }
     var q=e.target.closest('[data-qa]'); if(!q) return;
     if(q.getAttribute('data-qa')==='save') quickSave(); else { addingDay=null; renderDays(); }
+  });
+  $('days').addEventListener('change', function(e){
+    if(!e.target.classList.contains('mvsel') || !e.target.value) return;
+    var row=e.target.closest('.item'), it=row&&find(row.getAttribute('data-id')); if(!it) return;
+    var v=e.target.value.split('|'); moveTask(it,row.getAttribute('data-day'),v[0],v[1]);
   });
   $('days').addEventListener('keydown', function(e){
     if(e.target.id!=='qa-in') return;
