@@ -117,6 +117,9 @@
   .item.done .lbl{opacity:.5;text-decoration:line-through;text-decoration-color:var(--ink-faint)}
   .daytag{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--mauve);
     background:rgba(var(--mauve-rgb),0.13);border:1px solid rgba(var(--mauve-rgb),0.36);border-radius:20px;padding:3px 9px;flex:none}
+  .daysel{flex:none;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--mauve);padding:5px 8px;border-radius:20px;
+    background:rgba(var(--mauve-rgb),0.13);border:1px solid rgba(var(--mauve-rgb),0.36)}
+  .daysel:hover{border-color:var(--mauve)}
   .x{flex:0 0 auto;background:none;border:none;color:var(--ink-faint);cursor:pointer;font-size:16px;line-height:1;padding:4px 6px;border-radius:7px;transition:color .15s}
   .x:hover{color:var(--red)}
   .edit-in{flex:1;font-family:var(--sans);font-size:15px;color:var(--ink);background:rgba(7,5,15,0.6);border:1px solid var(--copper);border-radius:8px;padding:6px 10px}
@@ -367,7 +370,7 @@
     return '<div class="item'+(it.done?' done':'')+'" data-id="'+it.id+'">'+
       '<span class="box" data-act="toggle">'+CHK+'</span>'+
       '<span class="lbl" data-act="edit">'+esc(it.name)+'</span>'+
-      (isRhythm?'<span class="daytag">'+esc(it.day)+'</span>':'')+
+      (isRhythm?'<select class="daysel" data-act="day" aria-label="Day">'+DAYS.map(function(d){return '<option value="'+d+'"'+(d===it.day?' selected':'')+'>'+d+'</option>';}).join('')+'</select>':'')+
       '<button class="x" data-act="del" aria-label="Remove">×</button></div>';
   }
 
@@ -385,6 +388,13 @@
   $('rhythm').addEventListener('click', listClick);
   $('tasks').addEventListener('click', listClick);
   $('days').addEventListener('click', listClick);
+  function dayChange(e){
+    if(!e.target.classList.contains('daysel')) return;
+    var row=e.target.closest('.item'); var it=row&&find(row.getAttribute('data-id')); if(!it) return;
+    it.day=e.target.value; delete it.example; save(); render();
+  }
+  $('rhythm').addEventListener('change', dayChange);
+  $('tasks').addEventListener('change', dayChange);
   var addingDay=null;
   function quickSave(){
     var inp=$('qa-in'); if(!inp) return; var n=inp.value.trim(); if(!n){ inp.focus(); return; }
