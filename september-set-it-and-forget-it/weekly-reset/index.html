@@ -287,6 +287,7 @@
       <span class="sep"></span>
       <button type="button" class="btn ghost danger" id="clearWeek">Clear this week</button>
       <button type="button" class="btn ghost danger" id="clearAll">Clear everything</button>
+      <button type="button" class="btn ghost" id="loadEx">Show the example week</button>
     </div>
   </section>
 
@@ -640,6 +641,11 @@
   $('clearAll').addEventListener('click', function(){
     if(!confirm('Clear everything? Your routine, every week and every task go. Back it up first if you might want it.')) return;
     state={rhythm:[], weeks:{}}; viewWeek=CUR; addingDay=null; editingId=null; save(); render(); show('setup');
+  });
+
+  $('loadEx').addEventListener('click', function(){
+    if(!confirm('Load the example week? It replaces everything here now. Back it up first if you might want it.')) return;
+    state=seed(); viewWeek=CUR; addingDay=null; editingId=null; save(); render(); show('setup'); window.scrollTo(0,0);
   });
 
   save(); render();
