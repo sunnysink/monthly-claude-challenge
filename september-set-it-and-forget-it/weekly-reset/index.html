@@ -130,6 +130,8 @@
   .daysel:hover{border-color:var(--mauve)}
   .x{flex:0 0 auto;background:none;border:none;color:var(--ink-faint);cursor:pointer;font-size:16px;line-height:1;padding:4px 6px;border-radius:7px;transition:color .15s}
   .x:hover{color:var(--red)}
+  .mv{flex:0 0 auto;background:none;border:none;color:var(--ink-faint);cursor:pointer;font-size:15px;line-height:1;padding:4px 6px;border-radius:7px;transition:color .15s}
+  .mv:hover{color:var(--aqua)}
   .edit-in{flex:1;font-family:var(--sans);font-size:15px;color:var(--ink);background:rgba(7,5,15,0.6);border:1px solid var(--copper);border-radius:8px;padding:6px 10px}
   .edit-in:focus{outline:none}
   .empty{text-align:center;color:var(--ink-faint);font-family:var(--mono);font-size:12.5px;padding:22px 18px;
@@ -353,6 +355,14 @@
     if(isDaily(it)){ var v=w.done[it.id]||{}; var k=d||todayKey(); v[k]=!v[k]; w.done[it.id]=v; }
     else w.done[it.id]=!w.done[it.id];
   }
+  function isSkipped(it,d){
+    if(!isRhythm(it)) return false; var v=(wk().skip||{})[it.id];
+    return isDaily(it) ? !!(v && v[d]) : !!v;
+  }
+  function skip(it,d){
+    var w=wk(); w.skip=w.skip||{};
+    if(isDaily(it)){ var v=w.skip[it.id]||{}; v[d]=true; w.skip[it.id]=v; } else w.skip[it.id]=true;
+  }
   function onlyExamples(){ var all=state.rhythm.concat(wk(CUR).tasks); return !all.length || all.every(function(x){return x.example;}); }
   function find(id){ return state.rhythm.find(function(x){return x.id===id;}) || wk().tasks.find(function(x){return x.id===id;}); }
 
@@ -377,8 +387,8 @@
 
     var total=0, done=0;
     state.rhythm.concat(w.tasks).forEach(function(x){
-      if(isDaily(x)){ total+=7; WEEK.forEach(function(d){ if(isDone(x,d)) done++; }); }
-      else { total++; if(isDone(x)) done++; }
+      if(isDaily(x)){ WEEK.forEach(function(d){ if(!isSkipped(x,d)){ total++; if(isDone(x,d)) done++; } }); }
+      else if(!isSkipped(x)){ total++; if(isDone(x)) done++; }
     });
     $('done').textContent=done; $('total').textContent=total;
     $('fill').style.width=(total?(done/total*100):0)+'%';
@@ -399,7 +409,8 @@
     var w=wk(), start=fromIso(viewWeek), tk=todayKey();
     $('days').innerHTML = DAYS.map(function(d,i){
       var daily=d==='Anytime'?[]:state.rhythm.concat(w.tasks).filter(isDaily);
-      var its=daily.concat(state.rhythm.filter(function(x){return x.day===d;}), w.tasks.filter(function(x){return x.day===d;}));
+      var its=daily.concat(state.rhythm.filter(function(x){return x.day===d;}), w.tasks.filter(function(x){return x.day===d;}))
+        .filter(function(x){ return !isSkipped(x,d); });
       var date=''; if(d!=='Anytime'){ var dt=new Date(start); dt.setDate(dt.getDate()+i); date=fmt(dt); }
       var isToday=viewWeek===CUR && d===tk;
       var dn=its.filter(function(x){return isDone(x,d);}).length;
@@ -419,7 +430,9 @@
     var tag=isDaily(it)?'<span class="kind every">every day</span>':(isRhythm(it)?'<span class="kind every">every week</span>':'<span class="kind">this week</span>');
     return '<div class="item'+(isDone(it,d)?' done':'')+'" data-id="'+it.id+'" data-day="'+d+'">'+
       '<span class="box" data-act="toggle">'+CHK+'</span>'+
-      '<span class="lbl" data-act="toggle" style="cursor:pointer">'+esc(it.name)+'</span>'+tag+'</div>';
+      '<span class="lbl" data-act="toggle" style="cursor:pointer">'+esc(it.name)+'</span>'+tag+
+      (!isRhythm(it) && viewWeek<addWeeks(CUR,1) ? '<button class="mv" data-act="move" title="Move to next week" aria-label="Move to next week">→</button>' : '')+
+      '<button class="x" data-act="'+(isRhythm(it)?'skip':'del')+'" title="'+(isRhythm(it)?'Skip it '+(isDaily(it)?'today':'this week')+' (it stays in your routine)':'Delete')+'" aria-label="Remove">×</button></div>';
   }
   function itemHTML(it){
     if(editingId===it.id){
@@ -442,6 +455,10 @@
       state.rhythm=state.rhythm.filter(function(x){return x.id!==id;});
       var w=wk(); w.tasks=w.tasks.filter(function(x){return x.id!==id;});
       save(); render(); }
+    else if(act==='skip'){ skip(it,row.getAttribute('data-day')); save(); render(); }
+    else if(act==='move'){
+      var w0=wk(); w0.tasks=w0.tasks.filter(function(x){return x.id!==id;});
+      it.done=false; wk(addWeeks(viewWeek,1)).tasks.push(it); save(); render(); }
     else if(act==='edit'){ editingId=id; render(); var inp=$('edit-in'); if(inp){ inp.focus(); inp.select(); } }
     else if(act==='save'){ var v=$('edit-in').value.trim(); if(v){ it.name=v; delete it.example; } editingId=null; save(); render(); }
   }
