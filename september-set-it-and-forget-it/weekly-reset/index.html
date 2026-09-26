@@ -170,6 +170,11 @@
   .repeat input{accent-color:var(--aqua);width:16px;height:16px;cursor:pointer}
   .quickadd .btn{padding:8px 16px;font-size:13px}
   .kind.every{color:var(--mauve);border-color:rgba(var(--mauve-rgb),0.36)}
+  .safe{margin-top:34px;padding-top:20px;border-top:1px solid var(--edge)}
+  .savebar{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}
+  .savebar .btn.ghost{border:1px solid var(--edge2);padding:8px 14px}
+  .savebar .sep{flex:1}
+  .btn.ghost.danger:hover{color:var(--red);border-color:var(--red)}
   .setup-note{font-size:13.5px;color:var(--ink-dim);margin:18px 0 20px}
   .setup-note b{color:var(--copper-lt)}
 
@@ -253,6 +258,18 @@
     <div class="list" id="tasks"></div>
   </section>
   </div>
+
+  <section class="safe">
+    <div class="section-label">Keep it safe <span class="hint">Your week lives in this browser. Clearing site data or switching devices loses it, so back it up.</span></div>
+    <div class="savebar">
+      <button type="button" class="btn ghost" id="backupBtn">Back up (.json)</button>
+      <button type="button" class="btn ghost" id="restoreBtn">Restore backup</button>
+      <input type="file" id="restoreFile" accept="application/json,.json" style="display:none">
+      <span class="sep"></span>
+      <button type="button" class="btn ghost danger" id="clearWeek">Clear this week</button>
+      <button type="button" class="btn ghost danger" id="clearAll">Clear everything</button>
+    </div>
+  </section>
 
   <footer>SEPTEMBER · SET IT &amp; FORGET IT · A FREE SPARK INSIDE SOUL-FORGED FOUNDERS</footer>
 
@@ -518,6 +535,47 @@
     state.rhythm=state.rhythm.filter(function(x){return !x.example;});
     Object.keys(state.weeks).forEach(function(k){ var w=state.weeks[k]; w.tasks=w.tasks.filter(function(x){return !x.example;}); if(w.focus===EXAMPLE.focus) w.focus=''; });
     save(); render();
+  });
+
+  function blobDownload(name,content,type){
+    var blob=new Blob([content],{type:type}); var url=URL.createObjectURL(blob);
+    var a=document.createElement('a'); a.href=url; a.download=name; document.body.appendChild(a); a.click();
+    document.body.removeChild(a); setTimeout(function(){ URL.revokeObjectURL(url); },800);
+  }
+  function dl(name,content,type){
+    // Inside the claude.ai viewer a plain download does nothing, so use the runtime save; on Pages or as a file, download normally.
+    if(window.claude && window.claude.use){
+      claude.use('downloads').then(function(d){
+        if(d && d.save){ d.save({filename:name,data:content}).catch(function(){}); }
+        else { blobDownload(name,content,type); }
+      }).catch(function(){ blobDownload(name,content,type); });
+    } else { blobDownload(name,content,type); }
+  }
+  $('backupBtn').addEventListener('click', function(){
+    dl('weekly-reset-backup-'+iso(new Date())+'.json', JSON.stringify({app:'weekly-reset',version:2,rhythm:state.rhythm,weeks:state.weeks},null,2), 'application/json');
+  });
+  $('restoreBtn').addEventListener('click', function(){ $('restoreFile').click(); });
+  $('restoreFile').addEventListener('change', function(e){
+    var f=e.target.files[0]; if(!f) return;
+    var reader=new FileReader();
+    reader.onload=function(){
+      try{
+        var b=JSON.parse(reader.result);
+        if(!b || !Array.isArray(b.rhythm) || typeof b.weeks!=='object') throw 0;
+        if(!confirm('Replace what is here now with this backup?')) return;
+        state={rhythm:b.rhythm, weeks:b.weeks||{}};
+        viewWeek=CUR; addingDay=null; editingId=null; save(); render(); show('week');
+      }catch(err){ alert('That file could not be read as a Weekly Reset backup.'); }
+    };
+    reader.readAsText(f); e.target.value='';
+  });
+  $('clearWeek').addEventListener('click', function(){
+    if(!confirm('Clear '+weekLabel(viewWeek).toLowerCase()+' ('+range(viewWeek)+')? This removes its one-off tasks, focus and checkmarks. Your routine stays.')) return;
+    state.weeks[viewWeek]=blankWeek(); addingDay=null; save(); render();
+  });
+  $('clearAll').addEventListener('click', function(){
+    if(!confirm('Clear everything? Your routine, every week and every task go. Back it up first if you might want it.')) return;
+    state={rhythm:[], weeks:{}}; viewWeek=CUR; addingDay=null; editingId=null; save(); render(); show('setup');
   });
 
   save(); render();
