@@ -221,7 +221,7 @@
       <select id="r-day" aria-label="Day">
         <option value="Mon">Mon</option><option value="Tue">Tue</option><option value="Wed">Wed</option>
         <option value="Thu">Thu</option><option value="Fri">Fri</option><option value="Sat">Sat</option>
-        <option value="Sun">Sun</option><option value="Anytime" selected>Anytime</option>
+        <option value="Sun">Sun</option><option value="Daily">Every day</option><option value="Anytime" selected>Anytime</option>
       </select>
       <button class="btn primary" id="r-add">Add</button>
     </div>
@@ -235,7 +235,7 @@
       <select id="t-day" aria-label="Day">
         <option value="Mon">Mon</option><option value="Tue">Tue</option><option value="Wed">Wed</option>
         <option value="Thu">Thu</option><option value="Fri">Fri</option><option value="Sat">Sat</option>
-        <option value="Sun">Sun</option><option value="Anytime" selected>Anytime</option>
+        <option value="Sun">Sun</option><option value="Daily">Every day</option><option value="Anytime" selected>Anytime</option>
       </select>
       <button class="btn primary" id="t-add">Add</button>
     </div>
@@ -301,6 +301,12 @@
   var state=load();
   state.tasks.forEach(function(t){ if(!t.day) t.day='Anytime'; });
   var FULL={Mon:'Monday',Tue:'Tuesday',Wed:'Wednesday',Thu:'Thursday',Fri:'Friday',Sat:'Saturday',Sun:'Sunday',Anytime:'Anytime'};
+  var WEEK=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  var OPTS=['Daily','Mon','Tue','Wed','Thu','Fri','Sat','Sun','Anytime'];
+  function todayKey(){ return WEEK[(new Date().getDay()+6)%7]; }
+  function isDaily(it){ return it.day==='Daily'; }
+  function isDone(it,d){ return isDaily(it) ? !!(it.doneDays&&it.doneDays[d||todayKey()]) : !!it.done; }
+  function toggleDone(it,d){ if(isDaily(it)){ it.doneDays=it.doneDays||{}; var k=d||todayKey(); it.doneDays[k]=!it.doneDays[k]; } else it.done=!it.done; }
   function onlyExamples(){ var all=state.rhythm.concat(state.tasks); return !all.length || all.every(function(x){return x.example;}); }
   var view = onlyExamples() ? 'setup' : 'week';
   function show(v){ view=v; ['week','setup'].forEach(function(k){ $('view-'+k).classList.toggle('on',k===v); $('tab-'+k).classList.toggle('on',k===v); $('tab-'+k).setAttribute('aria-selected',k===v); }); }
@@ -315,7 +321,8 @@
     $('focus').value=state.focus||'';
 
     var all=state.rhythm.concat(state.tasks);
-    var total=all.length, done=all.filter(function(x){return x.done;}).length;
+    var total=0, done=0;
+    all.forEach(function(x){ if(isDaily(x)){ total+=7; WEEK.forEach(function(d){ if(isDone(x,d)) done++; }); } else { total++; if(x.done) done++; } });
     $('done').textContent=done; $('total').textContent=total;
     $('fill').style.width=(total?(done/total*100):0)+'%';
 
@@ -336,14 +343,15 @@
     var todayKey=DAYS[(new Date().getDay()+6)%7];
     var thisWeek=iso(mondayOf(new Date()))===state.weekStart;
     $('days').innerHTML = DAYS.map(function(d,i){
-      var its=state.rhythm.filter(function(x){return x.day===d;}).concat(state.tasks.filter(function(x){return x.day===d;}));
+      var daily=d==='Anytime'?[]:state.rhythm.concat(state.tasks).filter(isDaily);
+      var its=daily.concat(state.rhythm.filter(function(x){return x.day===d;}), state.tasks.filter(function(x){return x.day===d;}));
       var date=''; if(d!=='Anytime'){ var dt=new Date(start); dt.setDate(dt.getDate()+i); date=fmt(dt); }
       var isToday=thisWeek && d===todayKey;
-      var dn=its.filter(function(x){return x.done;}).length;
+      var dn=its.filter(function(x){return isDone(x,d);}).length;
       return '<div class="day'+(isToday?' today':'')+'">'+
         '<div class="dayhead"><span class="dayname">'+FULL[d]+(date?'<span class="daydate">'+date+'</span>':'')+'</span>'+
         (isToday?'<span class="todaytag">Today</span>':(its.length?'<span class="daycount">'+dn+' of '+its.length+'</span>':''))+'</div>'+
-        (its.length? '<div class="list">'+its.map(dayItemHTML).join('')+'</div>' : '<div class="none">Nothing planned yet.</div>')+
+        (its.length? '<div class="list">'+its.map(function(it){ return dayItemHTML(it,d); }).join('')+'</div>' : '<div class="none">Nothing planned yet.</div>')+
         (addingDay===d ?
           '<div class="quickadd"><input type="text" id="qa-in" placeholder="Add to '+FULL[d]+'" autocomplete="off">'+
           '<label class="repeat"><input type="checkbox" id="qa-rep"> Every week</label>'+
@@ -352,12 +360,13 @@
       '</div>';
     }).join('');
   }
-  function dayItemHTML(it){
+  function dayItemHTML(it,d){
     var once=state.tasks.indexOf(it)>-1;
-    return '<div class="item'+(it.done?' done':'')+'" data-id="'+it.id+'">'+
+    var tag=isDaily(it)?'<span class="kind every">every day</span>':(once?'<span class="kind">this week</span>':'<span class="kind every">every week</span>');
+    return '<div class="item'+(isDone(it,d)?' done':'')+'" data-id="'+it.id+'" data-day="'+d+'">'+
       '<span class="box" data-act="toggle">'+CHK+'</span>'+
       '<span class="lbl" data-act="toggle" style="cursor:pointer">'+esc(it.name)+'</span>'+
-      (once?'<span class="kind">this week</span>':'<span class="kind every">every week</span>')+'</div>';
+      tag+'</div>';
   }
 
   function itemHTML(it,isRhythm){
@@ -367,10 +376,10 @@
         '<input class="edit-in" id="edit-in" value="'+esc(it.name)+'">'+
         '<button class="btn ghost" data-act="save" style="padding:6px 10px">Save</button></div>';
     }
-    return '<div class="item'+(it.done?' done':'')+'" data-id="'+it.id+'">'+
+    return '<div class="item'+(isDone(it)?' done':'')+'" data-id="'+it.id+'">'+
       '<span class="box" data-act="toggle">'+CHK+'</span>'+
       '<span class="lbl" data-act="edit">'+esc(it.name)+'</span>'+
-      (isRhythm?'<select class="daysel" data-act="day" aria-label="Day">'+DAYS.map(function(d){return '<option value="'+d+'"'+(d===it.day?' selected':'')+'>'+d+'</option>';}).join('')+'</select>':'')+
+      (isRhythm?'<select class="daysel" data-act="day" aria-label="Day">'+OPTS.map(function(d){return '<option value="'+d+'"'+(d===it.day?' selected':'')+'>'+(d==='Daily'?'Every day':d)+'</option>';}).join('')+'</select>':'')+
       '<button class="x" data-act="del" aria-label="Remove">×</button></div>';
   }
 
@@ -380,7 +389,7 @@
     var row=e.target.closest('.item'); if(!row) return;
     var id=row.getAttribute('data-id'), act=e.target.closest('[data-act]');
     act=act?act.getAttribute('data-act'):''; var it=find(id); if(!it) return;
-    if(act==='toggle'){ it.done=!it.done; delete it.example; editingId=null; save(); render(); }
+    if(act==='toggle'){ toggleDone(it,row.getAttribute('data-day')); delete it.example; editingId=null; save(); render(); }
     else if(act==='del'){ state.rhythm=state.rhythm.filter(function(x){return x.id!==id;}); state.tasks=state.tasks.filter(function(x){return x.id!==id;}); save(); render(); }
     else if(act==='edit'){ editingId=id; render(); var inp=$('edit-in'); if(inp){ inp.focus(); inp.select(); } }
     else if(act==='save'){ var v=$('edit-in').value.trim(); if(v){ it.name=v; delete it.example; } editingId=null; save(); render(); }
@@ -435,7 +444,7 @@
 
   $('fresh').addEventListener('click', function(){
     if(!confirm('Start a fresh week? This unchecks your rhythm and clears this week\'s one-off tasks. Your rhythm itself stays.')) return;
-    state.rhythm.forEach(function(x){ x.done=false; });
+    state.rhythm.forEach(function(x){ x.done=false; x.doneDays={}; });
     state.tasks=[];
     state.weekStart=iso(mondayOf(new Date()));
     editingId=null; save(); render();
