@@ -9,11 +9,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,500&family=Hanken+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#FBF3E7; --ink:#211A12; --ink-dim:#544738;
-    --copper:#9A6B2E; --copper-lt:#7C5320; --ember:#C25A22; --ember-glow:#D96A2C;
-    --gold:#9C7C1E; --forest:#4A6250;
-    --copper-rgb:154,107,46; --ember-rgb:194,90,34; --forest-rgb:74,98,80;
-    --card-rgb:255,251,244;
+    --bg:#0D1411; --ink:#F5EFE8; --ink-dim:#A8998C;
+    --copper:#C6955C; --copper-lt:#E2B884; --ember:#FF6B1A; --ember-glow:#FFA24D;
+    --gold:#D8B968; --forest:#2C5F5A;
+    --copper-rgb:198,149,92; --ember-rgb:255,107,26; --forest-rgb:44,95,90;
+    --card-rgb:23,19,15;
     --serif:'Cormorant Garamond','Hoefler Text',Georgia,serif;
     --sans:'Hanken Grotesk',system-ui,-apple-system,sans-serif;
     --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;
@@ -22,8 +22,8 @@
   body{
     font-family:var(--sans);color:var(--ink);background:var(--bg);
     background-image:
-      radial-gradient(900px 520px at 10% -10%, rgba(var(--ember-rgb),.13), transparent 60%),
-      radial-gradient(820px 500px at 100% 0%, rgba(var(--forest-rgb),.13), transparent 55%);
+      radial-gradient(900px 520px at 10% -10%, rgba(var(--ember-rgb),.10), transparent 60%),
+      radial-gradient(820px 500px at 100% 0%, rgba(var(--forest-rgb),.16), transparent 55%);
     min-height:100vh;padding:70px 22px 80px;line-height:1.65;-webkit-font-smoothing:antialiased;
   }
   .wrap{max-width:720px;margin:0 auto}
@@ -43,15 +43,15 @@
     border-radius:16px;padding:24px 26px;margin-bottom:13px;position:relative;overflow:hidden;
     transition:transform .18s,border-color .18s,box-shadow .18s}
   a.month::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
-    background:linear-gradient(180deg,var(--copper),var(--ember),var(--gold))}
+    background:linear-gradient(180deg,var(--m1,var(--copper)),var(--m2,var(--ember)))}
   a.month:hover{transform:translateY(-3px);border-color:rgba(var(--ember-rgb),.55);
     box-shadow:0 14px 34px -20px rgba(var(--ember-rgb),.8)}
   a.month .when{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;
-    color:var(--copper);margin-bottom:7px}
+    color:var(--m1,var(--copper));margin-bottom:7px}
   a.month h2{font-family:var(--serif);font-size:31px;font-weight:600;line-height:1.1}
   a.month p{font-size:14.5px;color:var(--ink-dim);margin-top:6px}
   .live{font-family:var(--mono);font-size:8.5px;font-weight:600;letter-spacing:.2em;
-    text-transform:uppercase;color:#FFFDFA;background:linear-gradient(135deg,var(--ember),var(--copper));
+    text-transform:uppercase;color:#0D1411;background:linear-gradient(135deg,var(--ember-glow),var(--copper-lt));
     padding:4px 10px;border-radius:20px;margin-left:10px;vertical-align:middle}
   footer{margin-top:52px;text-align:center;font-family:var(--mono);font-size:11px;
     color:var(--ink-dim);opacity:.6;line-height:2}
@@ -67,20 +67,25 @@
   </header>
 
   <div class="label">This month</div>
-  <a class="month" href="september-set-it-and-forget-it/">
-    <div class="when">September 2026</div>
-    <h2>Set It &amp; Forget It<span class="live">Live</span></h2>
-    <p>Twenty-five systems you build once so they run without you, starting with your Biz Brain.</p>
+  <a class="month" href="october-raise-the-dead/" style="--m1:#A8D08F;--m2:#8F98A2">
+    <div class="when">October 2026</div>
+    <h2>Raise the Dead<span class="live">Live</span></h2>
+    <p>Twenty-five ways to bring back the offers, posts and ideas that went quiet.</p>
   </a>
 
   <div class="label" style="margin-top:38px">Past months</div>
-  <a class="month" href="august-made-visible/">
+  <a class="month" href="september-set-it-and-forget-it/" style="--m1:#C9A5FF;--m2:#E86FD8">
+    <div class="when">September 2026</div>
+    <h2>Set It &amp; Forget It</h2>
+    <p>Twenty-five systems you build once so they run without you, starting with your Biz Brain.</p>
+  </a>
+  <a class="month" href="august-made-visible/" style="--m1:#E2B884;--m2:#C25A22">
     <div class="when">August 2026</div>
     <h2>Made Visible</h2>
     <p>Twenty-five ways to put your work where people can actually see it.</p>
   </a>
 
-  <!-- NEXT MONTH: copy the September block, change the folder, the date, the name and the line.
+  <!-- NEXT MONTH: copy the October block, change the folder, the date, the name, the line and the two stripe colours (--m1, --m2).
        Move the current month down under "Past months" and drop its Live tag. -->
 
   <footer>
