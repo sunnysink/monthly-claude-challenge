@@ -152,8 +152,8 @@
   .rowhead h3{font-family:var(--serif);font-size:24px;font-weight:600;color:var(--heading)}
   .rowhead .d{font-size:13.5px;color:var(--ink-dim)}
   .stones{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:13px}
-  .stone{position:relative;background:var(--card);border:1px solid var(--cardborder);
-    border-radius:90px 90px 14px 14px;padding:30px 20px 18px;text-align:center;backdrop-filter:blur(12px);
+  .stone{position:relative;background:rgba(var(--card-rgb),0.9);border:1px solid var(--cardborder);
+    border-radius:90px 90px 14px 14px;padding:30px 20px 18px;text-align:center;contain:layout paint;
     display:flex;flex-direction:column;gap:8px;transition:transform .18s,border-color .18s,box-shadow .18s}
   .stone::before{content:"";position:absolute;inset:6px;border-radius:84px 84px 10px 10px;
     border:1px solid rgba(var(--copper-rgb),.13);pointer-events:none}
