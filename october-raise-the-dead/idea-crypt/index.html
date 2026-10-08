@@ -178,6 +178,14 @@
   .mini:hover{color:var(--ember-glow);border-color:rgba(var(--ember-rgb),.6);background:rgba(var(--ember-rgb),.07)}
   .mini.raise{color:var(--heading);border-color:rgba(var(--ember-rgb),.55)}
   .mini:disabled{opacity:.3;cursor:default}
+  .skull{position:absolute;top:22px;right:30px;width:32px;height:32px;border-radius:50%;
+    background:rgba(var(--well-rgb),.6);border:1px solid rgba(var(--copper-rgb),.3);cursor:pointer;
+    font-size:16px;line-height:1;display:grid;place-items:center;filter:grayscale(1);opacity:.45;
+    transition:opacity .18s,filter .18s,border-color .18s,box-shadow .18s,transform .18s}
+  .skull:hover{opacity:.9;transform:scale(1.08)}
+  .skull.on{filter:none;opacity:1;border-color:rgba(var(--ember-rgb),.7);box-shadow:0 0 14px -2px rgba(var(--ember-rgb),.7)}
+  .skull:focus-visible{outline:2px solid var(--heading);outline-offset:2px}
+  .rise .hint{font-size:12.5px;color:var(--ink-dim);margin-top:12px;opacity:.8}
   .none{font-size:14px;color:var(--ink-dim);padding:14px 4px}
 
   .ledger{list-style:none}
@@ -249,7 +257,7 @@
     <button class="tool" id="clear-ex" type="button">Clear examples</button>
   </div>
 
-  <div class="section-label">Closest to rising</div>
+  <div class="section-label" id="spot-label">Closest to rising</div>
   <section class="rise" id="spot"></section>
 
   <div class="section-label">Three prompts for Claude</div>
@@ -336,7 +344,9 @@
   function crypt(){ return state.ideas.filter(function(i){return i.status==='crypt';}); }
   var filter='All';
   function closest(list){
-    var c=(list||crypt()).slice().sort(function(a,b){ return b.stage-a.stage || (a.added<b.added?-1:1); });
+    var c=(list||crypt()).slice();
+    for(var k=0;k<c.length;k++) if(c[k].id===state.pick) return c[k];
+    c.sort(function(a,b){ return b.stage-a.stage || (a.added<b.added?-1:1); });
     return c[0]||null;
   }
   function meter(s){ var h='<div class="meter" aria-label="Stage '+(s+1)+' of 5">'; for(var i=0;i<5;i++) h+='<i class="'+(i<=s?'on':'')+'"></i>'; return h+'</div>'; }
@@ -409,7 +419,9 @@
         '<button class="mini" data-a="prompt" type="button">Prompt</button>'+
         '<button class="mini" data-a="edit" type="button">Edit</button>'+
         '<button class="mini raise" data-a="raise" type="button">Raise it</button>'+
-      '</div></article>';
+      '</div>'+
+      '<button class="skull'+(state.pick===i.id?' on':'')+'" data-a="pick" type="button" aria-pressed="'+(state.pick===i.id)+'" title="'+(state.pick===i.id?'Your pick. Tap to unpick':'Raise this one next')+'" aria-label="'+(state.pick===i.id?'Unpick this idea':'Pick this idea to raise next')+'">💀</button>'+
+      '</article>';
   }
 
   function render(){
@@ -430,14 +442,17 @@
     }).join('');
     var fc=filter==='All'?c:c.filter(function(i){return i.type===filter;});
 
-    var top=closest(fc), sp=$('spot');
+    var top=closest(fc), sp=$('spot'), picked=top && top.id===state.pick;
+    $('spot-label').textContent=picked?'Your pick to raise next':'Closest to rising';
     if(top){
-      sp.innerHTML='<div class="u">'+esc(STAGES[top.stage].n)+' · '+esc(top.type)+'</div>'+
+      sp.innerHTML='<div class="u">'+(picked?'💀 Your pick · ':'')+esc(STAGES[top.stage].n)+' · '+esc(top.type)+'</div>'+
         '<h2>'+esc(top.name)+'</h2>'+(top.what?'<div class="what">'+esc(top.what)+'</div>':'')+
         '<div class="next"><span class="k">Your next step</span>'+esc(top.next||'Open it and write down the one thing left to do.')+'</div>'+
         '<div class="acts"><button class="btn copy" data-a="prompt" data-id="'+top.id+'" type="button">Copy the Claude prompt</button>'+
         '<button class="btn ok" data-a="raise" data-id="'+top.id+'" type="button">I raised it</button>'+
-        '<button class="btn line" data-a="edit" data-id="'+top.id+'" type="button">Edit</button></div>';
+        '<button class="btn line" data-a="edit" data-id="'+top.id+'" type="button">Edit</button>'+
+        (picked?'<button class="btn line" data-a="pick" data-id="'+top.id+'" type="button">Unpick</button>':'')+'</div>'+
+        (picked?'':'<p class="hint">Tap the 💀 on any idea to make it your pick.</p>');
     } else {
       sp.innerHTML='<p class="empty">The crypt is empty. Add an idea above, or copy the Find prompt and let Claude help you remember them all.</p>';
     }
@@ -501,7 +516,7 @@
       save(); render(); closeSheet();
     });
     $('f-name').addEventListener('keydown',function(e){ if(e.key==='Enter') $('f-save').click(); });
-    if(!isNew) $('f-rest').addEventListener('click',function(){ i.status='rest'; save(); render(); closeSheet(); toast('Let go'); });
+    if(!isNew) $('f-rest').addEventListener('click',function(){ i.status='rest'; if(state.pick===i.id) state.pick=null; save(); render(); closeSheet(); toast('Let go'); });
   }
 
   function showPrompt(i){
@@ -518,7 +533,8 @@
     else if(a==='back' && i.stage>0){ i.stage--; save(); render(); }
     else if(a==='edit') editForm(i);
     else if(a==='prompt') showPrompt(i);
-    else if(a==='raise'){ i.status='raised'; i.raisedOn=today(); save(); render(); toast('Raised. It walks again.'); }
+    else if(a==='pick'){ state.pick=(state.pick===id)?null:id; save(); render(); if(state.pick) toast('Your pick. It rises next.'); }
+    else if(a==='raise'){ if(state.pick===id) state.pick=null; i.status='raised'; i.raisedOn=today(); save(); render(); toast('Raised. It walks again.'); }
     else if(a==='unraise'){ i.status='crypt'; delete i.raisedOn; save(); render(); }
     else if(a==='delete'){ if(confirm('Delete "'+i.name+'" for good?')){ state.ideas=state.ideas.filter(function(x){return x.id!==id;}); save(); render(); } }
   }
@@ -560,7 +576,7 @@
     } else { blobDownload(name,content,type); }
   }
   $('backupBtn').addEventListener('click',function(){
-    dl('idea-crypt-backup-'+today()+'.json', JSON.stringify({app:'idea-crypt',version:1,ideas:state.ideas},null,2), 'application/json');
+    dl('idea-crypt-backup-'+today()+'.json', JSON.stringify({app:'idea-crypt',version:1,ideas:state.ideas,pick:state.pick||null},null,2), 'application/json');
   });
   $('restoreBtn').addEventListener('click',function(){ $('restoreFile').click(); });
   $('restoreFile').addEventListener('change',function(e){
@@ -570,7 +586,7 @@
       try{
         var b=JSON.parse(r.result); if(!b || !Array.isArray(b.ideas)) throw 0;
         if(!confirm('Replace what is here now with this backup?')) return;
-        state={ideas:b.ideas}; save(); render();
+        state={ideas:b.ideas,pick:b.pick||null}; save(); render();
       }catch(err){ alert('That file could not be read as an Idea Crypt backup.'); }
     };
     r.readAsText(f); e.target.value='';
