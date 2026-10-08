@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Idea Crypt</title>
+<meta name="description" content="Every idea you shelved, sorted by how close it is to done, with the next step to bring one back.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* The October "tombstone" skin, token for token from the Raise the Dead board. */
+  :root{
+    color-scheme:dark;
+    --bg:#0F1113; --bg2:#1B1E22; --ink:#ECEEF0; --ink-dim:#A7AEB5;
+    --copper:#8F98A2; --copper-lt:#D5DADF; --ember:#7FA868; --ember-glow:#C7D0D8;
+    --forest:#6F9460; --mauve:#A39CB5; --gold:#E3E6E9;
+    --green:#94C57E;
+    --heading:#A8D08F;
+    --copper-rgb:143,152,162;   --copper-lt-rgb:213,218,223;
+    --ember-rgb:127,168,104;    --ember-glow-rgb:199,208,216;
+    --gold-rgb:227,230,233;     --mauve-rgb:163,156,181;
+    --forest-rgb:111,148,96;    --green-rgb:148,197,126;
+    --card-rgb:30,33,37;
+    --bg-rgb:15,17,19;    --bg2-rgb:27,30,34;
+    --veil-rgb:8,9,10;       --well-rgb:18,20,23;   --sheet-rgb:33,36,41;
+    --serif:'Cormorant Garamond','Hoefler Text',Georgia,serif;
+    --sans:'Hanken Grotesk',system-ui,-apple-system,sans-serif;
+    --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;
+    --card:rgba(var(--card-rgb),0.70); --cardborder:rgba(var(--copper-rgb),0.24);
+    --glow-a:rgba(var(--ember-rgb),0.16);
+    --glow-b:rgba(var(--forest-rgb),0.14);
+    --glow-c:rgba(var(--copper-rgb),0.12);
+    --on-accent:#101410; --well-ink:#E6EAEE;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:var(--sans);color:var(--ink);background:var(--bg);
+    background-image:
+      radial-gradient(900px 520px at 10% -10%, var(--glow-a), transparent 60%),
+      radial-gradient(820px 500px at 100% 0%, var(--glow-b), transparent 55%),
+      radial-gradient(760px 620px at 55% 120%, var(--glow-c), transparent 60%);
+    min-height:100vh;padding:44px 16px 80px;position:relative;overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;line-height:1.65;
+  }
+  .embers{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+  .ember{position:absolute;bottom:-12px;width:3px;height:3px;border-radius:50%;
+    background:var(--ember-glow);box-shadow:0 0 6px 1px rgba(var(--ember-glow-rgb),0.6);
+    opacity:0;animation:rise linear infinite}
+  @keyframes rise{0%{transform:translateY(0) translateX(0);opacity:0}
+    12%{opacity:.7}100%{transform:translateY(-104vh) translateX(26px);opacity:0}}
+  @media(prefers-reduced-motion:reduce){.ember{display:none}}
+  .wrap{max-width:1080px;margin:0 auto;position:relative;z-index:1}
+
+  header{text-align:center;margin-bottom:30px}
+  .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.34em;text-transform:uppercase;
+    color:var(--copper);opacity:.9;margin-bottom:12px}
+  h1{font-family:var(--serif);font-weight:600;font-size:clamp(46px,8vw,84px);line-height:.95;
+    background:linear-gradient(92deg,var(--copper-lt),var(--ember-glow) 38%,var(--gold) 70%,var(--copper));
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:.5px}
+  .sub{font-family:var(--serif);font-style:italic;font-size:clamp(19px,2.4vw,25px);color:var(--ink-dim);margin-top:10px}
+  .lede{font-size:15.5px;color:var(--ink-dim);margin:16px auto 0;max-width:640px}
+
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin:28px 0 8px}
+  .stat{background:var(--card);border:1px solid var(--cardborder);border-radius:16px;
+    padding:19px 16px;text-align:center;backdrop-filter:blur(14px);position:relative;overflow:hidden}
+  .stat::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+    background:linear-gradient(180deg,var(--copper),var(--ember),var(--gold))}
+  .stat .n{font-family:var(--serif);font-size:42px;font-weight:600;line-height:1;color:var(--copper-lt)}
+  .stat.live .n{color:var(--heading)}
+  .stat .l{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-dim);margin-top:8px}
+  @media(max-width:620px){.stats{grid-template-columns:1fr;gap:10px}
+    .stat{display:flex;align-items:center;justify-content:space-between;text-align:left;padding:14px 18px}
+    .stat .n{font-size:30px}.stat .l{margin-top:0}}
+
+  .section-label{font-family:var(--mono);font-size:11px;letter-spacing:.28em;text-transform:uppercase;
+    color:var(--ink-dim);margin:40px 0 16px;display:flex;align-items:center;gap:12px}
+  .section-label::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,rgba(var(--copper-rgb),0.35),transparent)}
+  .section-label .ct{color:var(--copper)}
+
+  .panel{background:var(--card);border:1px solid var(--cardborder);border-radius:16px;
+    padding:24px 26px;backdrop-filter:blur(14px)}
+  .panel p{font-size:15px;color:var(--ink-dim);margin-bottom:12px}
+  .panel p:last-child{margin-bottom:0}
+  .panel b{color:var(--ink)}
+  @media(max-width:520px){.panel{padding:20px 18px}}
+
+  /* the spotlight: the idea closest to done */
+  .rise{position:relative;overflow:hidden;
+    background:linear-gradient(150deg,rgba(var(--ember-rgb),.20),rgba(var(--card-rgb),.84));
+    border:1px solid rgba(var(--ember-rgb),.5);border-radius:18px;padding:26px 28px}
+  .rise .u{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
+  .rise h2{font-family:var(--serif);font-size:clamp(28px,4vw,38px);font-weight:600;line-height:1.1;color:var(--heading);margin:8px 0 6px}
+  .rise .what{font-size:15px;color:var(--ink-dim)}
+  .rise .next{margin-top:16px;padding:14px 16px;border-radius:12px;background:rgba(var(--well-rgb),.6);
+    border:1px solid rgba(var(--copper-rgb),.2);font-size:15px;color:var(--ink)}
+  .rise .next .k{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--copper);margin-bottom:4px}
+  .rise .empty{font-size:15px;color:var(--ink-dim)}
+  @media(max-width:520px){.rise{padding:20px 18px}}
+
+  .acts{display:flex;gap:11px;margin-top:17px;flex-wrap:wrap}
+  .btn{border:none;border-radius:30px;padding:12px 22px;font-family:var(--sans);font-size:14px;
+    font-weight:700;cursor:pointer;transition:transform .18s,box-shadow .18s}
+  .btn.copy{background:linear-gradient(135deg,var(--copper),var(--ember));color:var(--on-accent)}
+  .btn.ok{background:linear-gradient(135deg,var(--forest),var(--green));color:var(--on-accent)}
+  .btn.line{background:transparent;color:var(--copper-lt);border:1.5px solid rgba(var(--copper-rgb),.5)}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 8px 22px -8px rgba(var(--ember-rgb),.6)}
+  .btn:focus-visible,.tool:focus-visible,.mini:focus-visible{outline:2px solid var(--heading);outline-offset:2px}
+
+  .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:6px}
+  .tool{background:none;border:1px solid rgba(var(--copper-rgb),.34);border-radius:30px;
+    padding:8px 17px;font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;
+    text-transform:uppercase;color:var(--ink-dim);cursor:pointer;transition:color .18s,border-color .18s,background .18s}
+  .tool:hover{color:var(--ember-glow);border-color:rgba(var(--ember-rgb),.6);background:rgba(var(--ember-rgb),.07)}
+  .tool.danger:hover{color:var(--mauve);border-color:rgba(var(--mauve-rgb),.6);background:rgba(var(--mauve-rgb),.07)}
+
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 2px}
+  .chip{background:rgba(var(--card-rgb),.6);border:1px solid rgba(var(--copper-rgb),.32);border-radius:30px;
+    padding:7px 15px;font-family:var(--sans);font-size:13px;font-weight:600;color:var(--ink-dim);cursor:pointer;
+    transition:color .18s,border-color .18s,background .18s}
+  .chip .c{font-family:var(--mono);font-size:10px;opacity:.7;margin-left:6px}
+  .chip:hover{color:var(--ink);border-color:rgba(var(--copper-lt-rgb),.55)}
+  .chip.on{background:linear-gradient(135deg,var(--forest),var(--green));color:var(--on-accent);border-color:transparent}
+  .chip:focus-visible{outline:2px solid var(--heading);outline-offset:2px}
+  .prompts{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:13px}
+  .pcard{background:var(--card);border:1px solid var(--cardborder);border-radius:14px;padding:19px 18px;
+    backdrop-filter:blur(12px);display:flex;flex-direction:column;gap:8px}
+  .pcard .u{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mauve)}
+  .pcard h4{font-family:var(--serif);font-size:21px;font-weight:600;color:var(--heading);line-height:1.15}
+  .pcard p{font-size:13.5px;color:var(--ink-dim);line-height:1.5;flex:1}
+  .pcard .btn{align-self:flex-start;padding:10px 20px;font-size:13.5px}
+  .examples-note{display:none;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+    margin-top:22px;padding:14px 18px;border-radius:14px;border:1px dashed rgba(var(--gold-rgb),.4);
+    background:rgba(var(--gold-rgb),.05);font-size:14px;color:var(--ink-dim)}
+  .examples-note.on{display:flex}
+  .examples-note b{color:var(--ink)}
+
+  /* the crypt: one row per stage, tombstones inside */
+  .row{margin-top:26px}
+  .rowhead{display:flex;align-items:baseline;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+  .rowhead h3{font-family:var(--serif);font-size:24px;font-weight:600;color:var(--heading)}
+  .rowhead .d{font-size:13.5px;color:var(--ink-dim)}
+  .stones{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:13px}
+  .stone{position:relative;background:var(--card);border:1px solid var(--cardborder);
+    border-radius:90px 90px 14px 14px;padding:30px 20px 18px;text-align:center;backdrop-filter:blur(12px);
+    display:flex;flex-direction:column;gap:8px;transition:transform .18s,border-color .18s,box-shadow .18s}
+  .stone::before{content:"";position:absolute;inset:6px;border-radius:84px 84px 10px 10px;
+    border:1px solid rgba(var(--copper-rgb),.13);pointer-events:none}
+  .stone:hover{transform:translateY(-3px);border-color:rgba(var(--copper-lt-rgb),.55);box-shadow:0 14px 34px -18px rgba(var(--ember-rgb),.7)}
+  .stone.top{border-color:rgba(var(--ember-rgb),.6)}
+  .stone .ty{font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--copper)}
+  .stone .ty::after{content:"";display:block;width:16px;height:1px;margin:6px auto 0;
+    background:linear-gradient(90deg,transparent,var(--copper),transparent);opacity:.55}
+  .stone h4{font-family:var(--serif);font-size:22px;font-weight:600;line-height:1.15;color:var(--ink)}
+  .stone .what{font-size:13.5px;color:var(--ink-dim);line-height:1.5}
+  .meter{display:flex;gap:4px;justify-content:center;margin:2px 0}
+  .meter i{width:22px;height:4px;border-radius:3px;background:rgba(var(--copper-rgb),.25)}
+  .meter i.on{background:linear-gradient(90deg,var(--forest),var(--green))}
+  .stone .next{font-size:13px;color:var(--ink);text-align:left;background:rgba(var(--well-rgb),.55);
+    border-radius:10px;padding:9px 11px;border:1px solid rgba(var(--copper-rgb),.16)}
+  .stone .next .k{font-family:var(--mono);font-size:8.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--copper);display:block;margin-bottom:2px}
+  .stone .when{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;color:var(--ink-dim);opacity:.8}
+  .stone .row-acts{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:4px}
+  .mini{background:none;border:1px solid rgba(var(--copper-rgb),.32);border-radius:20px;padding:5px 11px;
+    font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-dim);cursor:pointer;
+    transition:color .18s,border-color .18s,background .18s}
+  .mini:hover{color:var(--ember-glow);border-color:rgba(var(--ember-rgb),.6);background:rgba(var(--ember-rgb),.07)}
+  .mini.raise{color:var(--heading);border-color:rgba(var(--ember-rgb),.55)}
+  .mini:disabled{opacity:.3;cursor:default}
+  .none{font-size:14px;color:var(--ink-dim);padding:14px 4px}
+
+  .ledger{list-style:none}
+  .ledger li{display:flex;gap:12px;align-items:baseline;justify-content:space-between;flex-wrap:wrap;
+    padding:10px 0;border-bottom:1px solid rgba(var(--copper-rgb),.14);font-size:14.5px;color:var(--ink-dim)}
+  .ledger li:last-child{border-bottom:none}
+  .ledger b{color:var(--ink);font-weight:600}
+  .ledger .dt{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--copper)}
+
+  /* sheet */
+  .veil{position:fixed;inset:0;background:rgba(var(--veil-rgb),.82);backdrop-filter:blur(7px);
+    z-index:60;display:none;align-items:flex-start;justify-content:center;padding:34px 16px;overflow-y:auto}
+  .veil.on{display:flex}
+  .sheet{background:linear-gradient(150deg,rgba(var(--sheet-rgb),.97),rgba(var(--bg-rgb),.99));
+    border:1px solid rgba(var(--copper-rgb),.36);border-radius:18px;max-width:620px;width:100%;
+    padding:30px 30px 26px;position:relative;box-shadow:0 30px 90px -30px #000}
+  .sheet .num{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--copper)}
+  .sheet h3{font-family:var(--serif);font-size:33px;font-weight:600;line-height:1.1;margin:7px 0 18px;color:var(--heading)}
+  .close{position:absolute;top:15px;right:17px;background:none;border:none;color:var(--ink-dim);font-size:25px;cursor:pointer;line-height:1;padding:4px 8px}
+  .close:hover{color:var(--ember-glow)}
+  .field{margin-bottom:15px}
+  .field label{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:7px}
+  .field input,.field select,.field textarea{width:100%;background:rgba(var(--well-rgb),.5);
+    border:1px solid rgba(var(--copper-rgb),.28);border-radius:10px;padding:11px 14px;
+    font-family:var(--sans);font-size:14.5px;color:var(--ink);outline:none;transition:border-color .18s}
+  .field textarea{min-height:70px;resize:vertical;line-height:1.5}
+  .field input:focus,.field select:focus,.field textarea:focus{border-color:rgba(var(--ember-rgb),.65)}
+  .field input::placeholder,.field textarea::placeholder{color:var(--ink-dim);opacity:.55}
+  .field .hint{font-size:12px;color:var(--ink-dim);margin-top:6px;opacity:.85}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:520px){.sheet{padding:26px 18px 22px}.two{grid-template-columns:1fr}}
+  .pbox{background:rgba(var(--well-rgb),.72);border:1px solid rgba(var(--copper-rgb),.2);border-radius:12px;
+    padding:17px 18px;font-family:var(--mono);font-size:12.5px;line-height:1.75;color:var(--well-ink);white-space:pre-wrap;max-height:46vh;overflow-y:auto}
+
+  .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);opacity:0;
+    background:linear-gradient(135deg,var(--forest),var(--green));color:var(--on-accent);font-weight:700;font-size:14px;
+    padding:11px 22px;border-radius:30px;z-index:80;transition:opacity .25s,transform .25s;pointer-events:none}
+  .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  .safe .hint{text-transform:none;letter-spacing:0;font-family:var(--sans);font-size:12.5px;color:var(--ink-dim)}
+  .savebar{display:flex;gap:10px;flex-wrap:wrap}
+  @media(max-width:520px){.savebar .tool{flex:1;text-align:center}}
+  footer{margin-top:44px;text-align:center;font-family:var(--mono);font-size:10px;letter-spacing:.24em;color:var(--ink-dim);opacity:.7}
+</style>
+</head>
+<body>
+<div class="embers" id="embers"></div>
+<div class="wrap">
+
+  <header>
+    <div class="kicker">Soul-Forged Founders · A Free Spark</div>
+    <h1>The Idea Crypt</h1>
+    <div class="sub">Every idea you shelved, sorted by how close it is to done.</div>
+    <p class="lede">Add each one here with a note on where you left it. The crypt keeps them in order, puts the closest one at the top, and hands you a prompt to bring it back with Claude.</p>
+    <div class="acts" style="justify-content:center;margin-top:22px">
+      <button class="btn copy" data-add type="button">+ Add an idea</button>
+      <button class="btn line" data-p="find" type="button">Find my ideas with Claude</button>
+    </div>
+  </header>
+
+  <div class="stats">
+    <div class="stat"><div class="n" id="s-all">0</div><div class="l">In the crypt</div></div>
+    <div class="stat live"><div class="n" id="s-close">0</div><div class="l">Almost there or ready</div></div>
+    <div class="stat"><div class="n" id="s-raised">0</div><div class="l">Raised</div></div>
+  </div>
+
+  <div class="examples-note" id="ex-note">
+    <span><b>These are example ideas</b> so you can see the shape. Clear them and add your own.</span>
+    <button class="tool" id="clear-ex" type="button">Clear examples</button>
+  </div>
+
+  <div class="section-label">Closest to rising</div>
+  <section class="rise" id="spot"></section>
+
+  <div class="section-label">Three prompts for Claude</div>
+  <div class="prompts">
+    <div class="pcard"><div class="u">1 · Find them</div><h4>Dig up every idea</h4><p>Claude looks through what it can see, asks what you remember, and hands back the full list sorted into the five stages.</p><button class="btn copy" data-p="find" type="button">Copy prompt</button></div>
+    <div class="pcard"><div class="u">2 · Pick the next one</div><h4>Choose what to raise</h4><p>Built from the ideas on this page. Claude asks about your time, money and season, then picks one with three first steps.</p><button class="btn copy" data-p="pick" type="button">Copy prompt</button></div>
+    <div class="pcard"><div class="u">3 · Keep them</div><h4>Save to your Business Brain</h4><p>Built from the ideas on this page. Claude finds where you keep your business files and asks before it creates or changes anything.</p><button class="btn copy" data-p="save" type="button">Copy prompt</button></div>
+  </div>
+
+  <div class="section-label">The crypt <span class="ct" id="crypt-ct"></span></div>
+  <div class="toolbar">
+    <button class="btn copy" data-add type="button">+ Add an idea</button>
+  </div>
+  <div class="chips" id="chips" role="group" aria-label="Show ideas by type"></div>
+  <div id="crypt"></div>
+
+  <div id="raised-wrap">
+    <div class="section-label">Raised <span class="ct" id="raised-ct"></span></div>
+    <div class="panel"><ul class="ledger" id="raised"></ul></div>
+  </div>
+
+  <div id="rest-wrap">
+    <div class="section-label">Let go <span class="ct" id="rest-ct"></span></div>
+    <div class="panel"><ul class="ledger" id="rest"></ul></div>
+  </div>
+
+  <section class="safe">
+    <div class="section-label">Keep it safe <span class="hint">Your crypt lives in this browser. Back it up before you clear site data or switch devices.</span></div>
+    <div class="savebar">
+      <button type="button" class="tool" id="backupBtn">Back up (.json)</button>
+      <button type="button" class="tool" id="restoreBtn">Restore backup</button>
+      <input type="file" id="restoreFile" accept="application/json,.json" style="display:none">
+      <button type="button" class="tool" id="loadEx">Show the examples</button>
+      <button type="button" class="tool danger" id="clearAll">Clear everything</button>
+    </div>
+  </section>
+
+  <footer>THE IDEA CRYPT · A FREE SPARK INSIDE SOUL-FORGED FOUNDERS</footer>
+</div>
+
+<div class="veil" id="veil" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+  <div class="sheet">
+    <button class="close" id="close" type="button" aria-label="Close">×</button>
+    <div class="num" id="sheet-num">New idea</div>
+    <h3 id="sheet-title">Add an idea</h3>
+    <div id="sheet-body"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+  var KEY='sff-idea-crypt-v1';
+  var STAGES=[
+    {n:'Just a Seed',   d:'A name and a feeling. Nothing written yet.'},
+    {n:'Sketched',      d:'Notes, an outline, or a rough plan exist.'},
+    {n:'Half Built',    d:'Real pieces are made. The middle is missing.'},
+    {n:'Almost There',  d:'Mostly made. A few pieces stand between it and the world.'},
+    {n:'Ready to Rise', d:'Built. It needs a launch, a post, or a price.'}
+  ];
+  var TYPES=['Offer','Workshop','Course','Product','Post or series','Email','Freebie','Other'];
+  var EX=[
+    {name:'Moon Ritual Workshop',type:'Workshop',stage:1,what:'A 60-minute live workshop on building a simple full moon ritual.',why:'Ran out of time before the last full moon.',next:'Pick the date for the next full moon and write the three ritual steps.'},
+    {name:'Tarot Journal Prompts PDF',type:'Freebie',stage:3,what:'30 journal prompts, one for each Major Arcana card plus extras.',why:'Got stuck on the cover design.',next:'Use a plain cover and finish the last 8 prompts.'},
+    {name:'Client Welcome Emails',type:'Email',stage:2,what:'Three emails that go out after someone books a session.',why:'Wrote two and never wrote the third.',next:'Write email 3: what to bring to the session.'},
+    {name:'Energy Check-In Cards',type:'Product',stage:4,what:'A printable deck of 20 cards with a daily check-in question on each.',why:'Never picked a price.',next:'Set the price and list it.'},
+    {name:'A Podcast',type:'Other',stage:0,what:'Weekly conversations with other healers.',why:'Felt too big to start.',next:'Write down five people you would love to talk to.'}
+  ];
+
+  var $=function(id){return document.getElementById(id);};
+  var uid=function(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7);};
+  var today=function(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');};
+  var MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function nice(iso){ if(!iso) return ''; var p=iso.split('-'); return MON[+p[1]-1]+' '+(+p[2])+', '+p[0]; }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+
+  function seed(){ var t=today(); return {ideas:EX.map(function(x){ return Object.assign({id:uid(),status:'crypt',added:t,example:true},x); })}; }
+  var state;
+  try{ state=JSON.parse(localStorage.getItem(KEY)); }catch(e){ state=null; }
+  if(!state || !Array.isArray(state.ideas)) state=seed();
+  function save(){ try{ localStorage.setItem(KEY,JSON.stringify(state)); }catch(e){} }
+
+  function crypt(){ return state.ideas.filter(function(i){return i.status==='crypt';}); }
+  var filter='All';
+  function closest(list){
+    var c=(list||crypt()).slice().sort(function(a,b){ return b.stage-a.stage || (a.added<b.added?-1:1); });
+    return c[0]||null;
+  }
+  function meter(s){ var h='<div class="meter" aria-label="Stage '+(s+1)+' of 5">'; for(var i=0;i<5;i++) h+='<i class="'+(i<=s?'on':'')+'"></i>'; return h+'</div>'; }
+
+  function prompt(i){
+    return "I'm bringing back an idea I shelved. Here is where I left it.\n\n"+
+      "Idea: "+i.name+"\n"+
+      "What it is: "+(i.what||'[one line on what it is]')+"\n"+
+      "Type: "+i.type+"\n"+
+      "How far along: "+STAGES[i.stage].n+" ("+STAGES[i.stage].d+")\n"+
+      "Why it went quiet: "+(i.why||'[skip if you are not sure]')+"\n"+
+      "What I think is left: "+(i.next||'[your best guess]')+"\n\n"+
+      "Help me finish it.\n"+
+      "1. Ask me up to three questions about what I already have before you suggest anything.\n"+
+      "2. Then give me the smallest finished version I could put in front of real people this week.\n"+
+      "3. List the steps to get there, in order, with the first one small enough to do today.\n"+
+      "4. If any piece of my original plan can wait for version two, name it so I can let it go for now.";
+  }
+  var TYPELIST=TYPES.join(', ');
+  var STAGELIST=STAGES.map(function(x){return x.n+' ('+x.d.replace(/\.$/,'').replace(/\. /g,', ').toLowerCase()+')';}).join('; ');
+  function FIND(){
+    return "I want to find every idea I started and set aside in my business: offers, workshops, courses, products, freebies, posts, email series, anything.\n\n"+
+    "1. Look first. If you can see my files, notes, projects or past chats, search them. Only read. Do not create, move or change anything.\n"+
+    "2. Then ask me what I remember that you did not find. If I wrote any ideas at the end of this message, include them.\n"+
+    "3. Give each idea one type from this list: "+TYPELIST+".\n"+
+    "4. Sort each idea into one of five stages: "+STAGELIST+".\n\n"+
+    "Show me the full list right here in your reply as a table with these columns: Idea, Type, Stage, What it is, Why it went quiet, Next step. Every idea gets its own row, the small ones too. Keep each cell short so I can copy them into my Idea Crypt.\n\n"+
+    "Do not pick one for me. This step is only for finding them.\n\n"+
+    "Ideas I can think of right now (optional):\n";
+  }
+  function listOf(c){
+    return c.slice().sort(function(a,b){return b.stage-a.stage;}).map(function(i,k){
+      return (k+1)+". "+i.name+" | "+i.type+" | "+STAGES[i.stage].n+
+        (i.what?" | What it is: "+i.what:"")+(i.why?" | Why it went quiet: "+i.why:"")+(i.next?" | Next step: "+i.next:"");
+    }).join("\n");
+  }
+  function PICK(c){
+    return "Help me choose which shelved idea to bring back next. Here is everything in my Idea Crypt, closest to done first:\n\n"+listOf(c)+"\n\n"+
+    "Before you recommend anything, ask me up to four questions: how much time I have in the next two weeks, whether I need money coming in soon, what my audience keeps asking for, and anything this season I could tie it to.\n\n"+
+    "Then pick one idea and tell me why it fits me right now better than the others. Give me the first three steps, with the first one small enough to do today. Name one runner-up in a sentence.\n\n"+
+    "Only use what I tell you and what is in this list. If you need a fact you do not have, ask me.";
+  }
+  function SAVE(c){
+    return "I keep a list of my shelved ideas in my Idea Crypt. I want a copy saved in my Business Brain, the place where I keep my business files for AI to read.\n\n"+
+    "Step 1. Find my Business Brain. Look everywhere you can reach: Google Drive, Dropbox, OneDrive, Notion, GitHub, a project, or folders on my computer. It may be called Business Brain, Biz Brain, or something close. Tell me what you found and where. Only look for now. Do not create or change anything.\n\n"+
+    "Step 2. If you found more than one, ask me which to use. If you found none, ask me where I would like to keep one and wait for my answer. Never create a folder or file anywhere until I say yes.\n\n"+
+    "Step 3. Inside it, look for an ideas file or folder. If there is one, show me what is in it. If there is none, suggest a name and ask me before you create it.\n\n"+
+    "Step 4. Compare my list below with what is already saved. Show me which ideas are new and which are already there. Once I say yes, add only the new ones and update any that changed. Do not delete anything.\n\n"+
+    "If you cannot reach any storage, give me the list as a document I can save myself.\n\n"+
+    "My Idea Crypt:\n"+listOf(c);
+  }
+
+  var toastT;
+  function toast(m){ var t=$('toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(function(){t.classList.remove('on');},1800); }
+  function copy(text,msg){
+    function fallback(){ var ta=document.createElement('textarea'); ta.value=text; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy');}catch(e){} document.body.removeChild(ta); toast(msg); }
+    if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(text).then(function(){toast(msg);},fallback); } else fallback();
+  }
+
+  function stoneHTML(i,top){
+    return '<article class="stone'+(top?' top':'')+'" data-id="'+i.id+'">'+
+      '<div class="ty">'+esc(i.type)+'</div>'+
+      '<h4>'+esc(i.name)+'</h4>'+meter(i.stage)+
+      (i.what?'<div class="what">'+esc(i.what)+'</div>':'')+
+      (i.next?'<div class="next"><span class="k">Next step</span>'+esc(i.next)+'</div>':'')+
+      '<div class="when">Added '+nice(i.added)+'</div>'+
+      '<div class="row-acts">'+
+        '<button class="mini" data-a="back" '+(i.stage===0?'disabled':'')+' type="button" aria-label="Move back a stage">◂ Back</button>'+
+        '<button class="mini" data-a="fwd" '+(i.stage===4?'disabled':'')+' type="button" aria-label="Move closer to done">Closer ▸</button>'+
+        '<button class="mini" data-a="prompt" type="button">Prompt</button>'+
+        '<button class="mini" data-a="edit" type="button">Edit</button>'+
+        '<button class="mini raise" data-a="raise" type="button">Raise it</button>'+
+      '</div></article>';
+  }
+
+  function render(){
+    var c=crypt(), raised=state.ideas.filter(function(i){return i.status==='raised';}), rest=state.ideas.filter(function(i){return i.status==='rest';});
+    $('s-all').textContent=c.length;
+    $('s-close').textContent=c.filter(function(i){return i.stage>=3;}).length;
+    $('s-raised').textContent=raised.length;
+    $('crypt-ct').textContent=c.length?'· '+c.length:'';
+    $('ex-note').classList.toggle('on',state.ideas.some(function(i){return i.example;}));
+
+    var counts={}; c.forEach(function(i){ counts[i.type]=(counts[i.type]||0)+1; });
+    var present=TYPES.filter(function(t){return counts[t];});
+    Object.keys(counts).forEach(function(t){ if(present.indexOf(t)<0) present.push(t); });
+    if(filter!=='All' && !counts[filter]) filter='All';
+    $('chips').style.display=present.length>1?'':'none';
+    $('chips').innerHTML=['All'].concat(present).map(function(t){
+      return '<button class="chip'+(t===filter?' on':'')+'" data-f="'+esc(t)+'" type="button" aria-pressed="'+(t===filter)+'">'+esc(t==='All'?'All types':t)+'<span class="c">'+(t==='All'?c.length:counts[t])+'</span></button>';
+    }).join('');
+    var fc=filter==='All'?c:c.filter(function(i){return i.type===filter;});
+
+    var top=closest(fc), sp=$('spot');
+    if(top){
+      sp.innerHTML='<div class="u">'+esc(STAGES[top.stage].n)+' · '+esc(top.type)+'</div>'+
+        '<h2>'+esc(top.name)+'</h2>'+(top.what?'<div class="what">'+esc(top.what)+'</div>':'')+
+        '<div class="next"><span class="k">Your next step</span>'+esc(top.next||'Open it and write down the one thing left to do.')+'</div>'+
+        '<div class="acts"><button class="btn copy" data-a="prompt" data-id="'+top.id+'" type="button">Copy the Claude prompt</button>'+
+        '<button class="btn ok" data-a="raise" data-id="'+top.id+'" type="button">I raised it</button>'+
+        '<button class="btn line" data-a="edit" data-id="'+top.id+'" type="button">Edit</button></div>';
+    } else {
+      sp.innerHTML='<p class="empty">The crypt is empty. Add an idea above, or copy the Find prompt and let Claude help you remember them all.</p>';
+    }
+
+    var h='';
+    for(var s=4;s>=0;s--){
+      var row=fc.filter(function(i){return i.stage===s;});
+      if(!row.length) continue;
+      h+='<div class="row"><div class="rowhead"><h3>'+STAGES[s].n+'</h3><span class="d">'+STAGES[s].d+'</span></div><div class="stones">';
+      row.forEach(function(i){ h+=stoneHTML(i, top && i.id===top.id); });
+      h+='</div></div>';
+    }
+    $('crypt').innerHTML=h||'<p class="none">Nothing here yet.</p>';
+
+    $('raised-wrap').style.display=raised.length?'':'none';
+    $('raised-ct').textContent=raised.length?'· '+raised.length:'';
+    $('raised').innerHTML=raised.slice().sort(function(a,b){return (b.raisedOn||'')<(a.raisedOn||'')?-1:1;}).map(function(i){
+      return '<li><span><b>'+esc(i.name)+'</b> · '+esc(i.type)+'</span><span><span class="dt">Raised '+nice(i.raisedOn)+'</span> <button class="mini" data-a="unraise" data-id="'+i.id+'" type="button">Back to the crypt</button></span></li>';
+    }).join('');
+
+    $('rest-wrap').style.display=rest.length?'':'none';
+    $('rest-ct').textContent=rest.length?'· '+rest.length:'';
+    $('rest').innerHTML=rest.map(function(i){
+      return '<li><span><b>'+esc(i.name)+'</b> · '+esc(i.type)+'</span><span><button class="mini" data-a="unraise" data-id="'+i.id+'" type="button">Back to the crypt</button> <button class="mini" data-a="delete" data-id="'+i.id+'" type="button">Delete</button></span></li>';
+    }).join('');
+  }
+
+  function find(id){ for(var k=0;k<state.ideas.length;k++) if(state.ideas[k].id===id) return state.ideas[k]; return null; }
+
+  /* sheet */
+  var lastFocus=null;
+  function openSheet(num,title,body){
+    lastFocus=document.activeElement;
+    $('sheet-num').textContent=num; $('sheet-title').textContent=title; $('sheet-body').innerHTML=body;
+    $('veil').classList.add('on');
+    var f=$('sheet-body').querySelector('input,textarea,button'); if(f) f.focus();
+  }
+  function closeSheet(){ $('veil').classList.remove('on'); if(lastFocus) try{lastFocus.focus();}catch(e){} }
+  $('close').addEventListener('click',closeSheet);
+  $('veil').addEventListener('click',function(e){ if(e.target===$('veil')) closeSheet(); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape' && $('veil').classList.contains('on')) closeSheet(); });
+
+  function editForm(i){
+    var isNew=!i; i=i||{name:'',type:'Offer',stage:0,what:'',why:'',next:''};
+    var typeOpts=TYPES.map(function(t){return '<option'+(t===i.type?' selected':'')+'>'+t+'</option>';}).join('');
+    var stOpts=STAGES.map(function(s,k){return '<option value="'+k+'"'+(k===i.stage?' selected':'')+'>'+s.n+'</option>';}).join('');
+    openSheet(isNew?'New idea':'Edit idea', isNew?'Add an idea':i.name,
+      '<div class="field"><label for="f-name">The idea</label><input id="f-name" value="'+esc(i.name)+'" placeholder="Moon Ritual Workshop" autocomplete="off"></div>'+
+      '<div class="two"><div class="field"><label for="f-type">Type</label><select id="f-type">'+typeOpts+'</select></div>'+
+      '<div class="field"><label for="f-stage">How far you got</label><select id="f-stage">'+stOpts+'</select></div></div>'+
+      '<div class="field"><label for="f-what">What it is</label><input id="f-what" value="'+esc(i.what)+'" placeholder="One line on what it is and who it helps" autocomplete="off"></div>'+
+      '<div class="field"><label for="f-why">Why it went quiet</label><input id="f-why" value="'+esc(i.why)+'" placeholder="Optional" autocomplete="off"><div class="hint">Time, money, a stuck spot, or a better idea came along. Any answer helps Claude later.</div></div>'+
+      '<div class="field"><label for="f-next">The next step</label><textarea id="f-next" placeholder="The one thing that would move it forward">'+esc(i.next)+'</textarea></div>'+
+      '<div class="acts"><button class="btn ok" id="f-save" type="button">'+(isNew?'Add it':'Save')+'</button>'+
+      (isNew?'':'<button class="btn line" id="f-rest" type="button">Let it go</button>')+'</div>');
+    $('f-save').addEventListener('click',function(){
+      var n=$('f-name').value.trim(); if(!n){ $('f-name').focus(); return; }
+      var data={name:n,type:$('f-type').value,stage:+$('f-stage').value,what:$('f-what').value.trim(),why:$('f-why').value.trim(),next:$('f-next').value.trim()};
+      if(isNew){ state.ideas.push(Object.assign({id:uid(),status:'crypt',added:today(),example:false},data)); toast('Added to the crypt'); }
+      else { Object.assign(i,data); i.example=false; toast('Saved'); }
+      save(); render(); closeSheet();
+    });
+    $('f-name').addEventListener('keydown',function(e){ if(e.key==='Enter') $('f-save').click(); });
+    if(!isNew) $('f-rest').addEventListener('click',function(){ i.status='rest'; save(); render(); closeSheet(); toast('Let go'); });
+  }
+
+  function showPrompt(i){
+    var p=prompt(i);
+    openSheet(STAGES[i.stage].n, i.name,
+      '<div class="pbox" id="p-text"></div><div class="acts"><button class="btn copy" id="p-copy" type="button">Copy the prompt</button></div>');
+    $('p-text').textContent=p;
+    $('p-copy').addEventListener('click',function(){ copy(p,'Copied. Paste it into Claude.'); });
+  }
+
+  function act(a,id){
+    var i=find(id); if(!i && a!=='add') return;
+    if(a==='fwd' && i.stage<4){ i.stage++; save(); render(); }
+    else if(a==='back' && i.stage>0){ i.stage--; save(); render(); }
+    else if(a==='edit') editForm(i);
+    else if(a==='prompt') showPrompt(i);
+    else if(a==='raise'){ i.status='raised'; i.raisedOn=today(); save(); render(); toast('Raised. It walks again.'); }
+    else if(a==='unraise'){ i.status='crypt'; delete i.raisedOn; save(); render(); }
+    else if(a==='delete'){ if(confirm('Delete "'+i.name+'" for good?')){ state.ideas=state.ideas.filter(function(x){return x.id!==id;}); save(); render(); } }
+  }
+  document.addEventListener('click',function(e){
+    var f=e.target.closest('[data-f]'); if(f){ filter=f.getAttribute('data-f'); render(); return; }
+    var b=e.target.closest('[data-a]'); if(!b) return;
+    var id=b.getAttribute('data-id') || (b.closest('.stone') && b.closest('.stone').getAttribute('data-id'));
+    act(b.getAttribute('data-a'),id);
+  });
+
+  [].forEach.call(document.querySelectorAll('[data-add]'),function(b){ b.addEventListener('click',function(){ editForm(null); }); });
+  document.addEventListener('click',function(e){
+    var b=e.target.closest('[data-p]'); if(!b) return;
+    var k=b.getAttribute('data-p'), c=crypt();
+    if(k==='find'){ copy(FIND(),'Copied. Paste it into Claude.'); return; }
+    if(!c.length){ toast('Add some ideas first'); return; }
+    copy(k==='pick'?PICK(c):SAVE(c),'Copied with '+c.length+' idea'+(c.length===1?'':'s')+'. Paste it into Claude.');
+  });
+  $('clear-ex').addEventListener('click',function(){ state.ideas=state.ideas.filter(function(i){return !i.example;}); save(); render(); });
+  $('loadEx').addEventListener('click',function(){
+    if(!confirm('Load the example ideas? They replace everything here now. Back it up first if you might want it.')) return;
+    state=seed(); save(); render(); window.scrollTo(0,0);
+  });
+  $('clearAll').addEventListener('click',function(){
+    if(!confirm('Clear everything? Every idea goes, raised ones too. Back it up first if you might want it.')) return;
+    state={ideas:[]}; save(); render();
+  });
+
+  function blobDownload(name,content,type){
+    var blob=new Blob([content],{type:type}); var url=URL.createObjectURL(blob);
+    var a=document.createElement('a'); a.href=url; a.download=name; document.body.appendChild(a); a.click();
+    document.body.removeChild(a); setTimeout(function(){ URL.revokeObjectURL(url); },800);
+  }
+  function dl(name,content,type){
+    if(window.claude && window.claude.use){
+      window.claude.use('downloads').then(function(d){
+        if(d && d.save){ d.save({filename:name,data:content}).catch(function(){}); } else { blobDownload(name,content,type); }
+      }).catch(function(){ blobDownload(name,content,type); });
+    } else { blobDownload(name,content,type); }
+  }
+  $('backupBtn').addEventListener('click',function(){
+    dl('idea-crypt-backup-'+today()+'.json', JSON.stringify({app:'idea-crypt',version:1,ideas:state.ideas},null,2), 'application/json');
+  });
+  $('restoreBtn').addEventListener('click',function(){ $('restoreFile').click(); });
+  $('restoreFile').addEventListener('change',function(e){
+    var f=e.target.files[0]; if(!f) return;
+    var r=new FileReader();
+    r.onload=function(){
+      try{
+        var b=JSON.parse(r.result); if(!b || !Array.isArray(b.ideas)) throw 0;
+        if(!confirm('Replace what is here now with this backup?')) return;
+        state={ideas:b.ideas}; save(); render();
+      }catch(err){ alert('That file could not be read as an Idea Crypt backup.'); }
+    };
+    r.readAsText(f); e.target.value='';
+  });
+
+  /* rising embers, same as the board */
+  (function(){
+    var box=$('embers'), n=window.innerWidth<600?14:26;
+    for(var k=0;k<n;k++){
+      var e=document.createElement('span'); e.className='ember';
+      e.style.left=(Math.random()*100)+'%';
+      e.style.animationDuration=(9+Math.random()*12)+'s';
+      e.style.animationDelay=(-Math.random()*20)+'s';
+      e.style.opacity=(.3+Math.random()*.5);
+      box.appendChild(e);
+    }
+  })();
+
+  render();
+})();
+</script>
+</body>
+</html>
