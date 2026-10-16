@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Evergreen Library</title>
+<meta name="description" content="Your old posts, shelved as repost, refresh or rest, and one handed back to you whenever you need something to post. A free Spark from Soul-Forged Founders.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="The Evergreen Library">
+<meta property="og:description" content="Your old posts, shelved as repost, refresh or rest, and one handed back to you whenever you need something to post. A free Spark from Soul-Forged Founders.">
+<meta property="og:url" content="https://sunnysink.github.io/monthly-claude-challenge/october-raise-the-dead/evergreen-library/">
+<meta property="og:image" content="https://sunnysink.github.io/monthly-claude-challenge/october-raise-the-dead/evergreen-library/preview.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The Evergreen Library">
+<meta name="twitter:description" content="Your old posts, shelved as repost, refresh or rest, and one handed back to you whenever you need something to post. A free Spark from Soul-Forged Founders.">
+<meta name="twitter:image" content="https://sunnysink.github.io/monthly-claude-challenge/october-raise-the-dead/evergreen-library/preview.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* The October "tombstone" skin, token for token from the Raise the Dead board. */
+  :root{
+    color-scheme:dark;
+    --bg:#0F1113; --bg2:#1B1E22; --ink:#ECEEF0; --ink-dim:#A7AEB5;
+    --copper:#8F98A2; --copper-lt:#D5DADF; --ember:#7FA868; --ember-glow:#C7D0D8;
+    --forest:#6F9460; --mauve:#A39CB5; --gold:#E3E6E9;
+    --green:#94C57E;
+    --heading:#A8D08F;
+    --copper-rgb:143,152,162;   --copper-lt-rgb:213,218,223;
+    --ember-rgb:127,168,104;    --ember-glow-rgb:199,208,216;
+    --gold-rgb:227,230,233;     --mauve-rgb:163,156,181;
+    --forest-rgb:111,148,96;    --green-rgb:148,197,126;
+    --card-rgb:30,33,37;
+    --bg-rgb:15,17,19;    --bg2-rgb:27,30,34;
+    --veil-rgb:8,9,10;       --well-rgb:18,20,23;   --sheet-rgb:33,36,41;
+    --serif:'Cormorant Garamond','Hoefler Text',Georgia,serif;
+    --sans:'Hanken Grotesk',system-ui,-apple-system,sans-serif;
+    --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;
+    --card:rgba(var(--card-rgb),0.70); --cardborder:rgba(var(--copper-rgb),0.24);
+    --glow-a:rgba(var(--ember-rgb),0.16);
+    --glow-b:rgba(var(--forest-rgb),0.14);
+    --glow-c:rgba(var(--copper-rgb),0.12);
+    --on-accent:#101410; --well-ink:#E6EAEE;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:var(--sans);color:var(--ink);background:var(--bg);
+    background-image:
+      radial-gradient(900px 520px at 10% -10%, var(--glow-a), transparent 60%),
+      radial-gradient(820px 500px at 100% 0%, var(--glow-b), transparent 55%),
+      radial-gradient(760px 620px at 55% 120%, var(--glow-c), transparent 60%);
+    min-height:100vh;padding:44px 16px 80px;position:relative;overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;line-height:1.65;
+  }
+  .embers{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+  .ember{position:absolute;bottom:-12px;width:3px;height:3px;border-radius:50%;
+    background:var(--ember-glow);box-shadow:0 0 6px 1px rgba(var(--ember-glow-rgb),0.6);
+    opacity:0;animation:rise linear infinite}
+  @keyframes rise{0%{transform:translateY(0) translateX(0);opacity:0}
+    12%{opacity:.7}100%{transform:translateY(-104vh) translateX(26px);opacity:0}}
+  @media(prefers-reduced-motion:reduce){.ember{display:none}}
+  .wrap{max-width:1080px;margin:0 auto;position:relative;z-index:1}
+
+  header{text-align:center;margin-bottom:28px}
+  .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.34em;text-transform:uppercase;
+    color:var(--copper);opacity:.9;margin-bottom:12px}
+  h1{font-family:var(--serif);font-weight:600;font-size:clamp(44px,8vw,84px);line-height:.95;
+    background:linear-gradient(92deg,var(--copper-lt),var(--ember-glow) 38%,var(--gold) 70%,var(--copper));
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:.5px}
+  .sub{font-family:var(--serif);font-style:italic;font-size:clamp(19px,2.4vw,25px);color:var(--ink-dim);margin-top:10px}
+  .lede{font-size:15.5px;color:var(--ink-dim);margin:16px auto 0;max-width:660px}
+
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin:26px 0 8px}
+  .stat{background:var(--card);border:1px solid var(--cardborder);border-radius:16px;
+    padding:19px 16px;text-align:center;backdrop-filter:blur(14px);position:relative;overflow:hidden}
+  .stat::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+    background:linear-gradient(180deg,var(--copper),var(--ember),var(--gold))}
+  .stat .n{font-family:var(--serif);font-size:42px;font-weight:600;line-height:1;color:var(--copper-lt)}
+  .stat.live .n{color:var(--heading)}
+  .stat .l{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-dim);margin-top:8px}
+  @media(max-width:620px){.stats{grid-template-columns:1fr;gap:10px}
+    .stat{display:flex;align-items:center;justify-content:space-between;text-align:left;padding:14px 18px}
+    .stat .n{font-size:30px}.stat .l{margin-top:0}}
+
+  /* tabs: one view at a time */
+  .tabs{display:flex;gap:6px;margin:26px 0 4px;padding:5px;border-radius:40px;
+    background:rgba(var(--card-rgb),.7);border:1px solid var(--cardborder);backdrop-filter:blur(12px)}
+  .tab{flex:1;background:none;border:none;border-radius:30px;padding:11px 10px;cursor:pointer;
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-dim);
+    transition:color .18s,background .18s}
+  .tab .c{opacity:.7;margin-left:6px}
+  .tab:hover{color:var(--ink)}
+  .tab.on{background:linear-gradient(135deg,var(--forest),var(--green));color:var(--on-accent);font-weight:700}
+  .tab:focus-visible{outline:2px solid var(--heading);outline-offset:2px}
+  .view{display:none}
+  .view.on{display:block}
+  @media(max-width:520px){.tab{font-size:9.5px;letter-spacing:.08em;padding:10px 4px}}
+
+  .section-label{font-family:var(--mono);font-size:11px;letter-spacing:.28em;text-transform:uppercase;
+    color:var(--ink-dim);margin:30px 0 16px;display:flex;align-items:center;gap:12px}
+  .section-label::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,rgba(var(--copper-rgb),0.35),transparent)}
+  .section-label .ct{color:var(--copper)}
+
+  /* today's pull */
+  .pull{position:relative;overflow:hidden;
+    background:linear-gradient(150deg,rgba(var(--ember-rgb),.20),rgba(var(--card-rgb),.84));
+    border:1px solid rgba(var(--ember-rgb),.5);border-radius:18px;padding:28px 30px}
+  .pull .u{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
+  .pull h2{font-family:var(--serif);font-size:clamp(28px,4vw,40px);font-weight:600;line-height:1.12;color:var(--heading);margin:10px 0 8px}
+  .pull .meta{font-size:14px;color:var(--ink-dim)}
+  .pull .meta a{color:var(--copper-lt)}
+  .pull .note{margin-top:16px;padding:14px 16px;border-radius:12px;background:rgba(var(--well-rgb),.6);
+    border:1px solid rgba(var(--copper-rgb),.2);font-size:15px;color:var(--ink)}
+  .pull .note .k{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--copper);margin-bottom:4px}
+  .pull .empty{font-size:15px;color:var(--ink-dim)}
+  .pull .hint{font-size:12.5px;color:var(--ink-dim);margin-top:12px;opacity:.85}
+  @media(max-width:520px){.pull{padding:22px 18px}}
+
+  .acts{display:flex;gap:11px;margin-top:18px;flex-wrap:wrap}
+  .btn{border:none;border-radius:30px;padding:12px 22px;font-family:var(--sans);font-size:14px;
+    font-weight:700;cursor:pointer;transition:transform .18s,box-shadow .18s}
+  .btn.copy{background:linear-gradient(135deg,var(--copper),var(--ember));color:var(--on-accent)}
+  .btn.ok{background:linear-gradient(135deg,var(--forest),var(--green));color:var(--on-accent)}
+  .btn.line{background:transparent;color:var(--copper-lt);border:1.5px solid rgba(var(--copper-rgb),.5)}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 8px 22px -8px rgba(var(--ember-rgb),.6)}
+  .btn:focus-visible,.tool:focus-visible,.mini:focus-visible{outline:2px solid var(--heading);outline-offset:2px}
+
+  .tool{background:none;border:1px solid rgba(var(--copper-rgb),.34);border-radius:30px;
+    padding:8px 17px;font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;
+    text-transform:uppercase;color:var(--ink-dim);cursor:pointer;transition:color .18s,border-color .18s,background .18s}
+  .tool:hover{color:var(--ember-glow);border-color:rgba(var(--ember-rgb),.6);background:rgba(var(--ember-rgb),.07)}
+  .tool.danger:hover{color:var(--mauve);border-color:rgba(var(--mauve-rgb),.6);background:rgba(var(--mauve-rgb),.07)}
+
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 2px}
+  .chip{background:rgba(var(--card-rgb),.6);border:1px solid rgba(var(--copper-rgb),.32);border-radius:30px;
+    padding:7px 15px;font-family:var(--sans);font-size:13px;font-weight:600;color:var(--ink-dim);cursor:pointer;
+    transition:color .18s,border-color .18s,background .18s}
+  .chip .c{font-family:var(--mono);font-size:10px;opacity:.7;margin-left:6px}
+  .chip:hover{color:var(--ink);border-color:rgba(var(--copper-lt-rgb),.55)}
+  .chip.on{background:linear-gradient(135deg,var(--forest),var(--green));color:var(--on-accent);border-color:transparent}
+  .chip:focus-visible{outline:2px solid var(--heading);outline-offset:2px}
+
+  .examples-note{display:none;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+    margin-top:20px;padding:14px 18px;border-radius:14px;border:1px dashed rgba(var(--gold-rgb),.4);
+    background:rgba(var(--gold-rgb),.05);font-size:14px;color:var(--ink-dim)}
+  .examples-note.on{display:flex}
+  .examples-note b{color:var(--ink)}
+
+  .panel{background:var(--card);border:1px solid var(--cardborder);border-radius:16px;padding:22px 24px;backdrop-filter:blur(14px)}
+  .panel p{font-size:15px;color:var(--ink-dim);margin-bottom:10px}
+  .panel p:last-child{margin-bottom:0}
+  .panel b{color:var(--ink)}
+  .tagkey{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .tagkey div{padding:14px 16px;border-radius:12px;background:rgba(var(--well-rgb),.5);border:1px solid rgba(var(--copper-rgb),.16);font-size:13.5px;color:var(--ink-dim);line-height:1.5}
+  .tagkey b{display:block;font-family:var(--serif);font-size:20px;color:var(--heading);margin-bottom:2px}
+  @media(max-width:620px){.tagkey{grid-template-columns:1fr}}
+
+  /* shelves */
+  .shelf{margin-top:24px}
+  .shelfhead{display:flex;align-items:baseline;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+  .shelfhead h3{font-family:var(--serif);font-size:25px;font-weight:600;color:var(--heading)}
+  .shelfhead .d{font-size:13.5px;color:var(--ink-dim)}
+  .books{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:13px}
+  .book{position:relative;background:rgba(var(--card-rgb),0.9);border:1px solid var(--cardborder);
+    border-radius:6px 14px 14px 6px;padding:18px 18px 16px 24px;contain:layout paint;
+    display:flex;flex-direction:column;gap:7px;transition:transform .18s,border-color .18s,box-shadow .18s}
+  .book::before{content:"";position:absolute;left:0;top:0;bottom:0;width:8px;border-radius:6px 0 0 6px;
+    background:linear-gradient(180deg,var(--forest),var(--green))}
+  .book.refresh::before{background:linear-gradient(180deg,var(--mauve),var(--copper-lt))}
+  .book.rest::before{background:linear-gradient(180deg,#4A5058,#6B727A)}
+  .book:hover{transform:translateY(-3px);border-color:rgba(var(--copper-lt-rgb),.55);box-shadow:0 14px 34px -18px rgba(var(--ember-rgb),.7)}
+  .book .ty{font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--copper)}
+  .book h4{font-family:var(--serif);font-size:21px;font-weight:600;line-height:1.18;color:var(--ink)}
+  .book .note{font-size:13px;color:var(--ink);background:rgba(var(--well-rgb),.55);
+    border-radius:10px;padding:8px 11px;border:1px solid rgba(var(--copper-rgb),.16)}
+  .book .note .k{font-family:var(--mono);font-size:8.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--copper);display:block;margin-bottom:2px}
+  .book .when{font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;color:var(--ink-dim);opacity:.85}
+  .book .when a{color:var(--copper-lt)}
+  .book .row-acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+  .mini{background:none;border:1px solid rgba(var(--copper-rgb),.32);border-radius:20px;padding:5px 11px;
+    font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-dim);cursor:pointer;
+    transition:color .18s,border-color .18s,background .18s}
+  .mini:hover{color:var(--ember-glow);border-color:rgba(var(--ember-rgb),.6);background:rgba(var(--ember-rgb),.07)}
+  .mini.go{color:var(--heading);border-color:rgba(var(--ember-rgb),.55)}
+  .none{font-size:14px;color:var(--ink-dim);padding:12px 4px}
+
+  .prompts{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:13px}
+  .pcard{background:var(--card);border:1px solid var(--cardborder);border-radius:14px;padding:19px 18px;
+    backdrop-filter:blur(12px);display:flex;flex-direction:column;gap:8px}
+  .pcard .u{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mauve)}
+  .pcard h4{font-family:var(--serif);font-size:21px;font-weight:600;color:var(--heading);line-height:1.15}
+  .pcard p{font-size:13.5px;color:var(--ink-dim);line-height:1.5;flex:1}
+  .pcard .btn{align-self:flex-start;padding:10px 20px;font-size:13.5px}
+
+  .ledger{list-style:none}
+  .ledger li{display:flex;gap:12px;align-items:baseline;justify-content:space-between;flex-wrap:wrap;
+    padding:10px 0;border-bottom:1px solid rgba(var(--copper-rgb),.14);font-size:14.5px;color:var(--ink-dim)}
+  .ledger li:last-child{border-bottom:none}
+  .ledger b{color:var(--ink);font-weight:600}
+  .ledger .dt{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--copper)}
+
+  /* sheet */
+  .veil{position:fixed;inset:0;background:rgba(var(--veil-rgb),.82);backdrop-filter:blur(7px);
+    z-index:60;display:none;align-items:flex-start;justify-content:center;padding:34px 16px;overflow-y:auto}
+  .veil.on{display:flex}
+  .sheet{background:linear-gradient(150deg,rgba(var(--sheet-rgb),.97),rgba(var(--bg-rgb),.99));
+    border:1px solid rgba(var(--copper-rgb),.36);border-radius:18px;max-width:620px;width:100%;
+    padding:30px 30px 26px;position:relative;box-shadow:0 30px 90px -30px #000}
+  .sheet .num{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--copper)}
+  .sheet h3{font-family:var(--serif);font-size:31px;font-weight:600;line-height:1.12;margin:7px 0 18px;color:var(--heading)}
+  .close{position:absolute;top:15px;right:17px;background:none;border:none;color:var(--ink-dim);font-size:25px;cursor:pointer;line-height:1;padding:4px 8px}
+  .close:hover{color:var(--ember-glow)}
+  .field{margin-bottom:15px}
+  .field label{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:7px}
+  .field input,.field select,.field textarea{width:100%;background:rgba(var(--well-rgb),.5);
+    border:1px solid rgba(var(--copper-rgb),.28);border-radius:10px;padding:11px 14px;
+    font-family:var(--sans);font-size:14.5px;color:var(--ink);outline:none;transition:border-color .18s}
+  .field textarea{min-height:70px;resize:vertical;line-height:1.5}
+  .field input:focus,.field select:focus,.field textarea:focus{border-color:rgba(var(--ember-rgb),.65)}
+  .field input::placeholder,.field textarea::placeholder{color:var(--ink-dim);opacity:.55}
+  .field .hint{font-size:12px;color:var(--ink-dim);margin-top:6px;opacity:.85}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .seg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .seg label{margin:0;cursor:pointer}
+  .seg input{position:absolute;opacity:0;width:0;height:0}
+  .seg span{display:block;text-align:center;padding:10px 6px;border-radius:10px;border:1px solid rgba(var(--copper-rgb),.3);
+    font-family:var(--sans);font-size:13.5px;font-weight:600;letter-spacing:0;text-transform:none;color:var(--ink-dim);transition:all .18s}
+  .seg input:checked + span{background:linear-gradient(135deg,var(--forest),var(--green));color:var(--on-accent);border-color:transparent}
+  .seg input:focus-visible + span{outline:2px solid var(--heading);outline-offset:2px}
+  @media(max-width:520px){.sheet{padding:26px 18px 22px}.two{grid-template-columns:1fr}}
+  .pbox{background:rgba(var(--well-rgb),.72);border:1px solid rgba(var(--copper-rgb),.2);border-radius:12px;
+    padding:17px 18px;font-family:var(--mono);font-size:12.5px;line-height:1.75;color:var(--well-ink);white-space:pre-wrap;max-height:46vh;overflow-y:auto}
+
+  .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);opacity:0;
+    background:linear-gradient(135deg,var(--forest),var(--green));color:var(--on-accent);font-weight:700;font-size:14px;
+    padding:11px 22px;border-radius:30px;z-index:80;transition:opacity .25s,transform .25s;pointer-events:none}
+  .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  .safe .hint{text-transform:none;letter-spacing:0;font-family:var(--sans);font-size:12.5px;color:var(--ink-dim)}
+  .savebar{display:flex;gap:10px;flex-wrap:wrap}
+  @media(max-width:520px){.savebar .tool{flex:1;text-align:center}}
+  footer{margin-top:44px;text-align:center;font-family:var(--mono);font-size:10px;letter-spacing:.24em;color:var(--ink-dim);opacity:.7}
+</style>
+</head>
+<body>
+<div class="embers" id="embers"></div>
+<div class="wrap">
+
+  <header>
+    <div class="kicker">Soul-Forged Founders · A Free Spark</div>
+    <h1>The Evergreen Library</h1>
+    <div class="sub">Your best old posts, shelved and ready to post again.</div>
+    <p class="lede">Shelve each past post as Repost, Refresh or Rest. Whenever you need something to post, the library hands you one, oldest first, with a Claude prompt to give it a fresh caption.</p>
+    <div class="acts" style="justify-content:center;margin-top:22px">
+      <button class="btn copy" data-add type="button">+ Shelve a post</button>
+      <button class="btn line" data-p="find" type="button">Find my posts with Claude</button>
+    </div>
+  </header>
+
+  <div class="stats">
+    <div class="stat"><div class="n" id="s-all">0</div><div class="l">On the shelves</div></div>
+    <div class="stat live"><div class="n" id="s-ready">0</div><div class="l">Ready to post</div></div>
+    <div class="stat"><div class="n" id="s-month">0</div><div class="l">Posted again this month</div></div>
+  </div>
+
+  <div class="examples-note" id="ex-note">
+    <span><b>These are example posts</b> so you can see the shape. Clear them and shelve your own.</span>
+    <button class="tool" id="clear-ex" type="button">Clear examples</button>
+  </div>
+
+  <div class="tabs" role="tablist">
+    <button class="tab on" role="tab" data-tab="pull" type="button">Today's pull</button>
+    <button class="tab" role="tab" data-tab="shelves" type="button">The shelves<span class="c" id="t-shelves"></span></button>
+    <button class="tab" role="tab" data-tab="prompts" type="button">Prompts</button>
+  </div>
+
+  <!-- TODAY'S PULL -->
+  <section class="view on" id="v-pull">
+    <div class="chips" id="pchips" role="group" aria-label="Pull for a platform" style="margin-top:20px"></div>
+    <div class="section-label" id="pull-label">Post this one</div>
+    <section class="pull" id="pull"></section>
+    <div id="log-wrap">
+      <div class="section-label">Posted again <span class="ct" id="log-ct"></span></div>
+      <div class="panel"><ul class="ledger" id="log"></ul></div>
+    </div>
+  </section>
+
+  <!-- THE SHELVES -->
+  <section class="view" id="v-shelves">
+    <div class="section-label">How the shelves work</div>
+    <div class="tagkey">
+      <div><b>Repost</b>Still true, still fits what you sell. Post it again as it is, with a fresh first line.</div>
+      <div><b>Refresh</b>The idea still works. A date, price, offer, link or old wording needs updating first.</div>
+      <div><b>Rest</b>Tied to a moment that passed or an offer you closed. It stays on the shelf and out of the pull.</div>
+    </div>
+    <div class="acts" style="margin-top:20px"><button class="btn copy" data-add type="button">+ Shelve a post</button></div>
+    <div class="chips" id="schips" role="group" aria-label="Show posts by platform" style="margin-top:16px"></div>
+    <div id="shelves"></div>
+  </section>
+
+  <!-- PROMPTS -->
+  <section class="view" id="v-prompts">
+    <div class="section-label">Three prompts for Claude</div>
+    <div class="prompts">
+      <div class="pcard"><div class="u">1 · Find them</div><h4>Gather your best posts</h4><p>Claude looks through what it can see, asks you to paste the rest, and hands back a table sorted into Repost, Refresh and Rest.</p><button class="btn copy" data-p="find" type="button">Copy prompt</button></div>
+      <div class="pcard"><div class="u">2 · Refresh a batch</div><h4>Update the Refresh shelf</h4><p>Built from your Refresh shelf. Claude asks what you sell now, then rewrites each post in your voice with your notes applied.</p><button class="btn copy" data-p="refresh" type="button">Copy prompt</button></div>
+      <div class="pcard"><div class="u">3 · Keep them</div><h4>Save to your Business Brain</h4><p>Built from your whole library. Claude finds where you keep your business files and asks before it creates or changes anything.</p><button class="btn copy" data-p="save" type="button">Copy prompt</button></div>
+    </div>
+
+    <section class="safe">
+      <div class="section-label">Keep it safe <span class="hint">Your library lives in this browser. Back it up before you clear site data or switch devices.</span></div>
+      <div class="savebar">
+        <button type="button" class="tool" id="backupBtn">Back up (.json)</button>
+        <button type="button" class="tool" id="restoreBtn">Restore backup</button>
+        <input type="file" id="restoreFile" accept="application/json,.json" style="display:none">
+        <button type="button" class="tool" id="loadEx">Show the examples</button>
+        <button type="button" class="tool danger" id="clearAll">Clear everything</button>
+      </div>
+    </section>
+  </section>
+
+  <footer>THE EVERGREEN LIBRARY · A FREE SPARK INSIDE SOUL-FORGED FOUNDERS</footer>
+</div>
+
+<div class="veil" id="veil" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+  <div class="sheet">
+    <button class="close" id="close" type="button" aria-label="Close">×</button>
+    <div class="num" id="sheet-num">New post</div>
+    <h3 id="sheet-title">Shelve a post</h3>
+    <div id="sheet-body"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+  var KEY='sff-evergreen-library-v1';
+  var REST_DAYS=30;
+  var TAGS={repost:{n:'Repost',d:'Still true. Post it again with a fresh first line.'},
+            refresh:{n:'Refresh',d:'The idea works. Something in it needs updating first.'},
+            rest:{n:'Rest',d:'Stays on the shelf, out of the pull.'}};
+  var ORDER=['repost','refresh','rest'];
+  var PLATFORMS=['Instagram','Facebook','TikTok','YouTube','Threads','LinkedIn','Pinterest','Blog','Email','Skool','Other'];
+  var FORMATS=['Post','Carousel','Reel or video','Story','Live','Blog post','Email','Thread','Other'];
+  function ago(days){ var d=new Date(); d.setDate(d.getDate()-days); return iso(d); }
+  function iso(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+  var EX=[
+    {title:'Three questions to ask before any tarot reading',platform:'Instagram',format:'Carousel',posted:220,tag:'repost',note:''},
+    {title:'How I prepare my space before a client session',platform:'Instagram',format:'Reel or video',posted:310,tag:'repost',note:''},
+    {title:'Why I stopped reading reversals as the opposite meaning',platform:'Facebook',format:'Post',posted:150,tag:'refresh',note:'Swap the old workshop link for my current course.'},
+    {title:'My full moon journaling ritual',platform:'Blog',format:'Blog post',posted:400,tag:'refresh',note:'Update the price of the journal and add this year\'s dates.'},
+    {title:'Last call for the summer group',platform:'Instagram',format:'Story',posted:120,tag:'rest',note:'That group is closed.'}
+  ];
+
+  var $=function(id){return document.getElementById(id);};
+  var uid=function(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7);};
+  var today=function(){return iso(new Date());};
+  var MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function nice(s){ if(!s) return ''; var p=s.split('-'); return MON[+p[1]-1]+' '+(+p[2])+', '+p[0]; }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+  function daysSince(s){ if(!s) return 9999; var p=s.split('-'); return Math.floor((new Date()-new Date(+p[0],+p[1]-1,+p[2]))/86400000); }
+  function safeUrl(u){ return /^https?:\/\//i.test(u||'')?u:''; }
+
+  function seed(){ return {posts:EX.map(function(x){ return {id:uid(),title:x.title,platform:x.platform,format:x.format,link:'',posted:ago(x.posted),tag:x.tag,note:x.note,uses:[],example:true}; })}; }
+  var state;
+  try{ state=JSON.parse(localStorage.getItem(KEY)); }catch(e){ state=null; }
+  if(!state || !Array.isArray(state.posts)) state=seed();
+  function save(){ try{ localStorage.setItem(KEY,JSON.stringify(state)); }catch(e){} }
+
+  function lastUsed(p){ return p.uses && p.uses.length ? p.uses[p.uses.length-1] : ''; }
+  function lastSeen(p){ return lastUsed(p) || p.posted || ''; }
+  var pfilter='All', sfilter='All', skip=0;
+
+  function candidates(){
+    return state.posts.filter(function(p){
+      return p.tag!=='rest' && daysSince(lastUsed(p))>=REST_DAYS && (pfilter==='All' || p.platform===pfilter);
+    }).sort(function(a,b){ return (lastSeen(a)||'0')<(lastSeen(b)||'0')?-1:1; });
+  }
+  function resting(){ return state.posts.filter(function(p){ return p.tag!=='rest' && daysSince(lastUsed(p))<REST_DAYS; }); }
+
+  function postPrompt(p){
+    var base="I'm posting one of my older pieces again. Here are the details.\n\n"+
+      "Title or first line: "+p.title+"\n"+
+      "Where it ran: "+p.platform+" ("+p.format+")\n"+
+      "First posted: "+(p.posted?nice(p.posted):'[not sure]')+"\n"+
+      (safeUrl(p.link)?"Link: "+p.link+"\n":"")+
+      "The original text: [paste it here]\n\n";
+    if(p.tag==='refresh'){
+      return base+"What needs updating: "+(p.note||'[what changed since I posted it]')+"\n\n"+
+        "1. Ask me up to three questions about what I sell and offer now before you write anything.\n"+
+        "2. Rewrite it in my voice. Keep the core idea and the parts that are still true. Apply the update above.\n"+
+        "3. Give me a new first line in three versions, so I can pick the strongest.\n"+
+        "4. Only use facts, prices, dates and results I give you. If you need one you do not have, ask me.";
+    }
+    return base+(p.note?"My note on it: "+p.note+"\n\n":"")+
+      "1. Keep the post as it is. It still works.\n"+
+      "2. Give me three fresh first lines so it reads new to someone who saw it before.\n"+
+      "3. Give me one new closing question that invites a comment.\n"+
+      "4. If anything in it now reads dated, point it out and ask me before changing it.";
+  }
+  function listOf(ps){
+    return ps.map(function(p,k){
+      return (k+1)+". "+p.title+" | "+p.platform+" | "+p.format+" | "+TAGS[p.tag].n+
+        (p.posted?" | First posted: "+nice(p.posted):"")+(lastUsed(p)?" | Last posted again: "+nice(lastUsed(p)):"")+
+        (p.note?" | Note: "+p.note:"")+(safeUrl(p.link)?" | "+p.link:"");
+    }).join("\n");
+  }
+  function FIND(){
+    return "I want to gather my best past content so I can post it again: social posts, carousels, videos, blog posts, emails, anything I've published.\n\n"+
+    "1. Look first. If you can see my files, notes, exports, drafts or past chats, search them for content I've already published. Only read. Do not create, move or change anything.\n"+
+    "2. Then ask me to paste or upload anything you could not reach, such as captions from my accounts or a list of my blog posts. If I wrote any at the end of this message, include them.\n"+
+    "3. Sort each piece into one of three shelves:\n"+
+    "   Repost: still true and still fits what I sell now.\n"+
+    "   Refresh: the idea works, but a date, price, offer, link or old wording needs updating.\n"+
+    "   Rest: tied to a moment that passed, an offer I closed, or no longer how I work.\n"+
+    "4. For each Refresh piece, write what needs updating in a few words.\n\n"+
+    "Show me the full list right here in your reply as a table with these columns: Title or first line, Platform, Format, First posted, Shelf, What to update. Every piece gets its own row. Keep each cell short so I can copy them into my Evergreen Library.\n\n"+
+    "Only use what you find and what I tell you. If you are unsure which shelf a piece belongs on, say so in the row.\n\n"+
+    "Posts I can think of right now (optional):\n";
+  }
+  function REFRESH(ps){
+    return "Help me refresh these older posts so I can post them again. They're on the Refresh shelf of my Evergreen Library, each with a note on what needs updating:\n\n"+listOf(ps)+"\n\n"+
+    "Before you write anything:\n"+
+    "1. Ask me what I sell and offer right now, with current prices and links.\n"+
+    "2. Ask me to paste the original text of each post. Work only from what I paste.\n\n"+
+    "Then, one post at a time: rewrite it in my voice, keep the core idea, apply its note, and give me three options for the first line. Ask me before you move to the next one.\n\n"+
+    "Only use facts, prices, dates and results I give you. If you need one you do not have, ask me.";
+  }
+  function SAVE(ps){
+    return "I keep a library of my past posts in my Evergreen Library, each shelved as Repost, Refresh or Rest. I want a copy saved in my Business Brain, the place where I keep my business files for AI to read.\n\n"+
+    "Step 1. Find my Business Brain. Look everywhere you can reach: Google Drive, Dropbox, OneDrive, Notion, GitHub, a project, or folders on my computer. It may be called Business Brain, Biz Brain, or something close. Tell me what you found and where. Only look for now. Do not create or change anything.\n\n"+
+    "Step 2. If you found more than one, ask me which to use. If you found none, ask me where I would like to keep one and wait for my answer. Never create a folder or file anywhere until I say yes.\n\n"+
+    "Step 3. Inside it, look for a content library or evergreen posts file. If there is one, show me what is in it. If there is none, suggest a name and ask me before you create it.\n\n"+
+    "Step 4. Compare my list below with what is already saved. Show me which posts are new and which are already there. Once I say yes, add only the new ones and update any that changed. Do not delete anything.\n\n"+
+    "If you cannot reach any storage, give me the list as a document I can save myself.\n\n"+
+    "My Evergreen Library:\n"+listOf(ps);
+  }
+
+  var toastT;
+  function toast(m){ var t=$('toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(function(){t.classList.remove('on');},1900); }
+  function copy(text,msg){
+    function fallback(){ var ta=document.createElement('textarea'); ta.value=text; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy');}catch(e){} document.body.removeChild(ta); toast(msg); }
+    if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(text).then(function(){toast(msg);},fallback); } else fallback();
+  }
+
+  function chipsHTML(sel,list,count){
+    var counts={}; list.forEach(function(p){ counts[p.platform]=(counts[p.platform]||0)+1; });
+    var present=PLATFORMS.filter(function(t){return counts[t];});
+    Object.keys(counts).forEach(function(t){ if(present.indexOf(t)<0) present.push(t); });
+    if(present.length<2) return {html:'',sel:'All'};
+    if(sel!=='All' && !counts[sel]) sel='All';
+    return {sel:sel,html:['All'].concat(present).map(function(t){
+      return '<button class="chip'+(t===sel?' on':'')+'" data-f="'+esc(t)+'" type="button" aria-pressed="'+(t===sel)+'">'+esc(t==='All'?'All platforms':t)+'<span class="c">'+(t==='All'?count:counts[t])+'</span></button>';
+    }).join('')};
+  }
+
+  function bookHTML(p){
+    var lu=lastUsed(p), link=safeUrl(p.link);
+    return '<article class="book '+p.tag+'" data-id="'+p.id+'">'+
+      '<div class="ty">'+esc(p.platform)+' · '+esc(p.format)+'</div>'+
+      '<h4>'+esc(p.title)+'</h4>'+
+      (p.note?'<div class="note"><span class="k">'+(p.tag==='refresh'?'To update':'Note')+'</span>'+esc(p.note)+'</div>':'')+
+      '<div class="when">'+(p.posted?'First posted '+nice(p.posted):'First posted date not set')+
+        (lu?' · posted again '+nice(lu):'')+(p.uses&&p.uses.length>1?' ('+p.uses.length+' times)':'')+
+        (link?' · <a href="'+esc(link)+'" target="_blank" rel="noopener">open</a>':'')+'</div>'+
+      '<div class="row-acts">'+
+        (p.tag!=='repost'?'<button class="mini" data-a="tag" data-t="repost" type="button">Repost</button>':'')+
+        (p.tag!=='refresh'?'<button class="mini" data-a="tag" data-t="refresh" type="button">Refresh</button>':'')+
+        (p.tag!=='rest'?'<button class="mini" data-a="tag" data-t="rest" type="button">Rest</button>':'')+
+        (p.tag!=='rest'?'<button class="mini" data-a="prompt" type="button">Prompt</button>':'')+
+        '<button class="mini" data-a="edit" type="button">Edit</button>'+
+        (p.tag!=='rest'?'<button class="mini go" data-a="posted" type="button">Posted it</button>':'')+
+      '</div></article>';
+  }
+
+  function render(){
+    var all=state.posts, live=all.filter(function(p){return p.tag!=='rest';});
+    var month=today().slice(0,7), nMonth=0;
+    all.forEach(function(p){ (p.uses||[]).forEach(function(u){ if(u.slice(0,7)===month) nMonth++; }); });
+    $('s-all').textContent=all.length;
+    $('s-ready').textContent=live.filter(function(p){return daysSince(lastUsed(p))>=REST_DAYS;}).length;
+    $('s-month').textContent=nMonth;
+    $('t-shelves').textContent=all.length?'· '+all.length:'';
+    $('ex-note').classList.toggle('on',all.some(function(p){return p.example;}));
+
+    /* pull */
+    var pc=chipsHTML(pfilter,live,live.length); pfilter=pc.sel; $('pchips').innerHTML=pc.html;
+    var cand=candidates(), sp=$('pull');
+    if(skip>=cand.length) skip=0;
+    var p=cand[skip];
+    if(p){
+      var link=safeUrl(p.link);
+      $('pull-label').textContent=p.tag==='refresh'?'Refresh this one, then post it':'Post this one';
+      sp.innerHTML='<div class="u">'+esc(TAGS[p.tag].n)+' · '+esc(p.platform)+' · '+esc(p.format)+'</div>'+
+        '<h2>'+esc(p.title)+'</h2>'+
+        '<div class="meta">'+(lastUsed(p)?'Last posted again '+nice(lastUsed(p)):(p.posted?'First posted '+nice(p.posted)+', '+daysSince(p.posted)+' days ago':'Never posted again yet'))+
+          (link?' · <a href="'+esc(link)+'" target="_blank" rel="noopener">Open the original</a>':'')+'</div>'+
+        (p.tag==='refresh'?'<div class="note"><span class="k">Update first</span>'+esc(p.note||'Open it and note what changed since you posted it.')+'</div>':
+          (p.note?'<div class="note"><span class="k">Your note</span>'+esc(p.note)+'</div>':''))+
+        '<div class="acts"><button class="btn copy" data-a="prompt" data-id="'+p.id+'" type="button">Copy the Claude prompt</button>'+
+        '<button class="btn ok" data-a="posted" data-id="'+p.id+'" type="button">I posted it</button>'+
+        (cand.length>1?'<button class="btn line" id="another" type="button">Hand me another</button>':'')+'</div>'+
+        '<p class="hint">'+(cand.length>1?(skip+1)+' of '+cand.length+' ready'+(pfilter!=='All'?' for '+esc(pfilter):'')+'. ':'')+'Once you post it, it rests for '+REST_DAYS+' days before it comes back.</p>';
+    } else {
+      var r=resting();
+      $('pull-label').textContent='Post this one';
+      sp.innerHTML='<p class="empty">'+(live.length?
+        'Everything on your Repost and Refresh shelves went out in the last '+REST_DAYS+' days'+(r.length?'. The next one comes back on '+nice(nextBack(r))+'.':'.')+' Shelve a few more posts to keep the pull full.':
+        'Your shelves are empty. Shelve a post above, or copy the Find prompt and let Claude help you gather your best ones.')+'</p>';
+    }
+    var log=[]; all.forEach(function(x){ (x.uses||[]).forEach(function(u){ log.push({p:x,d:u}); }); });
+    log.sort(function(a,b){return a.d<b.d?1:-1;});
+    $('log-wrap').style.display=log.length?'':'none';
+    $('log-ct').textContent=log.length?'· '+log.length:'';
+    $('log').innerHTML=log.slice(0,12).map(function(l){
+      return '<li><span><b>'+esc(l.p.title)+'</b> · '+esc(l.p.platform)+'</span><span class="dt">'+nice(l.d)+'</span></li>';
+    }).join('');
+
+    /* shelves */
+    var sc=chipsHTML(sfilter,all,all.length); sfilter=sc.sel; $('schips').innerHTML=sc.html;
+    var fl=sfilter==='All'?all:all.filter(function(x){return x.platform===sfilter;});
+    var h='';
+    ORDER.forEach(function(t){
+      var row=fl.filter(function(x){return x.tag===t;}).sort(function(a,b){ return (lastSeen(a)||'0')<(lastSeen(b)||'0')?-1:1; });
+      if(!row.length) return;
+      h+='<div class="shelf"><div class="shelfhead"><h3>'+TAGS[t].n+' <span style="font-size:15px;color:var(--copper)">· '+row.length+'</span></h3><span class="d">'+TAGS[t].d+'</span></div><div class="books">';
+      row.forEach(function(x){ h+=bookHTML(x); });
+      h+='</div></div>';
+    });
+    $('shelves').innerHTML=h||'<p class="none">Nothing shelved yet.</p>';
+  }
+  function nextBack(r){
+    var m=null; r.forEach(function(p){ var p2=lastUsed(p).split('-'); var d=new Date(+p2[0],+p2[1]-1,+p2[2]); d.setDate(d.getDate()+REST_DAYS); if(!m||d<m) m=d; });
+    return iso(m);
+  }
+
+  function find(id){ for(var k=0;k<state.posts.length;k++) if(state.posts[k].id===id) return state.posts[k]; return null; }
+
+  /* tabs */
+  function showTab(t){
+    [].forEach.call(document.querySelectorAll('.tab'),function(b){ var on=b.getAttribute('data-tab')===t; b.classList.toggle('on',on); b.setAttribute('aria-selected',on); });
+    [].forEach.call(document.querySelectorAll('.view'),function(v){ v.classList.toggle('on',v.id==='v-'+t); });
+    try{ sessionStorage.setItem(KEY+'-tab',t); }catch(e){}
+  }
+  [].forEach.call(document.querySelectorAll('.tab'),function(b){ b.addEventListener('click',function(){ showTab(b.getAttribute('data-tab')); }); });
+  try{ var lt=sessionStorage.getItem(KEY+'-tab'); if(lt) showTab(lt); }catch(e){}
+
+  /* sheet */
+  var lastFocus=null;
+  function openSheet(num,title,body){
+    lastFocus=document.activeElement;
+    $('sheet-num').textContent=num; $('sheet-title').textContent=title; $('sheet-body').innerHTML=body;
+    $('veil').classList.add('on');
+    var f=$('sheet-body').querySelector('input:not([type=radio]),textarea,button'); if(f) f.focus();
+  }
+  function closeSheet(){ $('veil').classList.remove('on'); if(lastFocus) try{lastFocus.focus();}catch(e){} }
+  $('close').addEventListener('click',closeSheet);
+  $('veil').addEventListener('click',function(e){ if(e.target===$('veil')) closeSheet(); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape' && $('veil').classList.contains('on')) closeSheet(); });
+
+  function editForm(p){
+    var isNew=!p; p=p||{title:'',platform:'Instagram',format:'Post',link:'',posted:'',tag:'repost',note:''};
+    var plOpts=PLATFORMS.map(function(t){return '<option'+(t===p.platform?' selected':'')+'>'+t+'</option>';}).join('');
+    var fmOpts=FORMATS.map(function(t){return '<option'+(t===p.format?' selected':'')+'>'+t+'</option>';}).join('');
+    var seg=ORDER.map(function(t){return '<label><input type="radio" name="f-tag" value="'+t+'"'+(t===p.tag?' checked':'')+'><span>'+TAGS[t].n+'</span></label>';}).join('');
+    openSheet(isNew?'New post':'Edit post', isNew?'Shelve a post':p.title,
+      '<div class="field"><label for="f-title">Title or first line</label><input id="f-title" value="'+esc(p.title)+'" placeholder="Three questions to ask before any tarot reading" autocomplete="off"></div>'+
+      '<div class="two"><div class="field"><label for="f-platform">Where it ran</label><select id="f-platform">'+plOpts+'</select></div>'+
+      '<div class="field"><label for="f-format">Format</label><select id="f-format">'+fmOpts+'</select></div></div>'+
+      '<div class="field"><label>Shelf</label><div class="seg">'+seg+'</div><div class="hint">Repost: post as it is. Refresh: update something first. Rest: keep it, out of the pull.</div></div>'+
+      '<div class="field"><label for="f-note">What to update, or a note</label><textarea id="f-note" placeholder="Swap the old link for my current course">'+esc(p.note)+'</textarea></div>'+
+      '<div class="two"><div class="field"><label for="f-posted">First posted</label><input id="f-posted" type="date" value="'+esc(p.posted)+'"><div class="hint">A rough date is fine.</div></div>'+
+      '<div class="field"><label for="f-link">Link</label><input id="f-link" value="'+esc(p.link)+'" placeholder="Optional" autocomplete="off"></div></div>'+
+      '<div class="acts"><button class="btn ok" id="f-save" type="button">'+(isNew?'Shelve it':'Save')+'</button>'+
+      (isNew?'':'<button class="btn line" id="f-del" type="button">Take it off the shelf</button>')+'</div>');
+    $('f-save').addEventListener('click',function(){
+      var t=$('f-title').value.trim(); if(!t){ $('f-title').focus(); return; }
+      var tg=document.querySelector('input[name=f-tag]:checked');
+      var data={title:t,platform:$('f-platform').value,format:$('f-format').value,tag:tg?tg.value:'repost',
+        note:$('f-note').value.trim(),posted:$('f-posted').value,link:$('f-link').value.trim()};
+      if(isNew){ state.posts.push(Object.assign({id:uid(),uses:[],example:false},data)); toast('On the shelf'); }
+      else { Object.assign(p,data); p.example=false; toast('Saved'); }
+      skip=0; save(); render(); closeSheet();
+    });
+    $('f-title').addEventListener('keydown',function(e){ if(e.key==='Enter') $('f-save').click(); });
+    if(!isNew) $('f-del').addEventListener('click',function(){
+      if(!confirm('Take "'+p.title+'" off the shelf for good?')) return;
+      state.posts=state.posts.filter(function(x){return x.id!==p.id;}); save(); render(); closeSheet();
+    });
+  }
+
+  function showPrompt(p){
+    var t=postPrompt(p);
+    openSheet(TAGS[p.tag].n+' · '+p.platform, p.title,
+      '<div class="pbox" id="p-text"></div><div class="acts"><button class="btn copy" id="p-copy" type="button">Copy the prompt</button></div>'+
+      '<p class="hint" style="font-size:12.5px;color:var(--ink-dim);margin-top:12px">Paste the original text where it says to, then send it to Claude.</p>');
+    $('p-text').textContent=t;
+    $('p-copy').addEventListener('click',function(){ copy(t,'Copied. Paste it into Claude.'); });
+  }
+
+  function act(a,id,b){
+    var p=find(id); if(!p) return;
+    if(a==='edit') editForm(p);
+    else if(a==='prompt') showPrompt(p);
+    else if(a==='tag'){ p.tag=b.getAttribute('data-t'); p.example=false; save(); render(); toast('Moved to '+TAGS[p.tag].n); }
+    else if(a==='posted'){
+      p.uses=p.uses||[]; p.uses.push(today());
+      var was=p.tag; if(p.tag==='refresh') p.tag='repost';
+      skip=0; save(); render();
+      toast(was==='refresh'?'Posted and refreshed. It moves to Repost.':'Posted. It rests for '+REST_DAYS+' days.');
+    }
+  }
+  document.addEventListener('click',function(e){
+    var f=e.target.closest('[data-f]');
+    if(f){ var inPull=f.closest('#pchips'); if(inPull){ pfilter=f.getAttribute('data-f'); skip=0; } else sfilter=f.getAttribute('data-f'); render(); return; }
+    if(e.target.closest('#another')){ skip++; render(); return; }
+    var b=e.target.closest('[data-a]'); if(!b) return;
+    var id=b.getAttribute('data-id') || (b.closest('.book') && b.closest('.book').getAttribute('data-id'));
+    act(b.getAttribute('data-a'),id,b);
+  });
+
+  [].forEach.call(document.querySelectorAll('[data-add]'),function(b){ b.addEventListener('click',function(){ editForm(null); }); });
+  document.addEventListener('click',function(e){
+    var b=e.target.closest('[data-p]'); if(!b) return;
+    var k=b.getAttribute('data-p');
+    if(k==='find'){ copy(FIND(),'Copied. Paste it into Claude.'); return; }
+    var ps=k==='refresh'?state.posts.filter(function(p){return p.tag==='refresh';}):state.posts;
+    if(!ps.length){ toast(k==='refresh'?'Your Refresh shelf is empty':'Shelve some posts first'); return; }
+    copy(k==='refresh'?REFRESH(ps):SAVE(ps),'Copied with '+ps.length+' post'+(ps.length===1?'':'s')+'. Paste it into Claude.');
+  });
+  $('clear-ex').addEventListener('click',function(){ state.posts=state.posts.filter(function(p){return !p.example;}); skip=0; save(); render(); });
+  $('loadEx').addEventListener('click',function(){
+    if(!confirm('Load the example posts? They replace everything here now. Back it up first if you might want it.')) return;
+    state=seed(); skip=0; save(); render(); showTab('pull'); window.scrollTo(0,0);
+  });
+  $('clearAll').addEventListener('click',function(){
+    if(!confirm('Clear everything? Every post goes, with its history. Back it up first if you might want it.')) return;
+    state={posts:[]}; skip=0; save(); render();
+  });
+
+  function blobDownload(name,content,type){
+    var blob=new Blob([content],{type:type}); var url=URL.createObjectURL(blob);
+    var a=document.createElement('a'); a.href=url; a.download=name; document.body.appendChild(a); a.click();
+    document.body.removeChild(a); setTimeout(function(){ URL.revokeObjectURL(url); },800);
+  }
+  function dl(name,content,type){
+    if(window.claude && window.claude.use){
+      window.claude.use('downloads').then(function(d){
+        if(d && d.save){ d.save({filename:name,data:content}).catch(function(){}); } else { blobDownload(name,content,type); }
+      }).catch(function(){ blobDownload(name,content,type); });
+    } else { blobDownload(name,content,type); }
+  }
+  $('backupBtn').addEventListener('click',function(){
+    dl('evergreen-library-backup-'+today()+'.json', JSON.stringify({app:'evergreen-library',version:1,posts:state.posts},null,2), 'application/json');
+  });
+  $('restoreBtn').addEventListener('click',function(){ $('restoreFile').click(); });
+  $('restoreFile').addEventListener('change',function(e){
+    var f=e.target.files[0]; if(!f) return;
+    var r=new FileReader();
+    r.onload=function(){
+      try{
+        var b=JSON.parse(r.result); if(!b || !Array.isArray(b.posts)) throw 0;
+        if(!confirm('Replace what is here now with this backup?')) return;
+        state={posts:b.posts}; skip=0; save(); render();
+      }catch(err){ alert('That file could not be read as an Evergreen Library backup.'); }
+    };
+    r.readAsText(f); e.target.value='';
+  });
+
+  /* rising embers, same as the board */
+  (function(){
+    var box=$('embers'), n=window.innerWidth<600?14:26;
+    for(var k=0;k<n;k++){
+      var e=document.createElement('span'); e.className='ember';
+      e.style.left=(Math.random()*100)+'%';
+      e.style.animationDuration=(9+Math.random()*12)+'s';
+      e.style.animationDelay=(-Math.random()*20)+'s';
+      e.style.opacity=(.3+Math.random()*.5);
+      box.appendChild(e);
+    }
+  })();
+
+  render();
+})();
+</script>
+</body>
+</html>
