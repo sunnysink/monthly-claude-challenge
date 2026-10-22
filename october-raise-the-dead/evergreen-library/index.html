@@ -256,6 +256,7 @@
     <div class="acts" style="justify-content:center;margin-top:22px">
       <button class="btn copy" data-add type="button">+ Shelve a post</button>
       <button class="btn line" data-p="find" type="button">Find my posts with Claude</button>
+      <button class="btn line" data-import type="button">Import from Claude</button>
     </div>
   </header>
 
@@ -304,7 +305,7 @@
   <section class="view" id="v-prompts">
     <div class="section-label">Three prompts for Claude</div>
     <div class="prompts">
-      <div class="pcard"><div class="u">1 · Find them</div><h4>Gather your best posts</h4><p>Claude looks through what it can see, asks you to paste the rest, and hands back a table sorted into Repost, Refresh and Rest.</p><button class="btn copy" data-p="find" type="button">Copy prompt</button></div>
+      <div class="pcard"><div class="u">1 · Find them</div><h4>Gather your best posts</h4><p>Claude looks through what it can see, asks you to paste the rest, and hands back an import list sorted into Repost, Refresh and Rest. Paste that list into Import and every post lands on its shelf.</p><div class="acts"><button class="btn copy" data-p="find" type="button">Copy prompt</button><button class="btn line" data-import type="button">Import</button></div></div>
       <div class="pcard"><div class="u">2 · Refresh a batch</div><h4>Update the Refresh shelf</h4><p>Built from your Refresh shelf. Claude asks what you sell now, then rewrites each post in your voice with your notes applied.</p><button class="btn copy" data-p="refresh" type="button">Copy prompt</button></div>
       <div class="pcard"><div class="u">3 · Keep them</div><h4>Save to your Business Brain</h4><p>Built from your whole library. Claude finds where you keep your business files and asks before it creates or changes anything.</p><button class="btn copy" data-p="save" type="button">Copy prompt</button></div>
     </div>
@@ -417,7 +418,15 @@
     "   Refresh: the idea works, but a date, price, offer, link or old wording needs updating.\n"+
     "   Rest: tied to a moment that passed, an offer I closed, or no longer how I work.\n"+
     "4. For each Refresh piece, write what needs updating in a few words.\n\n"+
-    "Show me the full list right here in your reply as a table with these columns: Title or first line, Platform, Format, First posted, Shelf, What to update. Every piece gets its own row. Keep each cell short so I can copy them into my Evergreen Library.\n\n"+
+    "5. Give me the full list as an import list I can paste into my Evergreen Library. Put it in one code block, one piece per line, six parts separated by | in this order:\n"+
+    "Title or first line | Platform | Format | First posted | Shelf | What to update\n"+
+    "   Platform is one of: "+PLATFORMS.join(", ")+".\n"+
+    "   Format is one of: "+FORMATS.join(", ")+".\n"+
+    "   First posted is a date as YYYY-MM-DD. If you only know the month, use the 1st. If you do not know, leave it empty.\n"+
+    "   Shelf is Repost, Refresh or Rest.\n"+
+    "   What to update is a few words for Refresh pieces and empty for the rest.\n"+
+    "   No header line, no numbering, and never use | inside a title.\n"+
+    "   Example: Three questions to ask before any tarot reading | Instagram | Carousel | 2026-03-04 | Repost |\n\n"+
     "Only use what you find and what I tell you. If you are unsure which shelf a piece belongs on, say so in the row.\n\n"+
     "Posts I can think of right now (optional):\n";
   }
@@ -591,6 +600,56 @@
       state.posts=state.posts.filter(function(x){return x.id!==p.id;}); save(); render(); closeSheet();
     });
   }
+
+  function pick(list,v,fallback){
+    var s=String(v||'').trim().toLowerCase(); if(!s) return fallback;
+    for(var k=0;k<list.length;k++) if(list[k].toLowerCase()===s) return list[k];
+    for(k=0;k<list.length;k++) if(list[k].toLowerCase().indexOf(s)===0 || s.indexOf(list[k].toLowerCase())===0) return list[k];
+    if(/reel|video|short/.test(s)) return list.indexOf('Reel or video')>-1?'Reel or video':fallback;
+    if(/ig|insta/.test(s)) return list.indexOf('Instagram')>-1?'Instagram':fallback;
+    return fallback;
+  }
+  function parseImport(text){
+    var out=[];
+    text.split(/\r?\n/).forEach(function(line){
+      line=line.replace(/^\s*[-*•]\s*/,'').replace(/^\s*\d+[.)]\s*/,'').trim();
+      if(line.indexOf('|')<0 || /^`{3}/.test(line)) return;
+      var c=line.replace(/^\||\|$/g,'').split('|').map(function(x){return x.trim();});
+      if(c.length<5 || !c[0] || /^-+$/.test(c[0].replace(/[:\s]/g,'')) || /^title/i.test(c[0])) return;
+      var shelf=(c[4]||'').toLowerCase(), tag=shelf.indexOf('refresh')>-1?'refresh':shelf.indexOf('rest')>-1?'rest':'repost';
+      var d=(c[3]||'').match(/(\d{4})-(\d{1,2})(?:-(\d{1,2}))?/);
+      var posted=d?d[1]+'-'+String(d[2]).padStart(2,'0')+'-'+String(d[3]||1).padStart(2,'0'):'';
+      out.push({title:c[0],platform:pick(PLATFORMS,c[1],'Other'),format:pick(FORMATS,c[2],'Post'),posted:posted,tag:tag,note:c.slice(5).join(' ').trim(),link:''});
+    });
+    return out;
+  }
+  function importSheet(){
+    openSheet('Import','Import from Claude',
+      '<div class="field"><label for="i-text">Paste the import list Claude gave you</label><textarea id="i-text" style="min-height:180px" placeholder="Three questions to ask before any tarot reading | Instagram | Carousel | 2026-03-04 | Repost |"></textarea>'+
+      '<div class="hint" id="i-hint">One post per line: title | platform | format | first posted | shelf | what to update. The "Find my posts with Claude" prompt asks for exactly this.</div></div>'+
+      '<div class="acts"><button class="btn ok" id="i-go" type="button">Shelve them</button></div>');
+    var ta=$('i-text');
+    ta.addEventListener('input',function(){
+      var n=parseImport(ta.value).length;
+      $('i-hint').textContent=n?n+' post'+(n===1?'':'s')+' ready to shelve.':'One post per line: title | platform | format | first posted | shelf | what to update.';
+    });
+    $('i-go').addEventListener('click',function(){
+      var items=parseImport(ta.value);
+      if(!items.length){ $('i-hint').textContent='No posts found. Each line needs at least five parts separated by |.'; ta.focus(); return; }
+      if(state.posts.length && state.posts.every(function(p){return p.example;})) state.posts=[];
+      var have={}; state.posts.forEach(function(p){ have[p.title.toLowerCase()]=1; });
+      var added=0, dup=0;
+      items.forEach(function(x){
+        if(have[x.title.toLowerCase()]){ dup++; return; }
+        have[x.title.toLowerCase()]=1;
+        state.posts.push(Object.assign({id:uid(),uses:[],example:false},x)); added++;
+      });
+      skip=0; save(); render(); closeSheet(); showTab('shelves');
+      toast(added+' shelved'+(dup?', '+dup+' already on the shelves':''));
+    });
+    ta.focus();
+  }
+  document.addEventListener('click',function(e){ if(e.target.closest('[data-import]')) importSheet(); });
 
   function showPrompt(p){
     var t=postPrompt(p);
