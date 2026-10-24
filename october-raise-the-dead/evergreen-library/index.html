@@ -270,6 +270,7 @@
       <button class="btn copy" data-add type="button">+ Shelve a post</button>
       <button class="btn line" data-p="find" type="button">Find my posts with Claude</button>
       <button class="btn line" data-import type="button">Import from Claude</button>
+      <button class="btn line" data-export type="button">Export list</button>
     </div>
   </header>
 
@@ -320,7 +321,7 @@
   <section class="view" id="v-prompts">
     <div class="section-label">Three prompts for Claude</div>
     <div class="prompts">
-      <div class="pcard"><div class="u">1 · Find them</div><h4>Gather your best posts</h4><p>Claude looks through what it can see, asks you to paste the rest, and asks for your analytics, and hands back an import list sorted into Repost, Refresh and Rest, with each post marked Hit, Fine or Flop. Paste that list into Import and every post lands on its shelf.</p><div class="acts"><button class="btn copy" data-p="find" type="button">Copy prompt</button><button class="btn line" data-import type="button">Import</button></div></div>
+      <div class="pcard"><div class="u">1 · Find them</div><h4>Gather your best posts</h4><p>Claude looks through what it can see, asks you to paste the rest and share your analytics, then hands back an import list sorted into Repost, Refresh and Rest, with each post marked Hit, Fine or Flop. Paste that list into Import and every post lands on its shelf.</p><div class="acts"><button class="btn copy" data-p="find" type="button">Copy prompt</button><button class="btn line" data-import type="button">Import</button></div></div>
       <div class="pcard"><div class="u">2 · Refresh a batch</div><h4>Update the Refresh shelf</h4><p>Built from your Refresh shelf. Claude asks what you sell now, then rewrites each post in your voice with your notes applied.</p><button class="btn copy" data-p="refresh" type="button">Copy prompt</button></div>
       <div class="pcard"><div class="u">3 · Keep them</div><h4>Save to your Business Brain</h4><p>Built from your whole library. Claude finds where you keep your business files and asks before it creates or changes anything.</p><button class="btn copy" data-p="save" type="button">Copy prompt</button></div>
     </div>
@@ -726,6 +727,47 @@
     ta.focus();
   }
   document.addEventListener('click',function(e){ if(e.target.closest('[data-import]')) importSheet(); });
+
+  function cleanCell(v){ return String(v==null?'':v).replace(/\|/g,'/').replace(/\s*\r?\n\s*/g,' ').trim(); }
+  function exportRows(ps){
+    return ps.map(function(p){
+      return [p.title,p.platform,p.format,p.posted||'',TAGS[p.tag].n,p.note||'',p.result?RES[p.result].n:'',p.stats||'',tagsOf(p).join(', ')].map(cleanCell).join(' | ');
+    }).join('\n');
+  }
+  function csvCell(v){ v=String(v==null?'':v); return /[",\r\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v; }
+  function exportCSV(ps){
+    var head=['Title or first line','Platform','Format','First posted','Shelf','What to update','How it did','The numbers','Tags','Link','Times posted again','Last posted again'];
+    return [head].concat(ps.map(function(p){
+      return [p.title,p.platform,p.format,p.posted||'',TAGS[p.tag].n,p.note||'',p.result?RES[p.result].n:'',p.stats||'',tagsOf(p).join(', '),safeUrl(p.link),(p.uses||[]).length,lastUsed(p)];
+    })).map(function(r){ return r.map(csvCell).join(','); }).join('\r\n');
+  }
+  function exportSheet(){
+    var mine=state.posts.filter(function(p){return !p.example;});
+    var ps=mine.length?mine:state.posts;
+    if(!ps.length){ toast('Shelve some posts first'); return; }
+    var all=ps.slice().sort(function(a,b){ var d=ORDER.indexOf(a.tag)-ORDER.indexOf(b.tag); return d||byRank(a,b); });
+    var tagNames={}; all.forEach(function(p){ tagsOf(p).forEach(function(t){ if(!tagNames[t.toLowerCase()]) tagNames[t.toLowerCase()]=t; }); });
+    var tks=Object.keys(tagNames);
+    var pickHTML=tks.length?'<div class="field"><label for="x-tag">Which posts</label><select id="x-tag"><option value="All">All '+all.length+' posts</option>'+
+      tks.map(function(k){ var n=all.filter(function(p){return hasTag(p,k);}).length; return '<option value="'+esc(tagNames[k])+'">#'+esc(tagNames[k])+' ('+n+')</option>'; }).join('')+'</select></div>':'';
+    openSheet('Export','Export your list',
+      pickHTML+
+      '<div class="field"><label for="x-text">Your list, ready to copy</label><textarea id="x-text" style="min-height:200px" readonly></textarea>'+
+      '<div class="hint" id="x-hint"></div></div>'+
+      '<div class="acts"><button class="btn copy" id="x-copy" type="button">Copy the list</button>'+
+      '<button class="btn line" id="x-csv" type="button">Download a spreadsheet (.csv)</button></div>'+
+      '<p class="hint" style="font-size:12.5px;color:var(--ink-dim);margin-top:12px">The list uses the same format as Import, so you can paste it into Claude, a note, or another browser and import it back. The spreadsheet adds links and how many times you posted each one again. For a full copy with every posting date, use Back up in the Prompts tab.</p>');
+    function chosen(){ var t=$('x-tag')?$('x-tag').value:'All'; return all.filter(function(p){return hasTag(p,t);}); }
+    function fill(){ var c=chosen(); $('x-text').value=exportRows(c); $('x-hint').textContent=c.length+' post'+(c.length===1?'':'s')+'. One per line: title | platform | format | first posted | shelf | what to update | how it did | the numbers | tags.'; }
+    fill();
+    if($('x-tag')) $('x-tag').addEventListener('change',fill);
+    $('x-copy').addEventListener('click',function(){ copy($('x-text').value,'Copied '+chosen().length+' posts'); });
+    $('x-csv').addEventListener('click',function(){
+      var t=$('x-tag')?$('x-tag').value:'All';
+      dl('evergreen-library'+(t==='All'?'':'-'+t.toLowerCase().replace(/[^a-z0-9]+/g,'-'))+'-'+today()+'.csv', exportCSV(chosen()), 'text/csv');
+    });
+  }
+  document.addEventListener('click',function(e){ if(e.target.closest('[data-export]')) exportSheet(); });
 
   function showPrompt(p){
     var t=postPrompt(p);
