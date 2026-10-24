@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Resurrection Calendar</title>
+<meta name="description" content="Four things in your business that went quiet, picked, placed back on next month's calendar, and handed back with a calendar file and a Claude prompt for each. A free Spark from Soul-Forged Founders.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="The Resurrection Calendar">
+<meta property="og:description" content="Four things in your business that went quiet, picked, placed back on next month's calendar, and handed back with a calendar file and a Claude prompt for each. A free Spark from Soul-Forged Founders.">
+<meta property="og:url" content="https://sunnysink.github.io/monthly-claude-challenge/october-raise-the-dead/resurrection-calendar/">
+<meta property="og:image" content="https://sunnysink.github.io/monthly-claude-challenge/october-raise-the-dead/resurrection-calendar/preview.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The Resurrection Calendar">
+<meta name="twitter:description" content="Four things in your business that went quiet, picked, placed back on next month's calendar, and handed back with a calendar file and a Claude prompt for each. A free Spark from Soul-Forged Founders.">
+<meta name="twitter:image" content="https://sunnysink.github.io/monthly-claude-challenge/october-raise-the-dead/resurrection-calendar/preview.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* The October "tombstone" skin, token for token from the Raise the Dead board. */
+  :root{
+    color-scheme:dark;
+    --bg:#0F1113; --bg2:#1B1E22; --ink:#ECEEF0; --ink-dim:#A7AEB5;
+    --copper:#8F98A2; --copper-lt:#D5DADF; --ember:#7FA868; --ember-glow:#C7D0D8;
+    --forest:#6F9460; --mauve:#A39CB5; --gold:#E3E6E9;
+    --green:#94C57E;
+    --heading:#A8D08F;
+    --copper-rgb:143,152,162;   --copper-lt-rgb:213,218,223;
+    --ember-rgb:127,168,104;    --ember-glow-rgb:199,208,216;
+    --gold-rgb:227,230,233;     --mauve-rgb:163,156,181;
+    --forest-rgb:111,148,96;    --green-rgb:148,197,126;
+    --card-rgb:30,33,37;
+    --bg-rgb:15,17,19;    --bg2-rgb:27,30,34;
+    --veil-rgb:8,9,10;       --well-rgb:18,20,23;   --sheet-rgb:33,36,41;
+    --serif:'Cormorant Garamond','Hoefler Text',Georgia,serif;
+    --sans:'Hanken Grotesk',system-ui,-apple-system,sans-serif;
+    --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;
+    --card:rgba(var(--card-rgb),0.70); --cardborder:rgba(var(--copper-rgb),0.24);
+    --glow-a:rgba(var(--ember-rgb),0.16);
+    --glow-b:rgba(var(--forest-rgb),0.14);
+    --glow-c:rgba(var(--copper-rgb),0.12);
+    --on-accent:#101410; --well-ink:#E6EAEE;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:var(--sans);color:var(--ink);background:var(--bg);
+    background-image:
+      radial-gradient(900px 520px at 10% -10%, var(--glow-a), transparent 60%),
+      radial-gradient(820px 500px at 100% 0%, var(--glow-b), transparent 55%),
+      radial-gradient(760px 620px at 55% 120%, var(--glow-c), transparent 60%);
+    min-height:100vh;padding:44px 16px 80px;position:relative;overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;line-height:1.65;
+  }
+  .embers{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+  .ember{position:absolute;bottom:-12px;width:3px;height:3px;border-radius:50%;
+    background:var(--ember-glow);box-shadow:0 0 6px 1px rgba(var(--ember-glow-rgb),0.6);
+    opacity:0;animation:rise linear infinite}
+  @keyframes rise{0%{transform:translateY(0) translateX(0);opacity:0}
+    12%{opacity:.7}100%{transform:translateY(-104vh) translateX(26px);opacity:0}}
+  @media(prefers-reduced-motion:reduce){.ember{display:none}}
+  .wrap{max-width:1080px;margin:0 auto;position:relative;z-index:1}
+
+  header{text-align:center;margin-bottom:28px}
+  .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.34em;text-transform:uppercase;
+    color:var(--copper);opacity:.9;margin-bottom:12px}
+  h1{font-family:var(--serif);font-weight:600;font-size:clamp(44px,8vw,84px);line-height:.95;
+    background:linear-gradient(92deg,var(--copper-lt),var(--ember-glow) 38%,var(--gold) 70%,var(--copper));
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:.5px}
+  .sub{font-family:var(--serif);font-style:italic;font-size:clamp(19px,2.4vw,25px);color:var(--ink-dim);margin-top:10px}
+  .lede{font-size:15.5px;color:var(--ink-dim);margin:16px auto 0;max-width:660px}
+
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin:26px 0 8px}
+  .stat{background:var(--card);border:1px solid var(--cardborder);border-radius:16px;
+    padding:19px 16px;text-align:center;backdrop-filter:blur(14px);position:relative;overflow:hidden}
+  .stat::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+    background:linear-gradient(180deg,var(--copper),var(--ember),var(--gold))}
+  .stat .n{font-family:var(--serif);font-size:42px;font-weight:600;line-height:1;color:var(--copper-lt)}
+  .stat.live .n{color:var(--heading)}
+  .stat .l{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-dim);margin-top:8px}
+  @media(max-width:620px){.stats{grid-template-columns:1fr;gap:10px}
+    .stat{display:flex;align-items:center;justify-content:space-between;text-align:left;padding:14px 18px}
+    .stat .n{font-size:30px}.stat .l{margin-top:0}}
+
+  /* tabs: one view at a time */
+  .tabs{display:flex;gap:6px;margin:26px 0 4px;padding:5px;border-radius:40px;
+    background:rgba(var(--card-rgb),.7);border:1px solid var(--cardborder);backdrop-filter:blur(12px)}
+  .tab{flex:1;background:none;border:none;border-radius:30px;padding:11px 10px;cursor:pointer;
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-dim);
+    transition:color .18s,background .18s}
+  .tab .c{opacity:.7;margin-left:6px}
+  .tab:hover{color:var(--ink)}
+  .tab.on{background:linear-gradient(135deg,var(--forest),var(--green));color:var(--on-accent);font-weight:700}
+  .tab:focus-visible{outline:2px solid var(--heading);outline-offset:2px}
+  .view{display:none}
+  .view.on{display:block}
+  @media(max-width:520px){.tab{font-size:9.5px;letter-spacing:.08em;padding:10px 4px}}
+
+  .section-label{font-family:var(--mono);font-size:11px;letter-spacing:.28em;text-transform:uppercase;
+    color:var(--ink-dim);margin:30px 0 16px;display:flex;align-items:center;gap:12px}
+  .section-label::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,rgba(var(--copper-rgb),0.35),transparent)}
+  .section-label .ct{color:var(--copper)}
+
+  /* today's pull */
+  .pull{position:relative;overflow:hidden;
+    background:linear-gradient(150deg,rgba(var(--ember-rgb),.20),rgba(var(--card-rgb),.84));
+    border:1px solid rgba(var(--ember-rgb),.5);border-radius:18px;padding:28px 30px}
+  .pull .u{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
+  .pull h2{font-family:var(--serif);font-size:clamp(28px,4vw,40px);font-weight:600;line-height:1.12;color:var(--heading);margin:10px 0 8px}
+  .pull .meta{font-size:14px;color:var(--ink-dim)}
+  .pull .meta a{color:var(--copper-lt)}
+  .pull .note{margin-top:16px;padding:14px 16px;border-radius:12px;background:rgba(var(--well-rgb),.6);
+    border:1px solid rgba(var(--copper-rgb),.2);font-size:15px;color:var(--ink)}
+  .pull .note .k{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--copper);margin-bottom:4px}
+  .pull .empty{font-size:15px;color:var(--ink-dim)}
+  .pull .hint{font-size:12.5px;color:var(--ink-dim);margin-top:12px;opacity:.85}
+  @media(max-width:520px){.pull{padding:22px 18px}}
+
+  .acts{display:flex;gap:11px;margin-top:18px;flex-wrap:wrap}
+  .btn{border:none;border-radius:30px;padding:12px 22px;font-family:var(--sans);font-size:14px;
+    font-weight:700;cursor:pointer;transition:transform .18s,box-shadow .18s}
+  .btn.copy{background:linear-gradient(135deg,var(--copper),var(--ember));color:var(--on-accent)}
+  .btn.ok{background:linear-gradient(135deg,var(--forest),var(--green));color:var(--on-accent)}
+  .btn.line{background:transparent;color:var(--copper-lt);border:1.5px solid rgba(var(--copper-rgb),.5)}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 8px 22px -8px rgba(var(--ember-rgb),.6)}
+  .btn:focus-visible,.tool:focus-visible,.mini:focus-visible{outline:2px solid var(--heading);outline-offset:2px}
+
+  .tool{background:none;border:1px solid rgba(var(--copper-rgb),.34);border-radius:30px;
+    padding:8px 17px;font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;
+    text-transform:uppercase;color:var(--ink-dim);cursor:pointer;transition:color .18s,border-color .18s,background .18s}
+  .tool:hover{color:var(--ember-glow);border-color:rgba(var(--ember-rgb),.6);background:rgba(var(--ember-rgb),.07)}
+  .tool.danger:hover{color:var(--mauve);border-color:rgba(var(--mauve-rgb),.6);background:rgba(var(--mauve-rgb),.07)}
+
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 2px}
+  .chip{background:rgba(var(--card-rgb),.6);border:1px solid rgba(var(--copper-rgb),.32);border-radius:30px;
+    padding:7px 15px;font-family:var(--sans);font-size:13px;font-weight:600;color:var(--ink-dim);cursor:pointer;
+    transition:color .18s,border-color .18s,background .18s}
+  .chip .c{font-family:var(--mono);font-size:10px;opacity:.7;margin-left:6px}
+  .chip:hover{color:var(--ink);border-color:rgba(var(--copper-lt-rgb),.55)}
+  .chip.on{background:linear-gradient(135deg,var(--forest),var(--green));color:var(--on-accent);border-color:transparent}
+  .chip:focus-visible{outline:2px solid var(--heading);outline-offset:2px}
+
+  .examples-note{display:none;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+    margin-top:20px;padding:14px 18px;border-radius:14px;border:1px dashed rgba(var(--gold-rgb),.4);
+    background:rgba(var(--gold-rgb),.05);font-size:14px;color:var(--ink-dim)}
+  .examples-note.on{display:flex}
+  .examples-note b{color:var(--ink)}
+
+  .panel{background:var(--card);border:1px solid var(--cardborder);border-radius:16px;padding:22px 24px;backdrop-filter:blur(14px)}
+  .panel p{font-size:15px;color:var(--ink-dim);margin-bottom:10px}
+  .panel p:last-child{margin-bottom:0}
+  .panel b{color:var(--ink)}
+  .tagkey{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .tagkey div{padding:14px 16px;border-radius:12px;background:rgba(var(--well-rgb),.5);border:1px solid rgba(var(--copper-rgb),.16);font-size:13.5px;color:var(--ink-dim);line-height:1.5}
+  .tagkey b{display:block;font-family:var(--serif);font-size:20px;color:var(--heading);margin-bottom:2px}
+  @media(max-width:620px){.tagkey{grid-template-columns:1fr}}
+
+  /* shelves */
+  .shelf{margin-top:24px}
+  .shelfhead{display:flex;align-items:baseline;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+  .shelfhead h3{font-family:var(--serif);font-size:25px;font-weight:600;color:var(--heading)}
+  .shelfhead .d{font-size:13.5px;color:var(--ink-dim)}
+  .books{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:13px}
+  .book{position:relative;background:rgba(var(--card-rgb),0.9);border:1px solid var(--cardborder);
+    border-radius:6px 14px 14px 6px;padding:18px 18px 16px 24px;contain:layout paint;
+    display:flex;flex-direction:column;gap:7px;transition:transform .18s,border-color .18s,box-shadow .18s}
+  .book::before{content:"";position:absolute;left:0;top:0;bottom:0;width:8px;border-radius:6px 0 0 6px;
+    background:linear-gradient(180deg,var(--forest),var(--green))}
+  .book.refresh::before{background:linear-gradient(180deg,var(--mauve),var(--copper-lt))}
+  .book.rest::before{background:linear-gradient(180deg,#4A5058,#6B727A)}
+  .book:hover{transform:translateY(-3px);border-color:rgba(var(--copper-lt-rgb),.55);box-shadow:0 14px 34px -18px rgba(var(--ember-rgb),.7)}
+  .book .ty{font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--copper)}
+  .book h4{font-family:var(--serif);font-size:21px;font-weight:600;line-height:1.18;color:var(--ink)}
+  .book .note{font-size:13px;color:var(--ink);background:rgba(var(--well-rgb),.55);
+    border-radius:10px;padding:8px 11px;border:1px solid rgba(var(--copper-rgb),.16)}
+  .book .note .k{font-family:var(--mono);font-size:8.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--copper);display:block;margin-bottom:2px}
+  .book .when{font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;color:var(--ink-dim);opacity:.85}
+  .book .when a{color:var(--copper-lt)}
+  .book .row-acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+  .mini{background:none;border:1px solid rgba(var(--copper-rgb),.32);border-radius:20px;padding:5px 11px;
+    font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-dim);cursor:pointer;
+    transition:color .18s,border-color .18s,background .18s}
+  .mini:hover{color:var(--ember-glow);border-color:rgba(var(--ember-rgb),.6);background:rgba(var(--ember-rgb),.07)}
+  .mini.go{color:var(--heading);border-color:rgba(var(--ember-rgb),.55)}
+  .none{font-size:14px;color:var(--ink-dim);padding:12px 4px}
+
+  .prompts{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:13px}
+  .pcard{background:var(--card);border:1px solid var(--cardborder);border-radius:14px;padding:19px 18px;
+    backdrop-filter:blur(12px);display:flex;flex-direction:column;gap:8px}
+  .pcard .u{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mauve)}
+  .pcard h4{font-family:var(--serif);font-size:21px;font-weight:600;color:var(--heading);line-height:1.15}
+  .pcard p{font-size:13.5px;color:var(--ink-dim);line-height:1.5;flex:1}
+  .pcard .btn{align-self:flex-start;padding:10px 20px;font-size:13.5px}
+
+  .ledger{list-style:none}
+  .ledger li{display:flex;gap:12px;align-items:baseline;justify-content:space-between;flex-wrap:wrap;
+    padding:10px 0;border-bottom:1px solid rgba(var(--copper-rgb),.14);font-size:14.5px;color:var(--ink-dim)}
+  .ledger li:last-child{border-bottom:none}
+  .ledger b{color:var(--ink);font-weight:600}
+  .ledger .dt{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--copper)}
+
+  /* sheet */
+  .veil{position:fixed;inset:0;background:rgba(var(--veil-rgb),.82);backdrop-filter:blur(7px);
+    z-index:60;display:none;align-items:flex-start;justify-content:center;padding:34px 16px;overflow-y:auto}
+  .veil.on{display:flex}
+  .sheet{background:linear-gradient(150deg,rgba(var(--sheet-rgb),.97),rgba(var(--bg-rgb),.99));
+    border:1px solid rgba(var(--copper-rgb),.36);border-radius:18px;max-width:620px;width:100%;
+    padding:30px 30px 26px;position:relative;box-shadow:0 30px 90px -30px #000}
+  .sheet .num{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--copper)}
+  .sheet h3{font-family:var(--serif);font-size:31px;font-weight:600;line-height:1.12;margin:7px 0 18px;color:var(--heading)}
+  .close{position:absolute;top:15px;right:17px;background:none;border:none;color:var(--ink-dim);font-size:25px;cursor:pointer;line-height:1;padding:4px 8px}
+  .close:hover{color:var(--ember-glow)}
+  .field{margin-bottom:15px}
+  .field label{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:7px}
+  .field input,.field select,.field textarea{width:100%;background:rgba(var(--well-rgb),.5);
+    border:1px solid rgba(var(--copper-rgb),.28);border-radius:10px;padding:11px 14px;
+    font-family:var(--sans);font-size:14.5px;color:var(--ink);outline:none;transition:border-color .18s}
+  .field textarea{min-height:70px;resize:vertical;line-height:1.5}
+  .field input:focus,.field select:focus,.field textarea:focus{border-color:rgba(var(--ember-rgb),.65)}
+  .field input::placeholder,.field textarea::placeholder{color:var(--ink-dim);opacity:.55}
+  .field .hint{font-size:12px;color:var(--ink-dim);margin-top:6px;opacity:.85}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .seg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .seg.four{grid-template-columns:repeat(4,1fr)}
+  .res{display:inline-block;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+    padding:2px 7px;border-radius:10px;margin-right:8px;vertical-align:1px;border:1px solid rgba(var(--copper-rgb),.4);color:var(--ink-dim)}
+  .res.hit{background:linear-gradient(135deg,var(--forest),var(--ember));color:var(--on-accent);border-color:transparent}
+  .res.flop{color:var(--mauve);border-color:rgba(var(--mauve-rgb),.5)}
+  .book .stats-line{font-size:12.5px;color:var(--ink-dim)}
+  .tagchips:empty{display:none}
+  .tagchips{margin-top:8px}
+  .chip.tg{border-style:dashed}
+  .tagrow{display:flex;flex-wrap:wrap;gap:5px}
+  .pull .tagrow{margin:2px 0 8px}
+  .tagpill{font-family:var(--mono);font-size:10px;letter-spacing:.04em;color:var(--copper-lt);background:rgba(var(--copper-rgb),.12);
+    border:1px solid rgba(var(--copper-rgb),.28);border-radius:10px;padding:2px 8px}
+  .seg label{margin:0;cursor:pointer}
+  .seg input{position:absolute;opacity:0;width:0;height:0}
+  .seg span{display:block;text-align:center;padding:10px 6px;border-radius:10px;border:1px solid rgba(var(--copper-rgb),.3);
+    font-family:var(--sans);font-size:13.5px;font-weight:600;letter-spacing:0;text-transform:none;color:var(--ink-dim);transition:all .18s}
+  .seg input:checked + span{background:linear-gradient(135deg,var(--forest),var(--green));color:var(--on-accent);border-color:transparent}
+  .seg input:focus-visible + span{outline:2px solid var(--heading);outline-offset:2px}
+  @media(max-width:520px){.sheet{padding:26px 18px 22px}.two{grid-template-columns:1fr}}
+  .pbox{background:rgba(var(--well-rgb),.72);border:1px solid rgba(var(--copper-rgb),.2);border-radius:12px;
+    padding:17px 18px;font-family:var(--mono);font-size:12.5px;line-height:1.75;color:var(--well-ink);white-space:pre-wrap;max-height:46vh;overflow-y:auto}
+
+  .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);opacity:0;
+    background:linear-gradient(135deg,var(--forest),var(--green));color:var(--on-accent);font-weight:700;font-size:14px;
+    padding:11px 22px;border-radius:30px;z-index:80;transition:opacity .25s,transform .25s;pointer-events:none}
+  .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  .safe .hint{text-transform:none;letter-spacing:0;font-family:var(--sans);font-size:12.5px;color:var(--ink-dim)}
+  .savebar{display:flex;gap:10px;flex-wrap:wrap}
+  @media(max-width:520px){.savebar .tool{flex:1;text-align:center}}
+  footer{margin-top:44px;text-align:center;font-family:var(--mono);font-size:10px;letter-spacing:.24em;color:var(--ink-dim);opacity:.7}
+
+  /* resurrection calendar: one step at a time */
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:26px 0 4px;padding:5px;border-radius:40px;
+    background:rgba(var(--card-rgb),.7);border:1px solid var(--cardborder);backdrop-filter:blur(12px)}
+  .stp{display:flex;align-items:center;justify-content:center;gap:8px;background:none;border:none;border-radius:30px;padding:10px 8px;cursor:pointer;
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-dim)}
+  .stp .sn{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;border:1px solid rgba(var(--copper-rgb),.5);font-size:10px}
+  .stp.done{color:var(--copper-lt)} .stp.done .sn{background:rgba(var(--ember-rgb),.25);border-color:transparent}
+  .stp.on{background:linear-gradient(135deg,var(--forest),var(--green));color:var(--on-accent);font-weight:700}
+  .stp.on .sn{border-color:var(--on-accent)}
+  .stp:focus-visible{outline:2px solid var(--heading);outline-offset:2px}
+  @media(max-width:620px){.stp .sl{display:none}.stp{padding:9px 4px}}
+  .steplede{font-size:15px;color:var(--ink-dim);margin:-4px 0 4px}
+  .stepnav{margin-top:26px}
+  .book.grave::before{background:linear-gradient(180deg,#4A5058,var(--mauve))}
+  .picks{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:11px;margin-top:16px}
+  .pick{display:flex;gap:13px;align-items:flex-start;text-align:left;background:rgba(var(--card-rgb),.85);border:1px solid var(--cardborder);
+    border-radius:14px;padding:15px 16px;cursor:pointer;color:var(--ink);font-family:var(--sans);transition:border-color .18s,background .18s}
+  .pick .pk{flex:none;display:grid;place-items:center;width:24px;height:24px;border-radius:7px;border:1.5px solid rgba(var(--copper-rgb),.55);font-weight:700;color:var(--on-accent)}
+  .pick .pt b{display:block;font-family:var(--serif);font-size:19px;font-weight:600;line-height:1.2}
+  .pick .pt span{font-size:12.5px;color:var(--ink-dim)}
+  .pick.on{border-color:rgba(var(--ember-rgb),.7);background:linear-gradient(150deg,rgba(var(--ember-rgb),.18),rgba(var(--card-rgb),.88))}
+  .pick.on .pk{background:linear-gradient(135deg,var(--forest),var(--green));border-color:transparent}
+  .pick:focus-visible{outline:2px solid var(--heading);outline-offset:2px}
+  .monthbar{display:flex;align-items:center;gap:14px;margin:0 0 12px}
+  .monthbar b{font-family:var(--serif);font-size:26px;color:var(--heading);font-weight:600}
+  .placecard{background:rgba(var(--card-rgb),.88);border:1px solid var(--cardborder);border-radius:14px;padding:18px 18px 4px;margin-top:12px}
+  .placecard .ty{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--copper)}
+  .placecard h4{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--ink);margin:4px 0 12px}
+  .cal{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+  .cal .dow{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-dim);text-align:center;padding:4px 0}
+  .cal .day{min-height:78px;background:rgba(var(--card-rgb),.55);border:1px solid rgba(var(--copper-rgb),.14);border-radius:9px;padding:6px 7px;display:flex;flex-direction:column;gap:4px}
+  .cal .day.empty{background:none;border:none}
+  .cal .dn{font-family:var(--mono);font-size:10.5px;color:var(--ink-dim)}
+  .cal .day.has{border-color:rgba(var(--ember-rgb),.6);background:linear-gradient(150deg,rgba(var(--ember-rgb),.2),rgba(var(--card-rgb),.8))}
+  .cal .ev{font-size:11.5px;font-weight:600;line-height:1.25;color:var(--heading)}
+  @media(max-width:620px){.cal .day{min-height:52px;padding:4px}.cal .ev{font-size:9.5px}}
+  .hint{font-size:12.5px;color:var(--ink-dim)}
+</style>
+</head>
+<body>
+<div class="embers" id="embers"></div>
+<div class="wrap">
+
+  <header>
+    <div class="kicker">Soul-Forged Founders · A Free Spark</div>
+    <h1>The Resurrection Calendar</h1>
+    <div class="sub">Four things that went quiet, back on the calendar.</div>
+    <p class="lede">Dig up the offers, freebies, workshops and series you stopped using. Pick four, give each one a day next month, and leave with a calendar file and a Claude prompt for every one.</p>
+  </header>
+
+  <div class="examples-note" id="ex-note">
+    <span><b>These are examples</b> so you can see the shape. Clear them and add your own.</span>
+    <button class="tool" id="clear-ex" type="button">Clear examples</button>
+  </div>
+
+  <nav class="steps" id="steps" aria-label="Steps"></nav>
+
+  <!-- STEP 1 -->
+  <section class="view" id="v-1">
+    <div class="section-label">Step 1 · Dig them up</div>
+    <p class="steplede">List everything that went quiet: an offer you stopped selling, a freebie nobody sees, a workshop recording, a post series you dropped, a list you stopped writing to. Add them one at a time, or let Claude find them.</p>
+    <div class="acts">
+      <button class="btn copy" data-add type="button">+ Add one</button>
+      <button class="btn line" data-p="find" type="button">Find them with Claude</button>
+      <button class="btn line" data-import type="button">Import from Claude</button>
+    </div>
+    <div id="dug"></div>
+    <div class="acts stepnav"><button class="btn ok" data-go="2" type="button">Next: pick four →</button></div>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="view" id="v-2">
+    <div class="section-label">Step 2 · Pick four <span class="ct" id="pick-ct"></span></div>
+    <p class="steplede">Choose the four you most want back. A good pick still fits what you sell now and needs a refresh more than a rebuild. Tap to pick, tap again to put it back.</p>
+    <div id="pickgrid" class="picks"></div>
+    <div class="acts stepnav"><button class="btn line" data-go="1" type="button">← Back</button><button class="btn ok" data-go="3" type="button">Next: place them →</button></div>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="view" id="v-3">
+    <div class="section-label">Step 3 · Place them</div>
+    <div class="monthbar"><button class="tool" id="m-prev" type="button" aria-label="Earlier month">←</button><b id="m-name"></b><button class="tool" id="m-next" type="button" aria-label="Later month">→</button></div>
+    <p class="steplede">Give each one its own day and the first small step that gets it moving. One a week keeps each one in front of your people long enough to land.</p>
+    <div id="place"></div>
+    <div class="acts stepnav"><button class="btn line" data-go="2" type="button">← Back</button><button class="btn ok" data-go="4" type="button">Next: your month →</button></div>
+  </section>
+
+  <!-- STEP 4 -->
+  <section class="view" id="v-4">
+    <div class="section-label">Step 4 · <span id="m-name2"></span></div>
+    <div class="cal" id="cal"></div>
+    <div id="plan"></div>
+    <div class="acts">
+      <button class="btn copy" id="ics" type="button">Download the calendar (.ics)</button>
+      <button class="btn line" data-p="month" type="button">Copy the month prompt</button>
+    </div>
+    <p class="hint" style="margin-top:10px">The calendar file opens in Google Calendar, Apple Calendar or Outlook and adds all four days, each with its first step.</p>
+
+    <section class="safe">
+      <div class="section-label">Keep it safe <span class="hint">Your calendar lives in this browser. Back it up before you clear site data or switch devices.</span></div>
+      <div class="savebar">
+        <button type="button" class="tool" id="backupBtn">Back up (.json)</button>
+        <button type="button" class="tool" id="restoreBtn">Restore backup</button>
+        <input type="file" id="restoreFile" accept="application/json,.json" style="display:none">
+        <button type="button" class="tool" id="loadEx">Show the examples</button>
+        <button type="button" class="tool danger" id="clearAll">Clear everything</button>
+      </div>
+    </section>
+    <div class="acts stepnav"><button class="btn line" data-go="3" type="button">← Back</button></div>
+  </section>
+
+  <footer>THE RESURRECTION CALENDAR · A FREE SPARK INSIDE SOUL-FORGED FOUNDERS</footer>
+</div>
+
+<div class="veil" id="veil" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+  <div class="sheet">
+    <button class="close" id="close" type="button" aria-label="Close">×</button>
+    <div class="num" id="sheet-num">New</div>
+    <h3 id="sheet-title">Add one</h3>
+    <div id="sheet-body"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+  var KEY='sff-resurrection-calendar-v1';
+  var MAXPICK=4;
+  var TYPES=['Offer','Freebie','Workshop or recording','Course','Post series','Email list','Product','Event','Other'];
+  var HOWS=['Relaunch it','Refresh it','Repost it','Bundle it','Give it away'];
+  var STEPS=['Dig them up','Pick four','Place them','Your month'];
+  var EX=[
+    {name:'Full moon tarot workshop',type:'Workshop or recording',quiet:'2026-03',why:'Ran it once and moved on',how:'Give it away'},
+    {name:'Three-card reading package',type:'Offer',quiet:'2026-05',why:'Got busy with clients',how:'Relaunch it'},
+    {name:'Monday card of the week posts',type:'Post series',quiet:'2026-06',why:'Fell out of the habit',how:'Repost it'},
+    {name:'Moon journal printable',type:'Freebie',quiet:'2025-12',why:'Link broke when I changed sites',how:'Refresh it'},
+    {name:'My email list',type:'Email list',quiet:'2026-02',why:'Did not know what to write',how:'Relaunch it'},
+    {name:'Beginner tarot mini course',type:'Course',quiet:'2025-10',why:'Prices were out of date',how:'Bundle it'}
+  ];
+
+  var $=function(id){return document.getElementById(id);};
+  var uid=function(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7);};
+  function pad(n){ return String(n).padStart(2,'0'); }
+  function iso(d){ return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+  var MON=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var DOW=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+  function monthName(ym){ var p=ym.split('-'); return MON[+p[1]-1]+' '+p[0]; }
+  function quietName(ym){ if(!ym) return ''; var p=ym.split('-'); return MON[+p[1]-1].slice(0,3)+' '+p[0]; }
+  function dayName(s){ if(!s) return ''; var p=s.split('-'); var d=new Date(+p[0],+p[1]-1,+p[2]); return DOW[d.getDay()]+' '+MON[d.getMonth()].slice(0,3)+' '+d.getDate(); }
+  function nextMonth(){ var d=new Date(); d.setDate(1); d.setMonth(d.getMonth()+1); return d.getFullYear()+'-'+pad(d.getMonth()+1); }
+  function shiftMonth(ym,n){ var p=ym.split('-'); var d=new Date(+p[0],+p[1]-1+n,1); return d.getFullYear()+'-'+pad(d.getMonth()+1); }
+  function daysIn(ym){ var p=ym.split('-'); return new Date(+p[0],+p[1],0).getDate(); }
+
+  var EXFIRST=['Find the recording and watch the first ten minutes','Write the new price and what is included','Pick the first four cards to post','Fix the download link'];
+  function seed(){
+    var m=nextMonth();
+    return {month:m,step:1,items:EX.map(function(x,i){
+      return Object.assign({id:uid(),picked:i<4,date:i<4?m+'-'+pad([3,10,17,24][i]):'',first:i<4?EXFIRST[i]:'',example:true},x);
+    })};
+  }
+  var state;
+  try{ state=JSON.parse(localStorage.getItem(KEY)); }catch(e){ state=null; }
+  if(!state || !Array.isArray(state.items)) state=seed();
+  if(!state.month) state.month=nextMonth();
+  if(!state.step) state.step=1;
+  function save(){ try{ localStorage.setItem(KEY,JSON.stringify(state)); }catch(e){} }
+
+  function picks(){ return state.items.filter(function(x){return x.picked;}); }
+  function placed(){ return picks().filter(function(x){return x.date && x.date.slice(0,7)===state.month;}).sort(function(a,b){return a.date<b.date?-1:1;}); }
+
+  /* suggest one a week: the 3rd, 10th, 17th, 24th */
+  function suggest(){
+    var used={}; picks().forEach(function(x){ if(x.date && x.date.slice(0,7)===state.month) used[x.date]=1; });
+    var days=[3,10,17,24,6,13,20,27];
+    for(var k=0;k<days.length;k++){ var d=state.month+'-'+pad(days[k]); if(!used[d]) return d; }
+    return state.month+'-01';
+  }
+
+  /* prompts */
+  function FIND(){
+    return "I want to bring back things in my business that went quiet, so I can put four of them back on my calendar next month.\n\n"+
+    "1. Look first. If you can see my files, notes, offers, past posts, emails or chats, look for things I made and stopped using: offers I stopped selling, freebies nobody sees, workshops and recordings, courses, post series I dropped, an email list I stopped writing to, products, events. Only read. Do not create, move or change anything.\n"+
+    "2. Then ask me about anything you could not see, and wait for my answer.\n"+
+    "3. For each one, tell me in a few words why it went quiet, and the simplest way to bring it back: Relaunch it, Refresh it, Repost it, Bundle it, or Give it away.\n\n"+
+    "4. Give me the full list as an import list I can paste into my Resurrection Calendar. Put it in one code block, one per line, five parts separated by | in this order:\n"+
+    "Name | Type | Went quiet | Why it stopped | How to bring it back\n"+
+    "   Type is one of: "+TYPES.join(", ")+".\n"+
+    "   Went quiet is a month as YYYY-MM, or empty if you do not know.\n"+
+    "   How to bring it back is one of: "+HOWS.join(", ")+".\n"+
+    "   No header line, no numbering, and never use | inside a name.\n"+
+    "   Example: Full moon tarot workshop | Workshop or recording | 2026-03 | Ran it once and moved on | Give it away\n\n"+
+    "Only use what you find and what I tell you.\n\n"+
+    "Things I already know went quiet (optional):\n";
+  }
+  function itemLine(x){ return x.name+' ('+x.type+')'+(x.date?' on '+dayName(x.date):'')+' · '+x.how+(x.why?' · went quiet because: '+x.why:'')+(x.first?' · first step: '+x.first:''); }
+  function ITEM(x){
+    return "I'm bringing something back that went quiet in my business.\n\n"+
+      "What it is: "+x.name+" ("+x.type+")\n"+
+      (x.quiet?"Went quiet: "+quietName(x.quiet)+"\n":"")+
+      (x.why?"Why it stopped: "+x.why+"\n":"")+
+      "How I'm bringing it back: "+x.how+"\n"+
+      (x.date?"The day it comes back: "+dayName(x.date)+"\n":"")+
+      (x.first?"My first step: "+x.first+"\n":"")+"\n"+
+      "1. Ask me what I sell now, with prices and links, and anything about this one that has changed. Wait for my answers.\n"+
+      "2. Give me a short plan from today to that day: three or four steps, the first one small enough to do today.\n"+
+      "3. Write the announcement for that day in my voice: one post and one short email.\n"+
+      "4. Only use facts, prices, dates and results I give you. If you need one you do not have, ask me.";
+  }
+  function MONTH(){
+    var ps=placed().length?placed():picks();
+    return "Here is what I'm bringing back in "+monthName(state.month)+", from my Resurrection Calendar:\n\n"+
+      ps.map(function(x,k){return (k+1)+'. '+itemLine(x);}).join('\n')+"\n\n"+
+      "1. Ask me what else is on my calendar that month: launches, holidays, time off. Wait for my answer.\n"+
+      "2. Check the order and the spacing. Tell me if any two land too close together or clash with something, and suggest a better day.\n"+
+      "3. Give me a week-by-week list for the month: what to prepare, what goes out, and what to watch.\n"+
+      "4. Only use what I give you.";
+  }
+
+  var toastT;
+  function toast(m){ var t=$('toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(function(){t.classList.remove('on');},1900); }
+  function copy(text,msg){
+    function fallback(){ var ta=document.createElement('textarea'); ta.value=text; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy');}catch(e){} document.body.removeChild(ta); toast(msg); }
+    if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(text).then(function(){toast(msg);},fallback); } else fallback();
+  }
+
+  /* render */
+  function renderSteps(){
+    $('steps').innerHTML=STEPS.map(function(s,i){
+      var n=i+1, cls=n===state.step?'on':n<state.step?'done':'';
+      return '<button class="stp '+cls+'" data-go="'+n+'" type="button"'+(n===state.step?' aria-current="step"':'')+'><span class="sn">'+n+'</span><span class="sl">'+s+'</span></button>';
+    }).join('');
+    [1,2,3,4].forEach(function(n){ $('v-'+n).classList.toggle('on',n===state.step); });
+  }
+  function dugHTML(x){
+    return '<article class="book grave" data-id="'+x.id+'">'+
+      '<div class="ty">'+esc(x.type)+(x.quiet?' · quiet since '+quietName(x.quiet):'')+'</div>'+
+      '<h4>'+esc(x.name)+'</h4>'+
+      (x.why?'<div class="note"><span class="k">Why it stopped</span>'+esc(x.why)+'</div>':'')+
+      '<div class="when">'+esc(x.how)+'</div>'+
+      '<div class="row-acts"><button class="mini" data-a="edit" type="button">Edit</button></div></article>';
+  }
+  function render(){
+    renderSteps();
+    var all=state.items;
+    $('ex-note').classList.toggle('on',all.some(function(x){return x.example;}));
+    /* step 1 */
+    $('dug').innerHTML=all.length?'<div class="books" style="margin-top:20px">'+all.map(dugHTML).join('')+'</div>':
+      '<p class="none" style="margin-top:16px">Nothing dug up yet. Add one above, or copy the Find prompt and let Claude look.</p>';
+    /* step 2 */
+    var n=picks().length;
+    $('pick-ct').textContent='· '+n+' of '+MAXPICK;
+    $('pickgrid').innerHTML=all.length?all.map(function(x){
+      return '<button class="pick'+(x.picked?' on':'')+'" data-pick="'+x.id+'" type="button" aria-pressed="'+!!x.picked+'">'+
+        '<span class="pk">'+(x.picked?'✓':'')+'</span><span class="pt"><b>'+esc(x.name)+'</b><span>'+esc(x.type)+' · '+esc(x.how)+'</span></span></button>';
+    }).join(''):'<p class="none">Go back to step 1 and dig a few up first.</p>';
+    /* step 3 */
+    $('m-name').textContent=monthName(state.month);
+    var ps=picks();
+    var minD=state.month+'-01', maxD=state.month+'-'+pad(daysIn(state.month));
+    $('place').innerHTML=ps.length?ps.map(function(x){
+      return '<div class="placecard" data-id="'+x.id+'"><div class="ty">'+esc(x.type)+' · '+esc(x.how)+'</div><h4>'+esc(x.name)+'</h4>'+
+        '<div class="two"><div class="field"><label for="d-'+x.id+'">The day it comes back</label><input type="date" id="d-'+x.id+'" data-date="'+x.id+'" min="'+minD+'" max="'+maxD+'" value="'+esc(x.date&&x.date.slice(0,7)===state.month?x.date:'')+'"></div>'+
+        '<div class="field"><label for="f-'+x.id+'">First small step</label><input id="f-'+x.id+'" data-first="'+x.id+'" value="'+esc(x.first)+'" placeholder="Find the old file" autocomplete="off"></div></div></div>';
+    }).join(''):'<p class="none">Go back to step 2 and pick up to four.</p>';
+    /* step 4 */
+    $('m-name2').textContent=monthName(state.month);
+    renderCal();
+    var pl=placed();
+    var un=ps.filter(function(x){return pl.indexOf(x)<0;});
+    $('plan').innerHTML=(pl.length?'<div class="books" style="margin-top:20px">'+pl.map(function(x){
+      return '<article class="book" data-id="'+x.id+'"><div class="ty">'+esc(dayName(x.date))+' · '+esc(x.how)+'</div><h4>'+esc(x.name)+'</h4>'+
+        (x.first?'<div class="note"><span class="k">First step</span>'+esc(x.first)+'</div>':'')+
+        '<div class="row-acts"><button class="mini go" data-a="prompt" type="button">Claude prompt</button><button class="mini" data-a="place" type="button">Change the day</button></div></article>';
+    }).join('')+'</div>':'<p class="none" style="margin-top:16px">Nothing placed in '+esc(monthName(state.month))+' yet. Go back to step 3 and give each pick a day.</p>')+
+      (un.length?'<p class="hint" style="margin-top:12px">Still without a day this month: '+un.map(function(x){return esc(x.name);}).join(', ')+'.</p>':'');
+  }
+  function renderCal(){
+    var p=state.month.split('-'), first=new Date(+p[0],+p[1]-1,1).getDay(), dim=daysIn(state.month), byDay={};
+    placed().forEach(function(x){ var d=+x.date.slice(8); (byDay[d]=byDay[d]||[]).push(x); });
+    var h=DOW.map(function(d){return '<div class="dow">'+d+'</div>';}).join('');
+    for(var k=0;k<first;k++) h+='<div class="day empty"></div>';
+    for(var d=1;d<=dim;d++){
+      var it=byDay[d];
+      h+='<div class="day'+(it?' has':'')+'"><span class="dn">'+d+'</span>'+(it?it.map(function(x){return '<span class="ev">'+esc(x.name)+'</span>';}).join(''):'')+'</div>';
+    }
+    $('cal').innerHTML=h;
+  }
+
+  function go(n){ n=Math.max(1,Math.min(4,n)); state.step=n; save(); render(); window.scrollTo({top:$('steps').offsetTop-20,behavior:'smooth'}); }
+
+  /* sheet */
+  var lastFocus=null;
+  function openSheet(num,title,body){
+    lastFocus=document.activeElement;
+    $('sheet-num').textContent=num; $('sheet-title').textContent=title; $('sheet-body').innerHTML=body;
+    $('veil').classList.add('on');
+    var f=$('sheet-body').querySelector('input:not([type=radio]),textarea,button'); if(f) f.focus();
+  }
+  function closeSheet(){ $('veil').classList.remove('on'); if(lastFocus) try{lastFocus.focus();}catch(e){} }
+  $('close').addEventListener('click',closeSheet);
+  $('veil').addEventListener('click',function(e){ if(e.target===$('veil')) closeSheet(); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape' && $('veil').classList.contains('on')) closeSheet(); });
+
+  function find(id){ for(var k=0;k<state.items.length;k++) if(state.items[k].id===id) return state.items[k]; return null; }
+  function editForm(x){
+    var isNew=!x; x=x||{name:'',type:'Offer',quiet:'',why:'',how:'Relaunch it'};
+    var tOpts=TYPES.map(function(t){return '<option'+(t===x.type?' selected':'')+'>'+t+'</option>';}).join('');
+    var hOpts=HOWS.map(function(t){return '<option'+(t===x.how?' selected':'')+'>'+t+'</option>';}).join('');
+    openSheet(isNew?'Dig one up':'Edit',isNew?'Add one that went quiet':x.name,
+      '<div class="field"><label for="e-name">What it is</label><input id="e-name" value="'+esc(x.name)+'" placeholder="Full moon tarot workshop" autocomplete="off"></div>'+
+      '<div class="two"><div class="field"><label for="e-type">Type</label><select id="e-type">'+tOpts+'</select></div>'+
+      '<div class="field"><label for="e-quiet">Went quiet</label><input id="e-quiet" type="month" value="'+esc(x.quiet)+'"><div class="hint">A rough month is fine.</div></div></div>'+
+      '<div class="field"><label for="e-why">Why it stopped</label><input id="e-why" value="'+esc(x.why)+'" placeholder="Optional, a few words" autocomplete="off"></div>'+
+      '<div class="field"><label for="e-how">How to bring it back</label><select id="e-how">'+hOpts+'</select></div>'+
+      '<div class="acts"><button class="btn ok" id="e-save" type="button">'+(isNew?'Add it':'Save')+'</button>'+
+      (isNew?'':'<button class="btn line" id="e-del" type="button">Let it rest</button>')+'</div>');
+    $('e-save').addEventListener('click',function(){
+      var nm=$('e-name').value.trim(); if(!nm){ $('e-name').focus(); return; }
+      var data={name:nm,type:$('e-type').value,quiet:$('e-quiet').value,why:$('e-why').value.trim(),how:$('e-how').value};
+      if(isNew){ state.items.push(Object.assign({id:uid(),picked:false,date:'',first:'',example:false},data)); toast('Dug up'); }
+      else { Object.assign(x,data); x.example=false; toast('Saved'); }
+      save(); render(); closeSheet();
+    });
+    $('e-name').addEventListener('keydown',function(e){ if(e.key==='Enter') $('e-save').click(); });
+    if(!isNew) $('e-del').addEventListener('click',function(){
+      if(!confirm('Take "'+x.name+'" off the list?')) return;
+      state.items=state.items.filter(function(y){return y.id!==x.id;}); save(); render(); closeSheet();
+    });
+  }
+
+  /* import */
+  function pick(list,v,fallback){
+    var s=String(v||'').trim().toLowerCase(); if(!s) return fallback;
+    for(var k=0;k<list.length;k++) if(list[k].toLowerCase()===s) return list[k];
+    for(k=0;k<list.length;k++){ var w=list[k].toLowerCase().split(' ')[0]; if(s.indexOf(w)>-1) return list[k]; }
+    return fallback;
+  }
+  function parseImport(text){
+    var out=[];
+    text.split(/\r?\n/).forEach(function(line){
+      line=line.replace(/^\s*[-*•]\s*/,'').replace(/^\s*\d+[.)]\s+/,'').trim();
+      if(line.indexOf('|')<0 || /^`{3}/.test(line)) return;
+      var c=line.replace(/^\||\|$/g,'').split('|').map(function(x){return x.trim();});
+      if(c.length<2 || !c[0] || /^-+$/.test(c[0].replace(/[:\s]/g,'')) || /^name$/i.test(c[0])) return;
+      var m=(c[2]||'').match(/(\d{4})-(\d{1,2})/);
+      out.push({name:c[0],type:pick(TYPES,c[1],'Other'),quiet:m?m[1]+'-'+pad(+m[2]):'',why:c[3]||'',how:pick(HOWS,c[4],'Relaunch it')});
+    });
+    return out;
+  }
+  function importSheet(){
+    openSheet('Import','Import from Claude',
+      '<div class="field"><label for="i-text">Paste the import list Claude gave you</label><textarea id="i-text" style="min-height:180px" placeholder="Full moon tarot workshop | Workshop or recording | 2026-03 | Ran it once and moved on | Give it away"></textarea>'+
+      '<div class="hint" id="i-hint">One per line: name | type | went quiet | why it stopped | how to bring it back.</div></div>'+
+      '<div class="acts"><button class="btn ok" id="i-go" type="button">Add them</button></div>');
+    var ta=$('i-text');
+    ta.addEventListener('input',function(){ var n=parseImport(ta.value).length; $('i-hint').textContent=n?n+' ready to add.':'One per line: name | type | went quiet | why it stopped | how to bring it back.'; });
+    $('i-go').addEventListener('click',function(){
+      var items=parseImport(ta.value);
+      if(!items.length){ $('i-hint').textContent='None found. Each line needs at least two parts separated by |.'; ta.focus(); return; }
+      if(state.items.length && state.items.every(function(x){return x.example;})) state.items=[];
+      var have={}; state.items.forEach(function(x){ have[x.name.toLowerCase()]=1; });
+      var added=0, dup=0;
+      items.forEach(function(x){ if(have[x.name.toLowerCase()]){ dup++; return; } have[x.name.toLowerCase()]=1; state.items.push(Object.assign({id:uid(),picked:false,date:'',first:'',example:false},x)); added++; });
+      state.step=1; save(); render(); closeSheet();
+      toast(added+' added'+(dup?', '+dup+' already here':''));
+    });
+    ta.focus();
+  }
+
+  function promptSheet(x){
+    var t=ITEM(x);
+    openSheet(x.how,x.name,'<div class="pbox" id="p-text"></div><div class="acts"><button class="btn copy" id="p-copy" type="button">Copy the prompt</button></div>');
+    $('p-text').textContent=t;
+    $('p-copy').addEventListener('click',function(){ copy(t,'Copied. Paste it into Claude.'); });
+  }
+
+  /* calendar file */
+  function icsEsc(s){ return String(s||'').replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\r?\n/g,'\\n'); }
+  function ICS(){
+    var stamp=new Date().toISOString().replace(/[-:]/g,'').replace(/\.\d+Z$/,'Z');
+    var lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Soul-Forged Founders//Resurrection Calendar//EN','CALSCALE:GREGORIAN','METHOD:PUBLISH'];
+    placed().forEach(function(x){
+      var p=x.date.split('-'), d=new Date(+p[0],+p[1]-1,+p[2]+1), end=d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate());
+      lines.push('BEGIN:VEVENT','UID:'+x.id+'@resurrection-calendar','DTSTAMP:'+stamp,
+        'DTSTART;VALUE=DATE:'+x.date.replace(/-/g,''),'DTEND;VALUE=DATE:'+end,
+        'SUMMARY:'+icsEsc('Bring back: '+x.name),
+        'DESCRIPTION:'+icsEsc(x.how+(x.first?'. First step: '+x.first:'')+(x.why?'. It went quiet because: '+x.why:'')),'END:VEVENT');
+    });
+    lines.push('END:VCALENDAR');
+    return lines.join('\r\n');
+  }
+
+  /* events */
+  document.addEventListener('click',function(e){
+    var g=e.target.closest('[data-go]'); if(g){ go(+g.getAttribute('data-go')); return; }
+    var pk=e.target.closest('[data-pick]');
+    if(pk){
+      var x=find(pk.getAttribute('data-pick')); if(!x) return;
+      if(!x.picked && picks().length>=MAXPICK){ toast('Four is the limit. Put one back first.'); return; }
+      x.picked=!x.picked; x.example=false;
+      if(x.picked && !x.date) x.date=suggest();
+      save(); render(); return;
+    }
+    if(e.target.closest('[data-add]')){ editForm(null); return; }
+    if(e.target.closest('[data-import]')){ importSheet(); return; }
+    var p=e.target.closest('[data-p]');
+    if(p){
+      var k=p.getAttribute('data-p');
+      if(k==='find') copy(FIND(),'Copied. Paste it into Claude.');
+      else if(k==='month'){ if(!picks().length){ toast('Pick some first'); return; } copy(MONTH(),'Copied. Paste it into Claude.'); }
+      return;
+    }
+    var b=e.target.closest('[data-a]'); if(!b) return;
+    var card=b.closest('[data-id]'), it=card&&find(card.getAttribute('data-id')); if(!it) return;
+    var a=b.getAttribute('data-a');
+    if(a==='edit') editForm(it);
+    else if(a==='prompt') promptSheet(it);
+    else if(a==='place') go(3);
+  });
+  document.addEventListener('change',function(e){
+    var d=e.target.getAttribute && e.target.getAttribute('data-date');
+    if(d){ var x=find(d); if(x){ x.date=e.target.value; save(); renderCal(); } }
+  });
+  document.addEventListener('input',function(e){
+    var f=e.target.getAttribute && e.target.getAttribute('data-first');
+    if(f){ var x=find(f); if(x){ x.first=e.target.value; save(); } }
+  });
+  $('m-prev').addEventListener('click',function(){ state.month=shiftMonth(state.month,-1); save(); render(); });
+  $('m-next').addEventListener('click',function(){ state.month=shiftMonth(state.month,1); save(); render(); });
+
+  $('clear-ex').addEventListener('click',function(){ state.items=state.items.filter(function(x){return !x.example;}); state.step=1; save(); render(); });
+  $('loadEx').addEventListener('click',function(){
+    if(!confirm('Load the examples? They replace everything here now. Back it up first if you might want it.')) return;
+    state=seed(); save(); render(); window.scrollTo(0,0);
+  });
+  $('clearAll').addEventListener('click',function(){
+    if(!confirm('Clear everything? Back it up first if you might want it.')) return;
+    state={month:nextMonth(),step:1,items:[]}; save(); render();
+  });
+
+  function blobDownload(name,content,type){
+    var blob=new Blob([content],{type:type}); var url=URL.createObjectURL(blob);
+    var a=document.createElement('a'); a.href=url; a.download=name; document.body.appendChild(a); a.click();
+    document.body.removeChild(a); setTimeout(function(){ URL.revokeObjectURL(url); },800);
+  }
+  function dl(name,content,type){
+    if(window.claude && window.claude.use){
+      window.claude.use('downloads').then(function(d){
+        if(d && d.save){ d.save({filename:name,data:content}).catch(function(){}); } else { blobDownload(name,content,type); }
+      }).catch(function(){ blobDownload(name,content,type); });
+    } else { blobDownload(name,content,type); }
+  }
+  $('ics').addEventListener('click',function(){
+    if(!placed().length){ toast('Give at least one pick a day first'); return; }
+    dl('resurrection-calendar-'+state.month+'.ics',ICS(),'text/calendar');
+  });
+  $('backupBtn').addEventListener('click',function(){
+    dl('resurrection-calendar-backup.json',JSON.stringify({app:'resurrection-calendar',version:1,month:state.month,items:state.items},null,2),'application/json');
+  });
+  $('restoreBtn').addEventListener('click',function(){ $('restoreFile').click(); });
+  $('restoreFile').addEventListener('change',function(e){
+    var f=e.target.files[0]; if(!f) return;
+    var r=new FileReader();
+    r.onload=function(){
+      try{
+        var b=JSON.parse(r.result); if(!b || !Array.isArray(b.items)) throw 0;
+        if(!confirm('Replace what is here now with this backup?')) return;
+        state={month:b.month||nextMonth(),step:1,items:b.items}; save(); render();
+      }catch(err){ alert('That file could not be read as a Resurrection Calendar backup.'); }
+    };
+    r.readAsText(f); e.target.value='';
+  });
+
+  /* rising embers, same as the board */
+  (function(){
+    var box=$('embers'), n=window.innerWidth<600?14:26;
+    for(var k=0;k<n;k++){
+      var e=document.createElement('span'); e.className='ember';
+      e.style.left=(Math.random()*100)+'%';
+      e.style.animationDuration=(9+Math.random()*12)+'s';
+      e.style.animationDelay=(-Math.random()*20)+'s';
+      e.style.opacity=(.3+Math.random()*.5);
+      box.appendChild(e);
+    }
+  })();
+
+  render();
+})();
+</script>
+</body>
+</html>
