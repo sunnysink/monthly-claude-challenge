@@ -223,6 +223,12 @@
   .field .hint{font-size:12px;color:var(--ink-dim);margin-top:6px;opacity:.85}
   .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
   .seg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .seg.four{grid-template-columns:repeat(4,1fr)}
+  .res{display:inline-block;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+    padding:2px 7px;border-radius:10px;margin-right:8px;vertical-align:1px;border:1px solid rgba(var(--copper-rgb),.4);color:var(--ink-dim)}
+  .res.hit{background:linear-gradient(135deg,var(--forest),var(--ember));color:var(--on-accent);border-color:transparent}
+  .res.flop{color:var(--mauve);border-color:rgba(var(--mauve-rgb),.5)}
+  .book .stats-line{font-size:12.5px;color:var(--ink-dim)}
   .seg label{margin:0;cursor:pointer}
   .seg input{position:absolute;opacity:0;width:0;height:0}
   .seg span{display:block;text-align:center;padding:10px 6px;border-radius:10px;border:1px solid rgba(var(--copper-rgb),.3);
@@ -252,7 +258,7 @@
     <div class="kicker">Soul-Forged Founders · A Free Spark</div>
     <h1>The Evergreen Library</h1>
     <div class="sub">Your best old posts, shelved and ready to post again.</div>
-    <p class="lede">Shelve each past post as Repost, Refresh or Rest. Whenever you need something to post, the library hands you one, oldest first, with a Claude prompt to give it a fresh caption.</p>
+    <p class="lede">Shelve each past post as Repost, Refresh or Rest. Mark how each one did the first time. Whenever you need something to post, the library hands you your hits first, with a Claude prompt to give it a fresh caption.</p>
     <div class="acts" style="justify-content:center;margin-top:22px">
       <button class="btn copy" data-add type="button">+ Shelve a post</button>
       <button class="btn line" data-p="find" type="button">Find my posts with Claude</button>
@@ -305,7 +311,7 @@
   <section class="view" id="v-prompts">
     <div class="section-label">Three prompts for Claude</div>
     <div class="prompts">
-      <div class="pcard"><div class="u">1 · Find them</div><h4>Gather your best posts</h4><p>Claude looks through what it can see, asks you to paste the rest, and hands back an import list sorted into Repost, Refresh and Rest. Paste that list into Import and every post lands on its shelf.</p><div class="acts"><button class="btn copy" data-p="find" type="button">Copy prompt</button><button class="btn line" data-import type="button">Import</button></div></div>
+      <div class="pcard"><div class="u">1 · Find them</div><h4>Gather your best posts</h4><p>Claude looks through what it can see, asks you to paste the rest, and asks for your analytics, and hands back an import list sorted into Repost, Refresh and Rest, with each post marked Hit, Fine or Flop. Paste that list into Import and every post lands on its shelf.</p><div class="acts"><button class="btn copy" data-p="find" type="button">Copy prompt</button><button class="btn line" data-import type="button">Import</button></div></div>
       <div class="pcard"><div class="u">2 · Refresh a batch</div><h4>Update the Refresh shelf</h4><p>Built from your Refresh shelf. Claude asks what you sell now, then rewrites each post in your voice with your notes applied.</p><button class="btn copy" data-p="refresh" type="button">Copy prompt</button></div>
       <div class="pcard"><div class="u">3 · Keep them</div><h4>Save to your Business Brain</h4><p>Built from your whole library. Claude finds where you keep your business files and asks before it creates or changes anything.</p><button class="btn copy" data-p="save" type="button">Copy prompt</button></div>
     </div>
@@ -344,15 +350,20 @@
             refresh:{n:'Refresh',d:'The idea works. Something in it needs updating first.'},
             rest:{n:'Rest',d:'Stays on the shelf, out of the pull.'}};
   var ORDER=['repost','refresh','rest'];
+  var RES={hit:{n:'Hit'},fine:{n:'Fine'},flop:{n:'Flop'}};
+  var RES_ORDER=['hit','fine','flop'];
+  var RANK={hit:0,fine:1,'':2,flop:3};
+  function rank(p){ var r=RANK[p.result||'']; return r==null?2:r; }
+  function byRank(a,b){ var d=rank(a)-rank(b); if(d) return d; return (lastSeen(a)||'0')<(lastSeen(b)||'0')?-1:1; }
   var PLATFORMS=['Instagram','Facebook','TikTok','YouTube','Threads','LinkedIn','Pinterest','Blog','Email','Skool','Other'];
   var FORMATS=['Post','Carousel','Reel or video','Story','Live','Blog post','Email','Thread','Other'];
   function ago(days){ var d=new Date(); d.setDate(d.getDate()-days); return iso(d); }
   function iso(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
   var EX=[
-    {title:'Three questions to ask before any tarot reading',platform:'Instagram',format:'Carousel',posted:220,tag:'repost',note:''},
-    {title:'How I prepare my space before a client session',platform:'Instagram',format:'Reel or video',posted:310,tag:'repost',note:''},
-    {title:'Why I stopped reading reversals as the opposite meaning',platform:'Facebook',format:'Post',posted:150,tag:'refresh',note:'Swap the old workshop link for my current course.'},
-    {title:'My full moon journaling ritual',platform:'Blog',format:'Blog post',posted:400,tag:'refresh',note:'Update the price of the journal and add this year\'s dates.'},
+    {title:'Three questions to ask before any tarot reading',platform:'Instagram',format:'Carousel',posted:220,tag:'repost',note:'',result:'hit',stats:'4,800 views, 210 saves'},
+    {title:'How I prepare my space before a client session',platform:'Instagram',format:'Reel or video',posted:310,tag:'repost',note:'',result:'fine',stats:'900 views'},
+    {title:'Why I stopped reading reversals as the opposite meaning',platform:'Facebook',format:'Post',posted:150,tag:'refresh',note:'Swap the old workshop link for my current course.',result:'hit',stats:'64 comments'},
+    {title:'My full moon journaling ritual',platform:'Blog',format:'Blog post',posted:400,tag:'refresh',note:'Update the price of the journal and add this year\'s dates.',result:'flop',stats:''},
     {title:'Last call for the summer group',platform:'Instagram',format:'Story',posted:120,tag:'rest',note:'That group is closed.'}
   ];
 
@@ -365,7 +376,7 @@
   function daysSince(s){ if(!s) return 9999; var p=s.split('-'); return Math.floor((new Date()-new Date(+p[0],+p[1]-1,+p[2]))/86400000); }
   function safeUrl(u){ return /^https?:\/\//i.test(u||'')?u:''; }
 
-  function seed(){ return {posts:EX.map(function(x){ return {id:uid(),title:x.title,platform:x.platform,format:x.format,link:'',posted:ago(x.posted),tag:x.tag,note:x.note,uses:[],example:true}; })}; }
+  function seed(){ return {posts:EX.map(function(x){ return {id:uid(),title:x.title,platform:x.platform,format:x.format,link:'',posted:ago(x.posted),tag:x.tag,note:x.note,result:x.result||'',stats:x.stats||'',uses:[],example:true}; })}; }
   var state;
   try{ state=JSON.parse(localStorage.getItem(KEY)); }catch(e){ state=null; }
   if(!state || !Array.isArray(state.posts)) state=seed();
@@ -378,17 +389,24 @@
   function candidates(){
     return state.posts.filter(function(p){
       return p.tag!=='rest' && daysSince(lastUsed(p))>=REST_DAYS && (pfilter==='All' || p.platform===pfilter);
-    }).sort(function(a,b){ return (lastSeen(a)||'0')<(lastSeen(b)||'0')?-1:1; });
+    }).sort(byRank);
   }
   function resting(){ return state.posts.filter(function(p){ return p.tag!=='rest' && daysSince(lastUsed(p))<REST_DAYS; }); }
 
+  function resText(p){ return p.result?RES[p.result].n+(p.stats?' ('+p.stats+')':''):(p.stats||''); }
   function postPrompt(p){
     var base="I'm posting one of my older pieces again. Here are the details.\n\n"+
       "Title or first line: "+p.title+"\n"+
       "Where it ran: "+p.platform+" ("+p.format+")\n"+
       "First posted: "+(p.posted?nice(p.posted):'[not sure]')+"\n"+
+      (resText(p)?"How it did the first time: "+resText(p)+"\n":"")+
       (safeUrl(p.link)?"Link: "+p.link+"\n":"")+
       "The original text: [paste it here]\n\n";
+    if(p.result==='flop') return base+(p.note?(p.tag==='refresh'?"What needs updating: ":"My note on it: ")+p.note+"\n\n":"")+
+      "1. The idea is good, but the post did not land the first time. Keep the core idea and the parts that are still true"+(p.tag==='refresh'&&p.note?", and apply the update above":"")+".\n"+
+      "2. Give me five new first lines that make the reader stop, and tell me which one you would pick and why.\n"+
+      "3. Tighten the rest so it delivers on the new first line.\n"+
+      "4. Only use facts, prices, dates and results I give you. If you need one you do not have, ask me.";
     if(p.tag==='refresh'){
       return base+"What needs updating: "+(p.note||'[what changed since I posted it]')+"\n\n"+
         "1. Ask me up to three questions about what I sell and offer now before you write anything.\n"+
@@ -405,7 +423,7 @@
   function listOf(ps){
     return ps.map(function(p,k){
       return (k+1)+". "+p.title+" | "+p.platform+" | "+p.format+" | "+TAGS[p.tag].n+
-        (p.posted?" | First posted: "+nice(p.posted):"")+(lastUsed(p)?" | Last posted again: "+nice(lastUsed(p)):"")+
+        (resText(p)?" | How it did: "+resText(p):"")+(p.posted?" | First posted: "+nice(p.posted):"")+(lastUsed(p)?" | Last posted again: "+nice(lastUsed(p)):"")+
         (p.note?" | Note: "+p.note:"")+(safeUrl(p.link)?" | "+p.link:"");
     }).join("\n");
   }
@@ -413,21 +431,30 @@
     return "I want to gather my best past content so I can post it again: social posts, carousels, videos, blog posts, emails, anything I've published.\n\n"+
     "1. Look first. If you can see my files, notes, exports, drafts or past chats, search them for content I've already published. Only read. Do not create, move or change anything.\n"+
     "2. Then ask me to paste or upload anything you could not reach, such as captions from my accounts or a list of my blog posts. If I wrote any at the end of this message, include them.\n"+
-    "3. Sort each piece into one of three shelves:\n"+
+    "3. Ask me for my results before you sort anything: an export or screenshots of my post analytics (views, likes, comments, shares, saves). Tell me where to find them on each platform I use, for example Meta Business Suite > Insights > Content for Instagram and Facebook, TikTok Studio > Analytics, YouTube Studio > Analytics > Content, and my email platform's campaign reports. Use only the numbers I give you.\n"+
+    "4. Mark how each piece did, compared with my own usual results on that platform:\n"+
+    "   Hit: one of my best, roughly my top fifth.\n"+
+    "   Fine: about my usual.\n"+
+    "   Flop: well below my usual.\n"+
+    "   Leave it empty if I have no numbers for it.\n"+
+    "5. Sort each piece into one of three shelves:\n"+
     "   Repost: still true and still fits what I sell now.\n"+
     "   Refresh: the idea works, but a date, price, offer, link or old wording needs updating.\n"+
     "   Rest: tied to a moment that passed, an offer I closed, or no longer how I work.\n"+
-    "4. For each Refresh piece, write what needs updating in a few words.\n\n"+
-    "5. Give me the full list as an import list I can paste into my Evergreen Library. Put it in one code block, one piece per line, six parts separated by | in this order:\n"+
-    "Title or first line | Platform | Format | First posted | Shelf | What to update\n"+
+    "   A Flop whose idea still fits goes on Refresh with the note: new first line.\n"+
+    "6. For each Refresh piece, write what needs updating in a few words.\n\n"+
+    "7. Give me the full list as an import list I can paste into my Evergreen Library. Put it in one code block, one piece per line, eight parts separated by | in this order:\n"+
+    "Title or first line | Platform | Format | First posted | Shelf | What to update | How it did | The numbers\n"+
     "   Platform is one of: "+PLATFORMS.join(", ")+".\n"+
     "   Format is one of: "+FORMATS.join(", ")+".\n"+
     "   First posted is a date as YYYY-MM-DD. If you only know the month, use the 1st. If you do not know, leave it empty.\n"+
     "   Shelf is Repost, Refresh or Rest.\n"+
     "   What to update is a few words for Refresh pieces and empty for the rest.\n"+
+    "   How it did is Hit, Fine, Flop, or empty.\n"+
+    "   The numbers are a short summary, such as 12,700 views, 340 saves. Leave it empty if I gave you none.\n"+
     "   No header line, no numbering, and never use | inside a title.\n"+
-    "   If there are more than 150 pieces, give me the strongest 150 and tell me how many you left out.\n"+
-    "   Example: Three questions to ask before any tarot reading | Instagram | Carousel | 2026-03-04 | Repost |\n\n"+
+    "   If there are more than 150 pieces, keep every Hit first, then the Fine ones, and tell me how many you left out.\n"+
+    "   Example: Three questions to ask before any tarot reading | Instagram | Carousel | 2026-03-04 | Repost | | Hit | 4,800 views, 210 saves\n\n"+
     "Only use what you find and what I tell you. If you are unsure which shelf a piece belongs on, say so in the row.\n\n"+
     "Posts I can think of right now (optional):\n";
   }
@@ -470,8 +497,9 @@
   function bookHTML(p){
     var lu=lastUsed(p), link=safeUrl(p.link);
     return '<article class="book '+p.tag+'" data-id="'+p.id+'">'+
-      '<div class="ty">'+esc(p.platform)+' · '+esc(p.format)+'</div>'+
+      '<div class="ty">'+(p.result?'<span class="res '+p.result+'">'+RES[p.result].n+'</span>':'')+esc(p.platform)+' · '+esc(p.format)+'</div>'+
       '<h4>'+esc(p.title)+'</h4>'+
+      (p.stats?'<div class="stats-line">'+esc(p.stats)+'</div>':'')+
       (p.note?'<div class="note"><span class="k">'+(p.tag==='refresh'?'To update':'Note')+'</span>'+esc(p.note)+'</div>':'')+
       '<div class="when">'+(p.posted?'First posted '+nice(p.posted):'First posted date not set')+
         (lu?' · posted again '+nice(lu):'')+(p.uses&&p.uses.length>1?' ('+p.uses.length+' times)':'')+
@@ -504,16 +532,17 @@
     if(p){
       var link=safeUrl(p.link);
       $('pull-label').textContent=p.tag==='refresh'?'Refresh this one, then post it':'Post this one';
-      sp.innerHTML='<div class="u">'+esc(TAGS[p.tag].n)+' · '+esc(p.platform)+' · '+esc(p.format)+'</div>'+
+      sp.innerHTML='<div class="u">'+(p.result?'<span class="res '+p.result+'">'+RES[p.result].n+'</span>':'')+esc(TAGS[p.tag].n)+' · '+esc(p.platform)+' · '+esc(p.format)+'</div>'+
         '<h2>'+esc(p.title)+'</h2>'+
         '<div class="meta">'+(lastUsed(p)?'Last posted again '+nice(lastUsed(p)):(p.posted?'First posted '+nice(p.posted)+', '+daysSince(p.posted)+' days ago':'Never posted again yet'))+
+          (p.stats?' · '+esc(p.stats):'')+
           (link?' · <a href="'+esc(link)+'" target="_blank" rel="noopener">Open the original</a>':'')+'</div>'+
         (p.tag==='refresh'?'<div class="note"><span class="k">Update first</span>'+esc(p.note||'Open it and note what changed since you posted it.')+'</div>':
           (p.note?'<div class="note"><span class="k">Your note</span>'+esc(p.note)+'</div>':''))+
         '<div class="acts"><button class="btn copy" data-a="prompt" data-id="'+p.id+'" type="button">Copy the Claude prompt</button>'+
         '<button class="btn ok" data-a="posted" data-id="'+p.id+'" type="button">I posted it</button>'+
         (cand.length>1?'<button class="btn line" id="another" type="button">Hand me another</button>':'')+'</div>'+
-        '<p class="hint">'+(cand.length>1?(skip+1)+' of '+cand.length+' ready'+(pfilter!=='All'?' for '+esc(pfilter):'')+'. ':'')+'Once you post it, it rests for '+REST_DAYS+' days before it comes back.</p>';
+        '<p class="hint">'+(cand.length>1?(skip+1)+' of '+cand.length+' ready'+(pfilter!=='All'?' for '+esc(pfilter):'')+'. ':'')+'Your hits come first, then the oldest. Once you post it, it rests for '+REST_DAYS+' days before it comes back.</p>';
     } else {
       var r=resting();
       $('pull-label').textContent='Post this one';
@@ -534,7 +563,7 @@
     var fl=sfilter==='All'?all:all.filter(function(x){return x.platform===sfilter;});
     var h='';
     ORDER.forEach(function(t){
-      var row=fl.filter(function(x){return x.tag===t;}).sort(function(a,b){ return (lastSeen(a)||'0')<(lastSeen(b)||'0')?-1:1; });
+      var row=fl.filter(function(x){return x.tag===t;}).sort(byRank);
       if(!row.length) return;
       h+='<div class="shelf"><div class="shelfhead"><h3>'+TAGS[t].n+' <span style="font-size:15px;color:var(--copper)">· '+row.length+'</span></h3><span class="d">'+TAGS[t].d+'</span></div><div class="books">';
       row.forEach(function(x){ h+=bookHTML(x); });
@@ -572,7 +601,8 @@
   document.addEventListener('keydown',function(e){ if(e.key==='Escape' && $('veil').classList.contains('on')) closeSheet(); });
 
   function editForm(p){
-    var isNew=!p; p=p||{title:'',platform:'Instagram',format:'Post',link:'',posted:'',tag:'repost',note:''};
+    var isNew=!p; p=p||{title:'',platform:'Instagram',format:'Post',link:'',posted:'',tag:'repost',note:'',result:'',stats:''};
+    var rseg=RES_ORDER.concat(['']).map(function(t){return '<label><input type="radio" name="f-res" value="'+t+'"'+(t===(p.result||'')?' checked':'')+'><span>'+(t?RES[t].n:'Not sure')+'</span></label>';}).join('');
     var plOpts=PLATFORMS.map(function(t){return '<option'+(t===p.platform?' selected':'')+'>'+t+'</option>';}).join('');
     var fmOpts=FORMATS.map(function(t){return '<option'+(t===p.format?' selected':'')+'>'+t+'</option>';}).join('');
     var seg=ORDER.map(function(t){return '<label><input type="radio" name="f-tag" value="'+t+'"'+(t===p.tag?' checked':'')+'><span>'+TAGS[t].n+'</span></label>';}).join('');
@@ -581,6 +611,8 @@
       '<div class="two"><div class="field"><label for="f-platform">Where it ran</label><select id="f-platform">'+plOpts+'</select></div>'+
       '<div class="field"><label for="f-format">Format</label><select id="f-format">'+fmOpts+'</select></div></div>'+
       '<div class="field"><label>Shelf</label><div class="seg">'+seg+'</div><div class="hint">Repost: post as it is. Refresh: update something first. Rest: keep it, out of the pull.</div></div>'+
+      '<div class="field"><label>How it did</label><div class="seg four">'+rseg+'</div><div class="hint">Compared with your usual on that platform. Hits come up first in Today&#39;s pull.</div></div>'+
+      '<div class="field"><label for="f-stats">The numbers</label><input id="f-stats" value="'+esc(p.stats||'')+'" placeholder="12,700 views, 340 saves (optional)" autocomplete="off"></div>'+
       '<div class="field"><label for="f-note">What to update, or a note</label><textarea id="f-note" placeholder="Swap the old link for my current course">'+esc(p.note)+'</textarea></div>'+
       '<div class="two"><div class="field"><label for="f-posted">First posted</label><input id="f-posted" type="date" value="'+esc(p.posted)+'"><div class="hint">A rough date is fine.</div></div>'+
       '<div class="field"><label for="f-link">Link</label><input id="f-link" value="'+esc(p.link)+'" placeholder="Optional" autocomplete="off"></div></div>'+
@@ -590,7 +622,8 @@
       var t=$('f-title').value.trim(); if(!t){ $('f-title').focus(); return; }
       var tg=document.querySelector('input[name=f-tag]:checked');
       var data={title:t,platform:$('f-platform').value,format:$('f-format').value,tag:tg?tg.value:'repost',
-        note:$('f-note').value.trim(),posted:$('f-posted').value,link:$('f-link').value.trim()};
+        note:$('f-note').value.trim(),posted:$('f-posted').value,link:$('f-link').value.trim(),
+        result:(document.querySelector('input[name=f-res]:checked')||{value:''}).value,stats:$('f-stats').value.trim()};
       if(isNew){ state.posts.push(Object.assign({id:uid(),uses:[],example:false},data)); toast('On the shelf'); }
       else { Object.assign(p,data); p.example=false; toast('Saved'); }
       skip=0; save(); render(); closeSheet();
@@ -620,19 +653,22 @@
       var shelf=(c[4]||'').toLowerCase(), tag=shelf.indexOf('refresh')>-1?'refresh':shelf.indexOf('rest')>-1?'rest':'repost';
       var d=(c[3]||'').match(/(\d{4})-(\d{1,2})(?:-(\d{1,2}))?/);
       var posted=d?d[1]+'-'+String(d[2]).padStart(2,'0')+'-'+String(d[3]||1).padStart(2,'0'):'';
-      out.push({title:c[0],platform:pick(PLATFORMS,c[1],'Other'),format:pick(FORMATS,c[2],'Post'),posted:posted,tag:tag,note:c.slice(5).join(' ').trim(),link:''});
+      var rs=(c[6]||'').toLowerCase(), result=rs.indexOf('hit')>-1?'hit':rs.indexOf('flop')>-1?'flop':rs.indexOf('fine')>-1?'fine':'';
+      var note=(c[5]||'').trim();
+      if(result==='flop' && tag==='repost'){ tag='refresh'; if(!note) note='New first line.'; }
+      out.push({title:c[0],platform:pick(PLATFORMS,c[1],'Other'),format:pick(FORMATS,c[2],'Post'),posted:posted,tag:tag,note:note,result:result,stats:c.slice(7).join(' ').trim(),link:''});
     });
     return out;
   }
   function importSheet(){
     openSheet('Import','Import from Claude',
       '<div class="field"><label for="i-text">Paste the import list Claude gave you</label><textarea id="i-text" style="min-height:180px" placeholder="Three questions to ask before any tarot reading | Instagram | Carousel | 2026-03-04 | Repost |"></textarea>'+
-      '<div class="hint" id="i-hint">One post per line: title | platform | format | first posted | shelf | what to update. The "Find my posts with Claude" prompt asks for exactly this.</div></div>'+
+      '<div class="hint" id="i-hint">One post per line: title | platform | format | first posted | shelf | what to update | how it did | the numbers. The "Find my posts with Claude" prompt asks for exactly this.</div></div>'+
       '<div class="acts"><button class="btn ok" id="i-go" type="button">Shelve them</button></div>');
     var ta=$('i-text');
     ta.addEventListener('input',function(){
       var n=parseImport(ta.value).length;
-      $('i-hint').textContent=n?n+' post'+(n===1?'':'s')+' ready to shelve.':'One post per line: title | platform | format | first posted | shelf | what to update.';
+      $('i-hint').textContent=n?n+' post'+(n===1?'':'s')+' ready to shelve.':'One post per line: title | platform | format | first posted | shelf | what to update | how it did | the numbers.';
     });
     $('i-go').addEventListener('click',function(){
       var items=parseImport(ta.value);
