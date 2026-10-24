@@ -229,6 +229,13 @@
   .res.hit{background:linear-gradient(135deg,var(--forest),var(--ember));color:var(--on-accent);border-color:transparent}
   .res.flop{color:var(--mauve);border-color:rgba(var(--mauve-rgb),.5)}
   .book .stats-line{font-size:12.5px;color:var(--ink-dim)}
+  .tagchips:empty{display:none}
+  .tagchips{margin-top:8px}
+  .chip.tg{border-style:dashed}
+  .tagrow{display:flex;flex-wrap:wrap;gap:5px}
+  .pull .tagrow{margin:2px 0 8px}
+  .tagpill{font-family:var(--mono);font-size:10px;letter-spacing:.04em;color:var(--copper-lt);background:rgba(var(--copper-rgb),.12);
+    border:1px solid rgba(var(--copper-rgb),.28);border-radius:10px;padding:2px 8px}
   .seg label{margin:0;cursor:pointer}
   .seg input{position:absolute;opacity:0;width:0;height:0}
   .seg span{display:block;text-align:center;padding:10px 6px;border-radius:10px;border:1px solid rgba(var(--copper-rgb),.3);
@@ -286,6 +293,7 @@
   <!-- TODAY'S PULL -->
   <section class="view on" id="v-pull">
     <div class="chips" id="pchips" role="group" aria-label="Pull for a platform" style="margin-top:20px"></div>
+    <div class="chips tagchips" id="ptchips" role="group" aria-label="Pull for a tag"></div>
     <div class="section-label" id="pull-label">Post this one</div>
     <section class="pull" id="pull"></section>
     <div id="log-wrap">
@@ -304,6 +312,7 @@
     </div>
     <div class="acts" style="margin-top:20px"><button class="btn copy" data-add type="button">+ Shelve a post</button></div>
     <div class="chips" id="schips" role="group" aria-label="Show posts by platform" style="margin-top:16px"></div>
+    <div class="chips tagchips" id="stchips" role="group" aria-label="Show posts by tag"></div>
     <div id="shelves"></div>
   </section>
 
@@ -360,9 +369,9 @@
   function ago(days){ var d=new Date(); d.setDate(d.getDate()-days); return iso(d); }
   function iso(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
   var EX=[
-    {title:'Three questions to ask before any tarot reading',platform:'Instagram',format:'Carousel',posted:220,tag:'repost',note:'',result:'hit',stats:'4,800 views, 210 saves'},
-    {title:'How I prepare my space before a client session',platform:'Instagram',format:'Reel or video',posted:310,tag:'repost',note:'',result:'fine',stats:'900 views'},
-    {title:'Why I stopped reading reversals as the opposite meaning',platform:'Facebook',format:'Post',posted:150,tag:'refresh',note:'Swap the old workshop link for my current course.',result:'hit',stats:'64 comments'},
+    {title:'Three questions to ask before any tarot reading',platform:'Instagram',format:'Carousel',posted:220,tag:'repost',note:'',result:'hit',stats:'4,800 views, 210 saves',tags:['tarot']},
+    {title:'How I prepare my space before a client session',platform:'Instagram',format:'Reel or video',posted:310,tag:'repost',note:'',result:'fine',stats:'900 views',tags:['sessions']},
+    {title:'Why I stopped reading reversals as the opposite meaning',platform:'Facebook',format:'Post',posted:150,tag:'refresh',note:'Swap the old workshop link for my current course.',result:'hit',stats:'64 comments',tags:['tarot']},
     {title:'My full moon journaling ritual',platform:'Blog',format:'Blog post',posted:400,tag:'refresh',note:'Update the price of the journal and add this year\'s dates.',result:'flop',stats:''},
     {title:'Last call for the summer group',platform:'Instagram',format:'Story',posted:120,tag:'rest',note:'That group is closed.'}
   ];
@@ -376,7 +385,7 @@
   function daysSince(s){ if(!s) return 9999; var p=s.split('-'); return Math.floor((new Date()-new Date(+p[0],+p[1]-1,+p[2]))/86400000); }
   function safeUrl(u){ return /^https?:\/\//i.test(u||'')?u:''; }
 
-  function seed(){ return {posts:EX.map(function(x){ return {id:uid(),title:x.title,platform:x.platform,format:x.format,link:'',posted:ago(x.posted),tag:x.tag,note:x.note,result:x.result||'',stats:x.stats||'',uses:[],example:true}; })}; }
+  function seed(){ return {posts:EX.map(function(x){ return {id:uid(),title:x.title,platform:x.platform,format:x.format,link:'',posted:ago(x.posted),tag:x.tag,note:x.note,result:x.result||'',stats:x.stats||'',tags:x.tags||[],uses:[],example:true}; })}; }
   var state;
   try{ state=JSON.parse(localStorage.getItem(KEY)); }catch(e){ state=null; }
   if(!state || !Array.isArray(state.posts)) state=seed();
@@ -384,11 +393,31 @@
 
   function lastUsed(p){ return p.uses && p.uses.length ? p.uses[p.uses.length-1] : ''; }
   function lastSeen(p){ return lastUsed(p) || p.posted || ''; }
-  var pfilter='All', sfilter='All', skip=0;
+  var pfilter='All', sfilter='All', ptag='All', stag='All', skip=0;
+  function tagsOf(p){ return Array.isArray(p.tags)?p.tags:[]; }
+  function hasTag(p,t){ if(t==='All') return true; t=t.toLowerCase(); return tagsOf(p).some(function(x){return x.toLowerCase()===t;}); }
+  function parseTags(v){
+    var known={}; ((state&&state.posts)||[]).forEach(function(p){ tagsOf(p).forEach(function(t){ if(!known[t.toLowerCase()]) known[t.toLowerCase()]=t; }); });
+    var seen={}, out=[];
+    String(v||'').split(/[,#]/).forEach(function(x){ x=x.trim(); var k=x.toLowerCase(); if(x && !seen[k]){ seen[k]=1; out.push(known[k]||x); } });
+    return out;
+  }
+  function tagChipsHTML(sel,list){
+    var counts={}, names={};
+    list.forEach(function(p){ tagsOf(p).forEach(function(t){ var k=t.toLowerCase(); counts[k]=(counts[k]||0)+1; if(!names[k]) names[k]=t; }); });
+    var keys=Object.keys(counts).sort(function(a,b){ return names[a].localeCompare(names[b]); });
+    if(!keys.length) return {html:'',sel:'All'};
+    if(sel!=='All' && !counts[sel.toLowerCase()]) sel='All';
+    return {sel:sel,html:['All'].concat(keys).map(function(k){
+      var label=k==='All'?'All tags':names[k], on=k==='All'?sel==='All':sel.toLowerCase()===k;
+      return '<button class="chip tg'+(on?' on':'')+'" data-tg="'+esc(k==='All'?'All':names[k])+'" type="button" aria-pressed="'+on+'">'+(k==='All'?'':'#')+esc(label)+'<span class="c">'+(k==='All'?list.length:counts[k])+'</span></button>';
+    }).join('')};
+  }
+  function tagPills(p){ return tagsOf(p).map(function(t){ return '<span class="tagpill">#'+esc(t)+'</span>'; }).join(''); }
 
   function candidates(){
     return state.posts.filter(function(p){
-      return p.tag!=='rest' && daysSince(lastUsed(p))>=REST_DAYS && (pfilter==='All' || p.platform===pfilter);
+      return p.tag!=='rest' && daysSince(lastUsed(p))>=REST_DAYS && (pfilter==='All' || p.platform===pfilter) && hasTag(p,ptag);
     }).sort(byRank);
   }
   function resting(){ return state.posts.filter(function(p){ return p.tag!=='rest' && daysSince(lastUsed(p))<REST_DAYS; }); }
@@ -423,7 +452,7 @@
   function listOf(ps){
     return ps.map(function(p,k){
       return (k+1)+". "+p.title+" | "+p.platform+" | "+p.format+" | "+TAGS[p.tag].n+
-        (resText(p)?" | How it did: "+resText(p):"")+(p.posted?" | First posted: "+nice(p.posted):"")+(lastUsed(p)?" | Last posted again: "+nice(lastUsed(p)):"")+
+        (resText(p)?" | How it did: "+resText(p):"")+(tagsOf(p).length?" | Tags: "+tagsOf(p).join(", "):"")+(p.posted?" | First posted: "+nice(p.posted):"")+(lastUsed(p)?" | Last posted again: "+nice(lastUsed(p)):"")+
         (p.note?" | Note: "+p.note:"")+(safeUrl(p.link)?" | "+p.link:"");
     }).join("\n");
   }
@@ -442,9 +471,10 @@
     "   Refresh: the idea works, but a date, price, offer, link or old wording needs updating.\n"+
     "   Rest: tied to a moment that passed, an offer I closed, or no longer how I work.\n"+
     "   A Flop whose idea still fits goes on Refresh with the note: new first line.\n"+
+    "   Before you sort, ask me if I want any tags, such as one per brand or topic. If I give you some, tag each piece with the ones that fit. If I say no, leave tags empty.\n"+
     "6. For each Refresh piece, write what needs updating in a few words.\n\n"+
-    "7. Give me the full list as an import list I can paste into my Evergreen Library. Put it in one code block, one piece per line, eight parts separated by | in this order:\n"+
-    "Title or first line | Platform | Format | First posted | Shelf | What to update | How it did | The numbers\n"+
+    "7. Give me the full list as an import list I can paste into my Evergreen Library. Put it in one code block, one piece per line, nine parts separated by | in this order:\n"+
+    "Title or first line | Platform | Format | First posted | Shelf | What to update | How it did | The numbers | Tags\n"+
     "   Platform is one of: "+PLATFORMS.join(", ")+".\n"+
     "   Format is one of: "+FORMATS.join(", ")+".\n"+
     "   First posted is a date as YYYY-MM-DD. If you only know the month, use the 1st. If you do not know, leave it empty.\n"+
@@ -452,9 +482,10 @@
     "   What to update is a few words for Refresh pieces and empty for the rest.\n"+
     "   How it did is Hit, Fine, Flop, or empty.\n"+
     "   The numbers are a short summary, such as 12,700 views, 340 saves. Leave it empty if I gave you none.\n"+
+    "   Tags are separated by commas, such as Brand A, tarot. Leave it empty if I chose none.\n"+
     "   No header line, no numbering, and never use | inside a title.\n"+
     "   If there are more than 150 pieces, keep every Hit first, then the Fine ones, and tell me how many you left out.\n"+
-    "   Example: Three questions to ask before any tarot reading | Instagram | Carousel | 2026-03-04 | Repost | | Hit | 4,800 views, 210 saves\n\n"+
+    "   Example: Three questions to ask before any tarot reading | Instagram | Carousel | 2026-03-04 | Repost | | Hit | 4,800 views, 210 saves | tarot\n\n"+
     "Only use what you find and what I tell you. If you are unsure which shelf a piece belongs on, say so in the row.\n\n"+
     "Posts I can think of right now (optional):\n";
   }
@@ -500,6 +531,7 @@
       '<div class="ty">'+(p.result?'<span class="res '+p.result+'">'+RES[p.result].n+'</span>':'')+esc(p.platform)+' · '+esc(p.format)+'</div>'+
       '<h4>'+esc(p.title)+'</h4>'+
       (p.stats?'<div class="stats-line">'+esc(p.stats)+'</div>':'')+
+      (tagsOf(p).length?'<div class="tagrow">'+tagPills(p)+'</div>':'')+
       (p.note?'<div class="note"><span class="k">'+(p.tag==='refresh'?'To update':'Note')+'</span>'+esc(p.note)+'</div>':'')+
       '<div class="when">'+(p.posted?'First posted '+nice(p.posted):'First posted date not set')+
         (lu?' · posted again '+nice(lu):'')+(p.uses&&p.uses.length>1?' ('+p.uses.length+' times)':'')+
@@ -526,6 +558,7 @@
 
     /* pull */
     var pc=chipsHTML(pfilter,live,live.length); pfilter=pc.sel; $('pchips').innerHTML=pc.html;
+    var ptc=tagChipsHTML(ptag,live); ptag=ptc.sel; $('ptchips').innerHTML=ptc.html;
     var cand=candidates(), sp=$('pull');
     if(skip>=cand.length) skip=0;
     var p=cand[skip];
@@ -534,6 +567,7 @@
       $('pull-label').textContent=p.tag==='refresh'?'Refresh this one, then post it':'Post this one';
       sp.innerHTML='<div class="u">'+(p.result?'<span class="res '+p.result+'">'+RES[p.result].n+'</span>':'')+esc(TAGS[p.tag].n)+' · '+esc(p.platform)+' · '+esc(p.format)+'</div>'+
         '<h2>'+esc(p.title)+'</h2>'+
+        (tagsOf(p).length?'<div class="tagrow">'+tagPills(p)+'</div>':'')+
         '<div class="meta">'+(lastUsed(p)?'Last posted again '+nice(lastUsed(p)):(p.posted?'First posted '+nice(p.posted)+', '+daysSince(p.posted)+' days ago':'Never posted again yet'))+
           (p.stats?' · '+esc(p.stats):'')+
           (link?' · <a href="'+esc(link)+'" target="_blank" rel="noopener">Open the original</a>':'')+'</div>'+
@@ -542,7 +576,7 @@
         '<div class="acts"><button class="btn copy" data-a="prompt" data-id="'+p.id+'" type="button">Copy the Claude prompt</button>'+
         '<button class="btn ok" data-a="posted" data-id="'+p.id+'" type="button">I posted it</button>'+
         (cand.length>1?'<button class="btn line" id="another" type="button">Hand me another</button>':'')+'</div>'+
-        '<p class="hint">'+(cand.length>1?(skip+1)+' of '+cand.length+' ready'+(pfilter!=='All'?' for '+esc(pfilter):'')+'. ':'')+'Your hits come first, then the oldest. Once you post it, it rests for '+REST_DAYS+' days before it comes back.</p>';
+        '<p class="hint">'+(cand.length>1?(skip+1)+' of '+cand.length+' ready'+(pfilter!=='All'?' for '+esc(pfilter):'')+(ptag!=='All'?' tagged #'+esc(ptag):'')+'. ':'')+'Your hits come first, then the oldest. Once you post it, it rests for '+REST_DAYS+' days before it comes back.</p>';
     } else {
       var r=resting();
       $('pull-label').textContent='Post this one';
@@ -560,7 +594,8 @@
 
     /* shelves */
     var sc=chipsHTML(sfilter,all,all.length); sfilter=sc.sel; $('schips').innerHTML=sc.html;
-    var fl=sfilter==='All'?all:all.filter(function(x){return x.platform===sfilter;});
+    var stc=tagChipsHTML(stag,all); stag=stc.sel; $('stchips').innerHTML=stc.html;
+    var fl=all.filter(function(x){return (sfilter==='All' || x.platform===sfilter) && hasTag(x,stag);});
     var h='';
     ORDER.forEach(function(t){
       var row=fl.filter(function(x){return x.tag===t;}).sort(byRank);
@@ -601,7 +636,9 @@
   document.addEventListener('keydown',function(e){ if(e.key==='Escape' && $('veil').classList.contains('on')) closeSheet(); });
 
   function editForm(p){
-    var isNew=!p; p=p||{title:'',platform:'Instagram',format:'Post',link:'',posted:'',tag:'repost',note:'',result:'',stats:''};
+    var isNew=!p; p=p||{title:'',platform:'Instagram',format:'Post',link:'',posted:'',tag:'repost',note:'',result:'',stats:'',tags:[]};
+    var known={}; state.posts.forEach(function(x){ tagsOf(x).forEach(function(t){ known[t.toLowerCase()]=t; }); });
+    var tagOpts=Object.keys(known).map(function(k){ return '<option value="'+esc(known[k])+'">'; }).join('');
     var rseg=RES_ORDER.concat(['']).map(function(t){return '<label><input type="radio" name="f-res" value="'+t+'"'+(t===(p.result||'')?' checked':'')+'><span>'+(t?RES[t].n:'Not sure')+'</span></label>';}).join('');
     var plOpts=PLATFORMS.map(function(t){return '<option'+(t===p.platform?' selected':'')+'>'+t+'</option>';}).join('');
     var fmOpts=FORMATS.map(function(t){return '<option'+(t===p.format?' selected':'')+'>'+t+'</option>';}).join('');
@@ -613,6 +650,8 @@
       '<div class="field"><label>Shelf</label><div class="seg">'+seg+'</div><div class="hint">Repost: post as it is. Refresh: update something first. Rest: keep it, out of the pull.</div></div>'+
       '<div class="field"><label>How it did</label><div class="seg four">'+rseg+'</div><div class="hint">Compared with your usual on that platform. Hits come up first in Today&#39;s pull.</div></div>'+
       '<div class="field"><label for="f-stats">The numbers</label><input id="f-stats" value="'+esc(p.stats||'')+'" placeholder="12,700 views, 340 saves (optional)" autocomplete="off"></div>'+
+      '<div class="field"><label for="f-tags">Tags</label><input id="f-tags" list="f-taglist" value="'+esc(tagsOf(p).join(', '))+'" placeholder="Optional, such as a brand or topic. Separate with commas." autocomplete="off"><datalist id="f-taglist">'+tagOpts+'</datalist>'+
+        (Object.keys(known).length?'<div class="hint">Yours so far: '+Object.keys(known).map(function(k){return '#'+esc(known[k]);}).join(' ')+'</div>':'')+'</div>'+
       '<div class="field"><label for="f-note">What to update, or a note</label><textarea id="f-note" placeholder="Swap the old link for my current course">'+esc(p.note)+'</textarea></div>'+
       '<div class="two"><div class="field"><label for="f-posted">First posted</label><input id="f-posted" type="date" value="'+esc(p.posted)+'"><div class="hint">A rough date is fine.</div></div>'+
       '<div class="field"><label for="f-link">Link</label><input id="f-link" value="'+esc(p.link)+'" placeholder="Optional" autocomplete="off"></div></div>'+
@@ -623,7 +662,7 @@
       var tg=document.querySelector('input[name=f-tag]:checked');
       var data={title:t,platform:$('f-platform').value,format:$('f-format').value,tag:tg?tg.value:'repost',
         note:$('f-note').value.trim(),posted:$('f-posted').value,link:$('f-link').value.trim(),
-        result:(document.querySelector('input[name=f-res]:checked')||{value:''}).value,stats:$('f-stats').value.trim()};
+        result:(document.querySelector('input[name=f-res]:checked')||{value:''}).value,stats:$('f-stats').value.trim(),tags:parseTags($('f-tags').value)};
       if(isNew){ state.posts.push(Object.assign({id:uid(),uses:[],example:false},data)); toast('On the shelf'); }
       else { Object.assign(p,data); p.example=false; toast('Saved'); }
       skip=0; save(); render(); closeSheet();
@@ -656,19 +695,19 @@
       var rs=(c[6]||'').toLowerCase(), result=rs.indexOf('hit')>-1?'hit':rs.indexOf('flop')>-1?'flop':rs.indexOf('fine')>-1?'fine':'';
       var note=(c[5]||'').trim();
       if(result==='flop' && tag==='repost'){ tag='refresh'; if(!note) note='New first line.'; }
-      out.push({title:c[0],platform:pick(PLATFORMS,c[1],'Other'),format:pick(FORMATS,c[2],'Post'),posted:posted,tag:tag,note:note,result:result,stats:c.slice(7).join(' ').trim(),link:''});
+      out.push({title:c[0],platform:pick(PLATFORMS,c[1],'Other'),format:pick(FORMATS,c[2],'Post'),posted:posted,tag:tag,note:note,result:result,stats:(c[7]||'').trim(),tags:parseTags(c.slice(8).join(',')),link:''});
     });
     return out;
   }
   function importSheet(){
     openSheet('Import','Import from Claude',
       '<div class="field"><label for="i-text">Paste the import list Claude gave you</label><textarea id="i-text" style="min-height:180px" placeholder="Three questions to ask before any tarot reading | Instagram | Carousel | 2026-03-04 | Repost |"></textarea>'+
-      '<div class="hint" id="i-hint">One post per line: title | platform | format | first posted | shelf | what to update | how it did | the numbers. The "Find my posts with Claude" prompt asks for exactly this.</div></div>'+
+      '<div class="hint" id="i-hint">One post per line: title | platform | format | first posted | shelf | what to update | how it did | the numbers | tags. The "Find my posts with Claude" prompt asks for exactly this.</div></div>'+
       '<div class="acts"><button class="btn ok" id="i-go" type="button">Shelve them</button></div>');
     var ta=$('i-text');
     ta.addEventListener('input',function(){
       var n=parseImport(ta.value).length;
-      $('i-hint').textContent=n?n+' post'+(n===1?'':'s')+' ready to shelve.':'One post per line: title | platform | format | first posted | shelf | what to update | how it did | the numbers.';
+      $('i-hint').textContent=n?n+' post'+(n===1?'':'s')+' ready to shelve.':'One post per line: title | platform | format | first posted | shelf | what to update | how it did | the numbers | tags.';
     });
     $('i-go').addEventListener('click',function(){
       var items=parseImport(ta.value);
@@ -712,6 +751,8 @@
   document.addEventListener('click',function(e){
     var f=e.target.closest('[data-f]');
     if(f){ var inPull=f.closest('#pchips'); if(inPull){ pfilter=f.getAttribute('data-f'); skip=0; } else sfilter=f.getAttribute('data-f'); render(); return; }
+    var tg=e.target.closest('[data-tg]');
+    if(tg){ if(tg.closest('#ptchips')){ ptag=tg.getAttribute('data-tg'); skip=0; } else stag=tg.getAttribute('data-tg'); render(); return; }
     if(e.target.closest('#another')){ skip++; render(); return; }
     var b=e.target.closest('[data-a]'); if(!b) return;
     var id=b.getAttribute('data-id') || (b.closest('.book') && b.closest('.book').getAttribute('data-id'));
