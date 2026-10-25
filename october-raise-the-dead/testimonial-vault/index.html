@@ -696,8 +696,9 @@
       '<div class="field" style="margin-top:16px"><label>Name on the card</label><div class="seg">'+nameOpts+'</div></div>'+
       '<div class="two"><div class="field"><label>Look</label><div class="seg two-seg">'+themeOpts+'</div></div>'+
       '<div class="field"><label for="c-handle">Your handle or site</label><input id="c-handle" value="'+esc(settings.handle)+'" placeholder="@yourhandle, optional" autocomplete="off"></div></div>'+
-      '<div class="acts"><button class="btn copy" id="c-dl" type="button">Download the card</button><button class="btn line" id="c-copy" type="button">Copy the quote</button></div>'+
-      '<p class="hint" style="font-size:12.5px;color:var(--ink-dim);margin-top:12px">1080 × 1350, sized for an Instagram or Facebook post. If the download does not start, press and hold (or right-click) the card and save the image.</p>');
+      '<div class="acts"><button class="btn copy" id="c-dl" type="button">Download the card</button><button class="btn line" id="c-gpt" type="button">Copy the ChatGPT prompt</button><button class="btn line" id="c-copy" type="button">Copy the quote</button></div>'+
+      '<p class="hint" style="font-size:12.5px;color:var(--ink-dim);margin-top:12px">1080 × 1350, sized for an Instagram or Facebook post. If the download does not start, press and hold (or right-click) the card and save the image.</p>'+
+      '<p class="hint" style="font-size:12.5px;color:var(--ink-dim);margin-top:8px">Want it in your brand look? Download the card, open ChatGPT, attach the card and your style guide or brand board, and paste the ChatGPT prompt.</p>');
     var cv=document.createElement('canvas');
     function redraw(){ drawCard(cv,t); try{ $('c-img').src=cv.toDataURL('image/png'); }catch(e){} }
     var fonts=['italic 500 60px "Cormorant Garamond"','600 60px "Cormorant Garamond"','600 40px "Hanken Grotesk"','500 30px "Hanken Grotesk"','500 26px "JetBrains Mono"'];
@@ -712,6 +713,7 @@
         a.download='quote-card-'+(norm(t.result||'testimonial').replace(/[^a-z0-9]+/g,'-')||'testimonial')+'.png';
         document.body.appendChild(a); a.click(); document.body.removeChild(a); setTimeout(function(){URL.revokeObjectURL(url);},800); toast('Card saved'); },'image/png');
     });
+    $('c-gpt').addEventListener('click',function(){ copy('Please create a 4:5 image using my attached style guide and testimonial card.','Prompt copied'); });
     $('c-copy').addEventListener('click',function(){ copy('“'+t.quote+'” — '+shownName(t,settings.name),'Quote copied'); });
   }
 
