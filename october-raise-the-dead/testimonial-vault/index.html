@@ -512,7 +512,7 @@
     var m=labelMap(list,field), counts={};
     list.forEach(function(t){ var k=norm(t[field]); if(k) counts[k]=(counts[k]||0)+1; });
     var keys=Object.keys(m).sort(function(a,b){ return counts[b]-counts[a] || m[a].localeCompare(m[b]); });
-    if(keys.length<2) return {html:'',sel:'All'};
+    if(keys.length<1) return {html:'',sel:'All'};
     if(sel!=='All' && !counts[norm(sel)]) sel='All';
     return {sel:sel,html:['All'].concat(keys).map(function(k){
       var on=k==='All'?sel==='All':norm(sel)===k;
