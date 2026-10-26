@@ -760,7 +760,7 @@
   var IMPORT_HINT='One per line: their words | who | source | result | offer | date | permission | brand (brand is optional).';
   function importSheet(){
     openSheet('Import','Import from Claude',
-      '<div class="field"><label for="i-text">Paste the import list Claude gave you</label><textarea id="i-text" style="min-height:180px" placeholder="I booked three clients the week after we rewrote my booking page | Dee | Email | More bookings | Business session | 2026-03-04 | Ask"></textarea>'+
+      '<div class="field"><label for="i-text">Paste the import list Claude gave you</label><textarea id="i-text" style="min-height:180px" placeholder="I booked three clients the week after we rewrote my booking page | Dee | Email | More bookings | Business session | 2026-03-04 | Ask | Moonrise Coaching"></textarea>'+
       '<div class="hint" id="i-hint">'+IMPORT_HINT+' The "Find my testimonials with Claude" prompt asks for exactly this.</div></div>'+
       '<div class="acts"><button class="btn ok" id="i-go" type="button">Put them in the vault</button></div>');
     var ta=$('i-text');
