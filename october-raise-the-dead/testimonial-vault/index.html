@@ -306,7 +306,8 @@
 
   <!-- TODAY'S PROOF -->
   <section class="view on" id="v-pull">
-    <div class="chips" id="pchips" role="group" aria-label="Proof for a result" style="margin-top:20px"></div>
+    <div class="chips" id="pbchips" role="group" aria-label="Proof for a brand" style="margin-top:20px"></div>
+    <div class="chips" id="pchips" role="group" aria-label="Proof for a result" style="margin-top:8px"></div>
     <div class="section-label" id="pull-label">Share this one</div>
     <section class="pull" id="pull"></section>
     <div id="log-wrap">
@@ -319,12 +320,13 @@
   <section class="view" id="v-vault">
     <div class="section-label">How the vault works</div>
     <div class="tagkey">
-      <div><b>The result</b>What changed for your client, in a few words: more bookings, clarity, confidence. The vault sorts by it, so you can find proof for whatever you are selling.</div>
+      <div><b>The result</b>What changed for your client, in a few words: more bookings, clarity, confidence. The vault sorts by it, and by brand and offer, so you can find proof for whatever you are selling.</div>
       <div><b>Permission</b>Yes means you can share it. Ask means it came in privately, so ask first; the vault gives you a message for that. Keep private stays in the vault for you.</div>
       <div><b>The card</b>Any testimonial becomes a quote card in one tap. Full name, first name or anonymous, light or dark, sized for a post.</div>
     </div>
     <div class="acts" style="margin-top:20px"><button class="btn copy" data-add type="button">+ Add a testimonial</button></div>
-    <div class="chips" id="schips" role="group" aria-label="Show testimonials by offer" style="margin-top:16px"></div>
+    <div class="chips" id="sbchips" role="group" aria-label="Show testimonials by brand" style="margin-top:16px"></div>
+    <div class="chips" id="schips" role="group" aria-label="Show testimonials by offer" style="margin-top:8px"></div>
     <div id="vault"></div>
   </section>
 
@@ -402,7 +404,8 @@
   function lastUsed(t){ return t.uses && t.uses.length ? t.uses[t.uses.length-1] : ''; }
   function norm(s){ return String(s||'').trim().toLowerCase(); }
   function labelMap(list,field){ var m={}; list.forEach(function(t){ var k=norm(t[field]); if(k && !m[k]) m[k]=t[field].trim(); }); return m; }
-  var rfilter='All', ofilter='All', skip=0;
+  var rfilter='All', ofilter='All', bfilter='All', skip=0;
+  function inBrand(t){ return bfilter==='All' || norm(t.brand)===norm(bfilter); }
 
   /* who to show on a card */
   function firstName(who){
@@ -419,7 +422,7 @@
   /* today's proof: shareable first, then ask; least recently shared first */
   function candidates(){
     return state.items.filter(function(t){
-      return t.perm!=='no' && (rfilter==='All' || norm(t.result)===norm(rfilter));
+      return t.perm!=='no' && inBrand(t) && (rfilter==='All' || norm(t.result)===norm(rfilter));
     }).sort(function(a,b){
       var d=PERM_ORDER.indexOf(a.perm)-PERM_ORDER.indexOf(b.perm); if(d) return d;
       var ua=lastUsed(a)||'0', ub=lastUsed(b)||'0'; if(ua!==ub) return ua<ub?-1:1;
@@ -428,7 +431,7 @@
   }
 
   function itemLine(t){
-    return '"'+t.quote+'"'+(t.who?' | Who: '+t.who:'')+(t.result?' | Result: '+t.result:'')+(t.offer?' | Offer: '+t.offer:'')+
+    return '"'+t.quote+'"'+(t.who?' | Who: '+t.who:'')+(t.result?' | Result: '+t.result:'')+(t.offer?' | Offer: '+t.offer:'')+(t.brand?' | Brand: '+t.brand:'')+
       ' | Source: '+t.source+(t.date?' | Date: '+nice(t.date):'')+' | Permission: '+PERM[t.perm].n;
   }
   function listOf(ts){ return ts.map(function(t,k){ return (k+1)+'. '+itemLine(t); }).join('\n'); }
@@ -438,7 +441,7 @@
       "Their words: \""+t.quote+"\"\n"+
       "Who: "+(t.who||'[keep them anonymous]')+"\n"+
       (t.result?"The result they got: "+t.result+"\n":"")+
-      (t.offer?"What they worked with me on: "+t.offer+"\n":"")+"\n"+
+      (t.offer?"What they worked with me on: "+t.offer+"\n":"")+(t.brand?"Brand: "+t.brand+"\n":"")+"\n"+
       "1. Ask me where I am posting it and what I sell now before you write anything.\n"+
       "2. Write the post in my voice: where they were, what changed, then their words exactly as written. You may trim for length. Never change the meaning.\n"+
       "3. End with one line inviting the reader to the same offer, with my link.\n"+
@@ -460,15 +463,16 @@
     "   Yes: it was already public, such as a review or a public comment, or they told me I can share it.\n"+
     "   Ask: it came privately, such as a DM, email or text.\n"+
     "   Keep private: anything personal I should not share.\n\n"+
-    "6. Give me the full list as an import list I can paste into my Testimonial Vault. Put it in one code block, one testimonial per line, seven parts separated by | in this order:\n"+
-    "Their words | Who | Source | Result | Offer | Date | Permission\n"+
+    "6. Give me the full list as an import list I can paste into my Testimonial Vault. Put it in one code block, one testimonial per line, eight parts separated by | in this order:\n"+
+    "Their words | Who | Source | Result | Offer | Date | Permission | Brand\n"+
     "   Who is their name as they gave it, or empty if I do not know.\n"+
     "   Source is one of: "+SOURCES.join(", ")+".\n"+
     "   Offer is what they worked with me on, in a few words.\n"+
     "   Date is YYYY-MM-DD. If you only know the month, use the 1st. If you do not know, leave it empty.\n"+
     "   Permission is Yes, Ask or Keep private.\n"+
+    "   Brand is which of my businesses it belongs to. Ask me my brand names first if I run more than one; if I run one, leave it empty.\n"+
     "   No header line, no numbering, no quotation marks around their words, and never use | inside their words.\n"+
-    "   Example: I booked three clients the week after we rewrote my booking page | Dee | Email | More bookings | Business session | 2026-03-04 | Ask\n\n"+
+    "   Example: I booked three clients the week after we rewrote my booking page | Dee | Email | More bookings | Business session | 2026-03-04 | Ask | \n\n"+
     "Only use what you find and what I paste. Never write or improve a testimonial.\n\n"+
     "Places I already know about (optional):\n";
   }
@@ -521,7 +525,7 @@
   function cardHTML(t){
     var lu=lastUsed(t), link=safeUrl(t.link);
     return '<article class="book qcard '+t.perm+'" data-id="'+t.id+'">'+
-      '<div class="ty">'+permPill(t)+esc(t.source)+(t.offer?' · '+esc(t.offer):'')+'</div>'+
+      '<div class="ty">'+permPill(t)+esc(t.source)+(t.brand?' · '+esc(t.brand):'')+(t.offer?' · '+esc(t.offer):'')+'</div>'+
       '<blockquote>'+esc(t.quote)+'</blockquote>'+
       '<div class="who">'+(t.who?esc(t.who):'Name not saved')+'</div>'+
       '<div class="when">'+(t.date?nice(t.date):'Date not set')+(lu?' · shared '+nice(lu)+(t.uses.length>1?' ('+t.uses.length+' times)':''):'')+
@@ -546,7 +550,9 @@
     $('ex-note').classList.toggle('on',all.some(function(t){return t.example;}));
 
     /* today's proof */
-    var pc=chipsHTML(rfilter,open,'result','Every result','data-r'); rfilter=pc.sel; $('pchips').innerHTML=pc.html;
+    var bc=chipsHTML(bfilter,all,'brand','Every brand','data-b'); bfilter=bc.sel; $('pbchips').innerHTML=bc.html; $('sbchips').innerHTML=bc.html;
+    var openB=open.filter(inBrand);
+    var pc=chipsHTML(rfilter,openB,'result','Every result','data-r'); rfilter=pc.sel; $('pchips').innerHTML=pc.html;
     var cand=candidates(), sp=$('pull');
     if(skip>=cand.length) skip=0;
     var t=cand[skip];
@@ -560,7 +566,7 @@
           (t.perm==='ask'?'<button class="btn copy" data-a="ask" data-id="'+t.id+'" type="button">Copy the ask</button><button class="btn ok" data-a="allow" data-id="'+t.id+'" type="button">They said yes</button>':
             '<button class="btn copy" data-a="card" data-id="'+t.id+'" type="button">Make the quote card</button><button class="btn line" data-a="prompt" data-id="'+t.id+'" type="button">Post prompt</button><button class="btn ok" data-a="used" data-id="'+t.id+'" type="button">I shared it</button>')+
           (cand.length>1?'<button class="btn line" id="another" type="button">Hand me another</button>':'')+'</div>'+
-        '<p class="hint">'+(cand.length>1?(skip+1)+' of '+cand.length+(rfilter!=='All'?' for '+esc(rfilter):'')+'. ':'')+'The ones you can share come first, the ones you have shared least before the rest.</p>';
+        '<p class="hint">'+(cand.length>1?(skip+1)+' of '+cand.length+(rfilter!=='All'?' for '+esc(rfilter):'')+(bfilter!=='All'?' in '+esc(bfilter):'')+'. ':'')+'The ones you can share come first, the ones you have shared least before the rest.</p>';
     } else {
       sp.innerHTML='<p class="empty">'+(all.length?'Everything in the vault is marked Keep private. Mark one Yes or Ask to see it here.':'Your vault is empty. Add a testimonial above, or copy the Find prompt and let Claude help you dig them up.')+'</p>';
     }
@@ -574,8 +580,9 @@
     }).join('');
 
     /* the vault, grouped by result */
-    var oc=chipsHTML(ofilter,all,'offer','Every offer','data-o'); ofilter=oc.sel; $('schips').innerHTML=oc.html;
-    var fl=all.filter(function(x){ return ofilter==='All' || norm(x.offer)===norm(ofilter); });
+    var allB=all.filter(inBrand);
+    var oc=chipsHTML(ofilter,allB,'offer','Every offer','data-o'); ofilter=oc.sel; $('schips').innerHTML=oc.html;
+    var fl=allB.filter(function(x){ return ofilter==='All' || norm(x.offer)===norm(ofilter); });
     var groups={}, names=labelMap(fl,'result');
     fl.forEach(function(x){ var k=norm(x.result)||'~'; (groups[k]=groups[k]||[]).push(x); });
     var keys=Object.keys(groups).sort(function(a,b){ if(a==='~') return 1; if(b==='~') return -1; return groups[b].length-groups[a].length || a.localeCompare(b); });
@@ -619,7 +626,7 @@
     return '<datalist id="'+id+'">'+Object.keys(m).map(function(k){ return '<option value="'+esc(m[k])+'">'; }).join('')+'</datalist>';
   }
   function editForm(t){
-    var isNew=!t; t=t||{quote:'',who:'',source:'DM',result:'',offer:'',date:'',perm:'ask',link:''};
+    var isNew=!t; t=t||{quote:'',who:'',source:'DM',result:'',offer:'',brand:'',date:'',perm:'ask',link:''};
     var srcOpts=SOURCES.map(function(s){return '<option'+(s===t.source?' selected':'')+'>'+s+'</option>';}).join('');
     var seg=PERM_ORDER.map(function(p){return '<label><input type="radio" name="f-perm" value="'+p+'"'+(p===t.perm?' checked':'')+'><span>'+PERM[p].n+'</span></label>';}).join('');
     openSheet(isNew?'New testimonial':'Edit testimonial', isNew?'Add a testimonial':'Edit testimonial',
@@ -628,6 +635,7 @@
       '<div class="field"><label for="f-source">Where it came from</label><select id="f-source">'+srcOpts+'</select></div></div>'+
       '<div class="two"><div class="field"><label for="f-result">The result it proves</label><input id="f-result" list="f-rlist" value="'+esc(t.result)+'" placeholder="More bookings, Clarity…" autocomplete="off">'+datalist('f-rlist','result')+'</div>'+
       '<div class="field"><label for="f-offer">What they worked with you on</label><input id="f-offer" list="f-olist" value="'+esc(t.offer)+'" placeholder="Tarot reading" autocomplete="off">'+datalist('f-olist','offer')+'</div></div>'+
+      '<div class="field"><label for="f-brand">Brand</label><input id="f-brand" list="f-blist" value="'+esc(t.brand)+'" placeholder="Only if you run more than one" autocomplete="off">'+datalist('f-blist','brand')+'<div class="hint">Which of your businesses it belongs to. The vault sorts by it.</div></div>'+
       '<div class="field"><label>Can you share it?</label><div class="seg">'+seg+'</div><div class="hint">Yes: it was public, or they said yes. Ask: it came privately. Keep private: it stays in the vault.</div></div>'+
       '<div class="two"><div class="field"><label for="f-date">When they said it</label><input id="f-date" type="date" value="'+esc(t.date)+'"><div class="hint">A rough date is fine.</div></div>'+
       '<div class="field"><label for="f-link">Link</label><input id="f-link" value="'+esc(t.link)+'" placeholder="Optional, such as the review" autocomplete="off"></div></div>'+
@@ -637,7 +645,7 @@
       var q=$('f-quote').value.trim(); if(!q){ $('f-quote').focus(); return; }
       var pm=document.querySelector('input[name=f-perm]:checked');
       var data={quote:q,who:$('f-who').value.trim(),source:$('f-source').value,result:snap($('f-result').value,'result'),
-        offer:snap($('f-offer').value,'offer'),perm:pm?pm.value:'ask',date:$('f-date').value,link:$('f-link').value.trim()};
+        offer:snap($('f-offer').value,'offer'),brand:snap($('f-brand').value,'brand'),perm:pm?pm.value:'ask',date:$('f-date').value,link:$('f-link').value.trim()};
       if(isNew){ state.items.push(Object.assign({id:uid(),uses:[],example:false},data)); toast('In the vault'); }
       else { Object.assign(t,data); t.example=false; toast('Saved'); }
       skip=0; save(); render(); closeSheet();
@@ -744,12 +752,12 @@
       var q=c[0].replace(/^["“”']+|["“”']+$/g,'').trim(); if(!q) return;
       var pm=norm(c[6]), perm=pm.indexOf('yes')===0?'yes':(pm.indexOf('private')>-1||pm==='no')?'no':'ask';
       var d=(c[5]||'').match(/(\d{4})-(\d{1,2})(?:-(\d{1,2}))?/);
-      out.push({quote:q,who:c[1]||'',source:pick(SOURCES,c[2],'Other'),result:c[3]||'',offer:c[4]||'',
+      out.push({quote:q,who:c[1]||'',source:pick(SOURCES,c[2],'Other'),result:c[3]||'',offer:c[4]||'',brand:c[7]||'',
         date:d?d[1]+'-'+String(d[2]).padStart(2,'0')+'-'+String(d[3]||1).padStart(2,'0'):'',perm:perm,link:''});
     });
     return out;
   }
-  var IMPORT_HINT='One per line: their words | who | source | result | offer | date | permission.';
+  var IMPORT_HINT='One per line: their words | who | source | result | offer | date | permission | brand (brand is optional).';
   function importSheet(){
     openSheet('Import','Import from Claude',
       '<div class="field"><label for="i-text">Paste the import list Claude gave you</label><textarea id="i-text" style="min-height:180px" placeholder="I booked three clients the week after we rewrote my booking page | Dee | Email | More bookings | Business session | 2026-03-04 | Ask"></textarea>'+
@@ -765,7 +773,7 @@
       var added=0, dup=0;
       items.forEach(function(x){
         if(have[norm(x.quote)]){ dup++; return; } have[norm(x.quote)]=1;
-        x.result=snap(x.result,'result'); x.offer=snap(x.offer,'offer');
+        x.result=snap(x.result,'result'); x.offer=snap(x.offer,'offer'); x.brand=snap(x.brand,'brand');
         state.items.push(Object.assign({id:uid(),uses:[],example:false},x)); added++;
       });
       skip=0; save(); render(); closeSheet(); showTab('vault');
@@ -776,11 +784,11 @@
 
   /* export */
   function cell(v){ return String(v==null?'':v).replace(/\|/g,'/').replace(/\s*\r?\n\s*/g,' ').trim(); }
-  function exportRows(ts){ return ts.map(function(t){ return [t.quote,t.who,t.source,t.result,t.offer,t.date||'',PERM[t.perm].n].map(cell).join(' | '); }).join('\n'); }
+  function exportRows(ts){ return ts.map(function(t){ return [t.quote,t.who,t.source,t.result,t.offer,t.date||'',PERM[t.perm].n,t.brand||''].map(cell).join(' | '); }).join('\n'); }
   function csvCell(v){ v=String(v==null?'':v); return /[",\r\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v; }
   function exportCSV(ts){
-    var head=['Their words','Who','Source','Result','Offer','Date','Permission','Link','Times shared','Last shared'];
-    return [head].concat(ts.map(function(t){ return [t.quote,t.who,t.source,t.result,t.offer,t.date||'',PERM[t.perm].n,safeUrl(t.link),(t.uses||[]).length,lastUsed(t)]; }))
+    var head=['Their words','Who','Source','Result','Offer','Date','Permission','Brand','Link','Times shared','Last shared'];
+    return [head].concat(ts.map(function(t){ return [t.quote,t.who,t.source,t.result,t.offer,t.date||'',PERM[t.perm].n,t.brand||'',safeUrl(t.link),(t.uses||[]).length,lastUsed(t)]; }))
       .map(function(r){ return r.map(csvCell).join(','); }).join('\r\n');
   }
   function exportSheet(){
@@ -813,6 +821,7 @@
   document.addEventListener('click',function(e){
     var r=e.target.closest('[data-r]'); if(r){ rfilter=r.getAttribute('data-r'); skip=0; render(); return; }
     var o=e.target.closest('[data-o]'); if(o){ ofilter=o.getAttribute('data-o'); render(); return; }
+    var bb=e.target.closest('[data-b]'); if(bb){ bfilter=bb.getAttribute('data-b'); ofilter='All'; rfilter='All'; skip=0; render(); return; }
     if(e.target.closest('#another')){ skip++; render(); return; }
     if(e.target.closest('[data-import]')){ importSheet(); return; }
     if(e.target.closest('[data-export]')){ exportSheet(); return; }
