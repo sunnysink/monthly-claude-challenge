@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Monthly Claude Challenge · November: Holiday Ready</title>
+<meta name="description" content="November&#x27;s Claude challenge: 25 prompts to build and sell one offer before the holidays, plus a free Spark every Saturday.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Holiday Ready: November's Monthly Claude Challenge">
+<meta property="og:description" content="November&#x27;s Claude challenge: 25 prompts to build and sell one offer before the holidays, plus a free Spark every Saturday.">
+<meta property="og:url" content="https://sunnysink.github.io/monthly-claude-challenge/november-holiday-ready/">
+<meta property="og:image" content="https://sunnysink.github.io/monthly-claude-challenge/november-holiday-ready/preview.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Holiday Ready: November's Monthly Claude Challenge">
+<meta name="twitter:description" content="November&#x27;s Claude challenge: 25 prompts to build and sell one offer before the holidays, plus a free Spark every Saturday.">
+<meta name="twitter:image" content="https://sunnysink.github.io/monthly-claude-challenge/november-holiday-ready/preview.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ───────────────────────────────────────────────────────────
+     THE MONTHLY SKIN — change this block, get a new month.
+     Every colour in the file reads from here, so the layout never moves.
+
+     NOVEMBER · HOLIDAY READY — "hearth and frost" 🎁
+     Midnight blue under candlelight, cranberry and ribbon gold,
+     pine and frost as the cool notes. A dark month, so no data-mode="light".
+     ─────────────────────────────────────────────────────────── */
+  :root{
+    --bg:#10141C; --bg2:#1A2030; --ink:#F3EEE6; --ink-dim:#B3ADA6;
+    --copper:#C9A35C; --copper-lt:#EBD9AE; --ember:#CF5B67; --ember-glow:#E8A2A8;
+    --forest:#3E7A62; --mauve:#8E9BC0; --gold:#F0D58C;
+    --green:#6FAF8F;
+    --heading:#E9C77A;   /* ribbon gold: square names, spark titles, the Ember Keeper */
+    /* same colours as rgb triples, so alpha variants track the skin */
+    --copper-rgb:201,163,92;    --copper-lt-rgb:235,217,174;
+    --ember-rgb:207,91,103;     --ember-glow-rgb:232,162,168;
+    --gold-rgb:240,213,140;     --mauve-rgb:142,155,192;
+    --forest-rgb:62,122,98;     --green-rgb:111,175,143;
+    --card-rgb:30,36,52;
+    --bg-rgb:16,20,28;    --bg2-rgb:26,32,48;
+    --veil-rgb:7,9,13;       --well-rgb:18,22,32;   --sheet-rgb:32,38,56;
+    --serif:'Cormorant Garamond','Hoefler Text',Georgia,serif;
+    --sans:'Hanken Grotesk',system-ui,-apple-system,sans-serif;
+    --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;
+    --card:rgba(var(--card-rgb),0.70); --cardborder:rgba(var(--copper-rgb),0.24);
+    --glow-a:rgba(var(--ember-rgb),0.16);
+    --glow-b:rgba(var(--forest-rgb),0.14);
+    --glow-c:rgba(var(--copper-rgb),0.12);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:var(--sans);color:var(--ink);background:var(--bg);
+    background-image:
+      radial-gradient(900px 520px at 10% -10%, var(--glow-a), transparent 60%),
+      radial-gradient(820px 500px at 100% 0%, var(--glow-b), transparent 55%),
+      radial-gradient(760px 620px at 55% 120%, var(--glow-c), transparent 60%);
+    min-height:100vh;padding:44px 22px 80px;position:relative;overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;line-height:1.65;
+  }
+  .embers{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+  .ember{position:absolute;bottom:-12px;width:3px;height:3px;border-radius:50%;
+    background:var(--ember-glow);box-shadow:0 0 6px 1px rgba(var(--ember-glow-rgb),0.6);
+    opacity:0;animation:rise linear infinite}
+  @keyframes rise{0%{transform:translateY(0) translateX(0);opacity:0}
+    12%{opacity:.7}100%{transform:translateY(-104vh) translateX(26px);opacity:0}}
+  .wrap{max-width:1080px;margin:0 auto;position:relative;z-index:1}
+
+  /* header */
+  header{text-align:center;margin-bottom:34px}
+  .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.34em;text-transform:uppercase;
+    color:var(--copper);opacity:.9;margin-bottom:12px}
+  h1{font-family:var(--serif);font-weight:600;font-size:clamp(46px,8vw,84px);line-height:.95;
+    background:linear-gradient(92deg,var(--copper-lt),var(--ember-glow) 38%,var(--gold) 70%,var(--copper));
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:.5px}
+  .sub{font-family:var(--serif);font-style:italic;font-size:clamp(19px,2.4vw,25px);
+    color:var(--ink-dim);margin-top:10px}
+
+  /* stat strip */
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin:30px 0 34px}
+  .stat{background:var(--card);border:1px solid var(--cardborder);border-radius:16px;
+    padding:19px 16px;text-align:center;backdrop-filter:blur(14px);position:relative;overflow:hidden}
+  .stat::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+    background:linear-gradient(180deg,var(--copper),var(--ember),var(--gold))}
+  .stat .n{font-family:var(--serif);font-size:42px;font-weight:600;line-height:1;color:var(--copper-lt)}
+  .stat.live .n{color:var(--ember-glow)}
+  .stat .l{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--ink-dim);margin-top:8px}
+  @media(max-width:620px){.stats{grid-template-columns:1fr;gap:10px}
+    .stat{display:flex;align-items:center;justify-content:space-between;text-align:left;padding:14px 18px}
+    .stat .n{font-size:30px}.stat .l{margin-top:0}}
+
+  .section-label{font-family:var(--mono);font-size:11px;letter-spacing:.28em;text-transform:uppercase;
+    color:var(--ink-dim);margin:44px 0 16px;display:flex;align-items:center;gap:12px}
+  .section-label::after{content:"";flex:1;height:1px;
+    background:linear-gradient(90deg,rgba(var(--copper-rgb),0.35),transparent)}
+
+  /* rules */
+  .rules{background:var(--card);border:1px solid var(--cardborder);border-radius:16px;
+    padding:24px 26px;backdrop-filter:blur(14px)}
+  .rules ol{list-style:none;counter-reset:r;display:flex;flex-direction:column;gap:13px}
+  /* ⚠️ do NOT make this a flex row. A flex container turns every bare
+     run of text into its own anonymous column, so a line with two <b>
+     tags in it breaks into four columns side by side. The number is
+     positioned instead, which lets the sentence flow as one paragraph. */
+  .rules li{counter-increment:r;position:relative;padding-left:38px;
+    font-size:15px;line-height:1.65;color:var(--ink-dim)}
+  .rules li::before{content:counter(r);position:absolute;left:0;top:1px;
+    font-family:var(--mono);font-size:11px;font-weight:700;
+    color:var(--copper);border:1px solid rgba(var(--copper-rgb),.45);border-radius:50%;
+    width:24px;height:24px;display:grid;place-items:center}
+  .rules b{color:var(--ink)}
+  .prize{margin-top:22px;padding-top:20px;border-top:1px solid rgba(var(--copper-rgb),.18);
+    display:grid;grid-template-columns:auto 1fr;gap:22px;align-items:center}
+  .prize .amtwrap{text-align:center;padding-right:22px;border-right:1px solid rgba(var(--copper-rgb),.18)}
+  .prize .amt{font-family:var(--serif);font-size:52px;font-weight:600;color:var(--gold);
+    line-height:.9;display:block}
+  .prize .amtlbl{font-family:var(--mono);font-size:8.5px;letter-spacing:.24em;text-transform:uppercase;
+    color:var(--ink-dim);display:block;margin-top:7px}
+  .prize p{font-size:14.5px;color:var(--ink-dim);max-width:none;line-height:1.7}
+  @media(max-width:620px){
+    .prize{grid-template-columns:1fr;gap:14px;text-align:center}
+    .prize .amtwrap{padding-right:0;border-right:none;padding-bottom:14px;
+      border-bottom:1px solid rgba(var(--copper-rgb),.18)}
+  }
+
+  /* board */
+  .board{display:grid;grid-template-columns:repeat(5,1fr) 52px;gap:10px}
+  .sq{position:relative;aspect-ratio:1;background:var(--card);border:1px solid var(--cardborder);
+    border-radius:13px;padding:14px 11px;cursor:pointer;backdrop-filter:blur(12px);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;
+    text-align:center;overflow:hidden;
+    transition:transform .18s,border-color .18s,box-shadow .18s,background .25s}
+  /* inset hairline, the bit that makes it read as a pressed tile */
+  .sq::before{content:"";position:absolute;inset:5px;border-radius:9px;
+    border:1px solid rgba(var(--copper-rgb),.13);pointer-events:none;transition:border-color .2s}
+  .sq:hover{transform:translateY(-3px);border-color:rgba(var(--copper-lt-rgb),.6);
+    box-shadow:0 14px 34px -18px rgba(var(--ember-rgb),.7)}
+  .sq:hover::before{border-color:rgba(var(--copper-rgb),.3)}
+  .sq .num{font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.18em;
+    color:var(--copper);opacity:.7;position:relative;z-index:1}
+  .sq .nm{font-family:var(--serif);font-size:clamp(13px,1.5vw,19px);font-weight:600;
+    line-height:1.16;color:var(--heading);position:relative;z-index:1;max-width:94%}
+  /* hairline rule under the number, a small piece of metalwork */
+  .sq .num::after{content:"";display:block;width:16px;height:1px;margin:6px auto 0;
+    background:linear-gradient(90deg,transparent,var(--copper),transparent);opacity:.55}
+  .sq.done{background:linear-gradient(155deg,rgba(var(--copper-rgb),.28),rgba(var(--card-rgb),.84));
+    border-color:rgba(var(--copper-lt-rgb),.62)}
+  .sq.done::before{border-color:rgba(var(--copper-lt-rgb),.28)}
+  .sq.done .nm{color:var(--copper-lt)}
+  .sq.done .num{opacity:.9}
+  .sq .mark{position:absolute;top:9px;right:10px;width:16px;height:16px;border-radius:50%;
+    border:1.5px solid rgba(var(--copper-rgb),.4);display:grid;place-items:center;
+    font-size:9px;color:var(--on-accent);font-weight:700;z-index:2;transition:all .2s}
+  .sq.done .mark{background:var(--copper);border-color:var(--copper);
+    box-shadow:0 0 10px rgba(var(--copper-rgb),.55)}
+  .sq.done .mark::after{content:"\2713"}
+  .sq.free{background:linear-gradient(150deg,rgba(var(--ember-rgb),.22),rgba(var(--card-rgb),.82));
+    border-color:rgba(var(--ember-rgb),.5);cursor:pointer;align-items:center;justify-content:center;text-align:center}
+  .sq.free:hover{transform:translateY(-3px);box-shadow:0 14px 34px -18px rgba(var(--ember-rgb),.7)}
+  .sq.free .nm{font-size:clamp(12px,1.5vw,17px);color:var(--ember-glow)}
+  .sq.free .glyph{font-size:24px;line-height:1;margin-bottom:4px}
+  .sq.free .freehint{font-family:var(--mono);font-size:7.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--gold);margin-bottom:5px}
+  .sq.inline{outline:1.5px solid rgba(var(--gold-rgb),.75);outline-offset:-1.5px}
+  @media(max-width:560px){.sq{padding:8px 7px;border-radius:10px}
+    .board{gap:6px;grid-template-columns:repeat(5,1fr) 34px}}
+
+  /* the bingo slot that appears at the end of a finished row or column */
+  .bslot{border:none;background:none;padding:0;cursor:default;opacity:0;
+    display:grid;place-items:center;border-radius:11px;
+    font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.12em;
+    color:var(--on-accent);transition:opacity .35s ease,transform .18s,box-shadow .18s}
+  .bslot.won{opacity:1;cursor:pointer;
+    background:linear-gradient(150deg,var(--gold),var(--ember));
+    box-shadow:0 0 16px -2px rgba(var(--gold-rgb),.6)}
+  .bslot.won:hover{transform:translateY(-3px);box-shadow:0 10px 26px -10px rgba(var(--ember-rgb),.85)}
+  .bslot .bw{writing-mode:vertical-rl;text-orientation:mixed}
+  .board > .bslot:nth-last-child(-n+5) .bw{writing-mode:horizontal-tb}
+  @media(max-width:560px){.bslot{font-size:7.5px}}
+
+  /* detail modal */
+  .veil{position:fixed;inset:0;background:rgba(var(--veil-rgb),.82);backdrop-filter:blur(7px);
+    z-index:60;display:none;align-items:flex-start;justify-content:center;padding:34px 18px;overflow-y:auto}
+  .veil.on{display:flex}
+  .sheet{background:linear-gradient(150deg,rgba(var(--sheet-rgb),.97),rgba(var(--bg-rgb),.99));
+    border:1px solid rgba(var(--copper-rgb),.36);border-radius:18px;max-width:660px;width:100%;
+    padding:30px 30px 26px;position:relative;box-shadow:0 30px 90px -30px #000}
+  .sheet .num{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--copper)}
+  .sheet h3{font-family:var(--serif);font-size:33px;font-weight:600;line-height:1.1;margin:7px 0 5px;color:var(--heading)}
+  .sheet .job{font-size:14.5px;color:var(--ink-dim);margin-bottom:20px}
+  .close{position:absolute;top:15px;right:17px;background:none;border:none;color:var(--ink-dim);
+    font-size:25px;cursor:pointer;line-height:1;padding:4px 8px}
+  .close:hover{color:var(--ember-glow)}
+  .pbox{background:rgba(var(--well-rgb),.72);border:1px solid rgba(var(--copper-rgb),.2);border-radius:12px;
+    padding:19px 20px;font-family:var(--mono);font-size:12.5px;line-height:1.78;
+    color:var(--well-ink);white-space:pre-wrap;max-height:44vh;overflow-y:auto}
+  .acts{display:flex;gap:11px;margin-top:17px;flex-wrap:wrap}
+  .btn{border:none;border-radius:30px;padding:12px 24px;font-family:var(--sans);font-size:14px;
+    font-weight:700;cursor:pointer;transition:transform .18s,box-shadow .18s}
+  .btn.copy{background:linear-gradient(135deg,var(--copper),var(--ember));color:var(--on-accent)}
+  .btn.mark{background:transparent;color:var(--copper-lt);border:1.5px solid rgba(var(--copper-rgb),.5)}
+  .btn.mark.is{background:rgba(var(--green-rgb),.16);color:var(--green);border-color:rgba(var(--green-rgb),.5)}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 8px 22px -8px rgba(var(--ember-rgb),.6)}
+  .btn.ok{background:linear-gradient(135deg,var(--forest),var(--green));color:var(--on-accent)}
+
+  /* generic panel */
+  .panel{background:var(--card);border:1px solid var(--cardborder);border-radius:16px;
+    padding:24px 26px;backdrop-filter:blur(14px)}
+  .panel p{font-size:15px;color:var(--ink-dim);margin-bottom:12px}
+  .panel p:last-child{margin-bottom:0}
+  .panel b{color:var(--ink)}
+  .tmpl{background:rgba(var(--well-rgb),.72);border:1px solid rgba(var(--copper-rgb),.2);border-radius:12px;
+    padding:18px 20px;font-family:var(--mono);font-size:12.5px;line-height:1.85;
+    color:var(--well-ink);white-space:pre-wrap;margin-top:6px}
+
+  /* completed lines — one copyable post per bingo */
+  .bingos{display:none;margin-top:13px}
+  .bingos.on{display:block}
+  .bingo{display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+    background:linear-gradient(140deg,rgba(var(--gold-rgb),.16),rgba(var(--card-rgb),.84));
+    border:1px solid rgba(var(--gold-rgb),.45);border-radius:14px;
+    padding:16px 20px;margin-bottom:10px}
+  .bingo .bn{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--heading);flex:none}
+  .bingo .bd{font-size:13.5px;color:var(--ink-dim);flex:1;min-width:150px}
+  .bingo button{flex:none;border:none;border-radius:30px;padding:10px 20px;
+    font-family:var(--sans);font-size:13.5px;font-weight:700;cursor:pointer;
+    background:linear-gradient(135deg,var(--copper),var(--ember));color:var(--on-accent);
+    transition:transform .18s,box-shadow .18s}
+  .bingo button:hover{transform:translateY(-2px);box-shadow:0 8px 22px -8px rgba(var(--ember-rgb),.6)}
+  @media(max-width:520px){.bingo{gap:10px}.bingo button{width:100%}}
+
+  /* board tools — clear all + copy my links */
+  .boardtools{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:13px}
+  .tool{background:none;border:1px solid rgba(var(--copper-rgb),.34);border-radius:30px;
+    padding:8px 17px;font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;
+    text-transform:uppercase;color:var(--ink-dim);cursor:pointer;
+    transition:color .18s,border-color .18s,background .18s}
+  .tool:hover{color:var(--ember-glow);border-color:rgba(var(--ember-rgb),.6);
+    background:rgba(var(--ember-rgb),.07)}
+  .tool.danger:hover{color:var(--mauve);border-color:rgba(var(--mauve-rgb),.6);
+    background:rgba(var(--mauve-rgb),.07)}
+  @media(max-width:520px){.boardtools{justify-content:stretch}.tool{flex:1;text-align:center}}
+
+  /* optional post link, inside the square sheet */
+  .linkwrap{margin-top:16px;padding-top:15px;border-top:1px solid rgba(var(--copper-rgb),.18)}
+  .linkwrap label{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--ink-dim);margin-bottom:8px}
+  .linkwrap input{width:100%;background:rgba(var(--well-rgb),.5);
+    border:1px solid rgba(var(--copper-rgb),.28);border-radius:10px;padding:11px 14px;
+    font-family:var(--mono);font-size:12.5px;color:var(--ink);outline:none;
+    transition:border-color .18s}
+  .linkwrap input:focus{border-color:rgba(var(--ember-rgb),.65)}
+  .linkwrap input::placeholder{color:var(--ink-dim);opacity:.55}
+  .linkwrap .hint{font-size:12px;color:var(--ink-dim);margin-top:8px;opacity:.85}
+
+  /* unlocks */
+  .sparklead{font-size:15px;color:var(--ink-dim);margin-bottom:15px}
+  .sparklead b{color:var(--ink)}
+  .unlocks{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:13px}
+  .unlock{background:var(--card);border:1px dashed rgba(var(--copper-rgb),.34);border-radius:14px;
+    padding:19px 18px;backdrop-filter:blur(12px);position:relative}
+  .freetag{position:absolute;top:15px;right:15px;font-family:var(--mono);font-size:8.5px;
+    font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--on-accent);
+    background:linear-gradient(135deg,var(--ember),var(--copper));
+    padding:4px 9px;border-radius:20px;line-height:1}
+  .unlock .u{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--mauve);margin-bottom:9px}
+  .unlock h4{font-family:var(--serif);font-size:20px;font-weight:600;margin-bottom:6px;color:var(--heading)}
+  .unlock p{font-size:12.5px;color:var(--ink-dim);line-height:1.5}
+  .unlock.open{border-style:solid;border-color:rgba(var(--gold-rgb),.55)}
+  .unlock.open .u{color:var(--gold)}
+  .unlock a{color:var(--copper-lt);font-weight:600}
+
+  .keeper{background:linear-gradient(140deg,rgba(var(--gold-rgb),.15),rgba(var(--card-rgb),.84));
+    border:1px solid rgba(var(--gold-rgb),.4);border-radius:16px;padding:30px 30px 28px;
+    backdrop-filter:blur(14px);text-align:center}
+  .keeper .crownrow{display:flex;align-items:center;justify-content:center;gap:13px;margin-bottom:12px}
+  .keeper svg{width:34px;height:34px;flex:none;
+    filter:drop-shadow(0 0 9px rgba(var(--gold-rgb),.45))}
+  .keeper h4{font-family:var(--serif);font-size:31px;font-weight:600;color:var(--heading);line-height:1}
+  .keeper p{font-size:15px;color:var(--ink-dim);max-width:64ch;margin:0 auto 12px;line-height:1.7}
+  .keeper p:last-child{margin-bottom:0}
+  .keeper b{color:var(--gold)}
+  @media(max-width:520px){.keeper h4{font-size:25px}.keeper svg{width:27px;height:27px}}
+
+  footer{margin-top:52px;text-align:center;font-family:var(--mono);font-size:11px;
+    color:var(--ink-dim);opacity:.6;letter-spacing:.06em;line-height:2}
+  footer a{color:var(--copper)}
+  .toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(90px);
+    background:var(--copper);color:var(--on-accent);font-family:var(--mono);font-size:12px;font-weight:600;
+    padding:11px 22px;border-radius:30px;z-index:90;transition:transform .3s;letter-spacing:.05em}
+  .toast.up{transform:translateX(-50%) translateY(0)}
+
+  /* text sitting on a bright accent fill, and text inside the dark prompt wells */
+  :root{ --on-accent:#10141C; --well-ink:#EEE9E2; }
+</style>
+</head>
+<body>
+<div class="embers" id="embers"></div>
+<div class="wrap">
+
+  <header>
+    <div class="kicker">Soul-Forged Founders · The Monthly Claude Challenge</div>
+    <h1>Holiday Ready</h1>
+    <div class="sub">November · Holiday Ready</div>
+  </header>
+
+  <div class="stats">
+    <div class="stat"><div class="n" id="sDone">0</div><div class="l">Squares built</div></div>
+    <div class="stat live"><div class="n" id="sLines">0</div><div class="l">Lines complete · your entries</div></div>
+    <div class="stat"><div class="n" id="sLeft">—</div><div class="l">Days remaining</div></div>
+  </div>
+
+  <div class="section-label">How it works</div>
+  <div class="rules">
+    <p style="font-size:15px;color:var(--ink);margin-bottom:17px;line-height:1.6"><b>Start in the middle.</b> The centre square, The One Offer, is where you pick the one thing you'll sell before your holiday and save it. Every other square builds on it. A brand-new business counts: a small reading, a gift card or one download is plenty.</p>
+    <ol>
+      <li><b>Pick any square, in any order.</b> Tap it, copy the prompt, run it in Claude, and bring back the thing it hands you. Each one is something you make in one sitting.</li>
+      <li><b>Make it real.</b> Post it, send it, publish it, or set it up where buyers will use it. The square counts once the thing exists outside the chat.</li>
+      <li><b>Share it in the Monthly Challenge category</b> in the community, with the square's name as your title. That is what marks it done. Show what you made and one line on what it's for.</li>
+      <li><b>Five in a row is one entry.</b> Any direction, across, down, or corner to corner. The centre square, The One Offer, is done for you, so four of the lines start with a head start.</li>
+      <li><b>Fill more rows, get more entries.</b> Twelve lines exist on this board. Every one you complete is another name in the draw.</li>
+      <li><b>One thing per square.</b> Each thing you make counts for one square only.</li>
+      <li><b>Any holiday works.</b> Every prompt asks which holiday or date you're selling toward, so come back to this board before Valentine's Day, Mother's Day or your business birthday.</li>
+    </ol>
+    <div class="prize">
+      <div class="amtwrap"><span class="amt">$50</span><span class="amtlbl">Cash prize</span></div>
+      <p>One winner, drawn on <b>December 1</b>. Every completed line puts your name in once more, so the board rewards finishing a row over collecting scattered squares. Your progress saves on this device, so you can close the tab and pick it back up whenever you have twenty minutes.</p>
+    </div>
+  </div>
+
+  <div class="section-label">The board</div>
+  <div class="board" id="board"></div>
+  <div class="bingos" id="bingos"></div>
+  <div class="boardtools">
+    <button class="tool danger" id="clearAll">Clear the board</button>
+  </div>
+
+  <div class="section-label">When you post it</div>
+  <div class="panel">
+    <p>Copy this, fill the three lines, and put it in the <b>Monthly Challenge</b> category. Title the post with the square's name so everyone can see which one you built.</p>
+    <div class="tmpl" id="tmpl">Square: [the name of the square]
+
+What I made: [one line on what it is]
+
+What it's for: [the offer it belongs to, and your holiday]
+
+The part that surprised me: [one honest sentence, this is the bit people actually read]</div>
+    <div class="acts"><button class="btn copy" id="copyTmpl">Copy the template</button></div>
+  </div>
+
+  <div class="section-label">Your free Sparks</div>
+  <p class="sparklead"><b>Free things, one a week, yours just for being here.</b> No square to finish and nothing to buy. Each one opens on its date, so check back on a Saturday.</p>
+  <div class="unlocks" id="unlocks">
+    <div class="unlock"><div class="u">Opens Sat Nov 7</div><h4>Spark 01</h4><p>A free thing, yours on the day it opens.</p></div>
+    <div class="unlock"><div class="u">Opens Sat Nov 14</div><h4>Spark 02</h4><p>A free thing, yours on the day it opens.</p></div>
+    <div class="unlock"><div class="u">Opens Sat Nov 21</div><h4>Spark 03</h4><p>A free thing, yours on the day it opens.</p></div>
+    <div class="unlock"><div class="u">Opens Sat Nov 28</div><h4>Spark 04</h4><p>A free thing, yours on the day it opens.</p></div>
+  </div>
+
+  <div class="section-label">The crown</div>
+  <div class="keeper">
+    <div class="crownrow">
+      <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <path d="M4 23.5 L2.6 9.4 L9.4 14.6 L16 4.5 L22.6 14.6 L29.4 9.4 L28 23.5 Z"
+              fill="url(#cg)" stroke="var(--copper)" stroke-width="1.3" stroke-linejoin="round"/>
+        <rect x="4" y="24.8" width="24" height="3.4" rx="1.3" fill="url(#cg)" stroke="var(--copper)" stroke-width="1.1"/>
+        <circle cx="16" cy="18.6" r="1.7" fill="var(--bg)" opacity=".6"/>
+        <defs>
+          <linearGradient id="cg" x1="2" y1="4" x2="30" y2="28" gradientUnits="userSpaceOnUse">
+            <stop stop-color="var(--gold)"/><stop offset=".5" stop-color="var(--copper)"/><stop offset="1" stop-color="var(--ember)"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <h4>The Ember Keeper</h4>
+    </div>
+    <p>The Ember Keeper award goes to whoever is most active. Posting, commenting, and cheering everyone on.</p>
+    <p>The leaderboard in the community already tracks this, because points come from people appreciating what you put out. <b>Give the most, rise the highest.</b></p>
+    <p>November closes on the <b>30th</b>. The Ember Keeper is crowned <b>December 1</b>.</p>
+    <p><b>What they win:</b> the crown beside their name all month, and a half hour private session with me.</p>
+  </div>
+
+  <style>
+  .joinsff{margin:30px auto 0;text-align:center;background:linear-gradient(135deg,rgba(var(--ember-rgb),0.10),rgba(var(--card-rgb),0.82));border:1px solid rgba(var(--copper-rgb),0.30);border-radius:16px;padding:24px 24px}
+  .joinsff p{font-size:14.5px;color:var(--ink-dim);line-height:1.6;margin:0 auto 15px;max-width:480px}
+  .joinsff a{display:inline-block;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;background:var(--ember);color:var(--on-accent);text-decoration:none;padding:13px 30px;border-radius:30px;font-weight:600}
+  .joinsff a:hover{background:var(--copper)}
+  </style>
+  <div class="joinsff">
+    <p>Built inside Soul-Forged Founders, where tarot readers, coaches, and healers create tools like these with Claude.</p>
+    <a href="https://www.skool.com/soul-forged-founders" target="_blank" rel="noopener">Come build with us →</a>
+  </div>
+
+  <footer>
+    The Monthly Claude Challenge · November: Holiday Ready · Soul-Forged Founders<br>
+    Progress saves on this device. Bookmark it and come back.
+  </footer>
+</div>
+
+<div class="veil" id="veil"><div class="sheet" id="sheet"></div></div>
+<div class="toast" id="toast">Copied</div>
+
+<script>
+const SQUARES = [
+ {n:"The Gift Version", job:"Something you already do, turned into a gift someone buys for someone else.", p:"Help me turn something I already do into a gift one person buys for another.\n\nIf my One Offer file is in my Biz Brain, read it first. If it isn't, ask me what my offer is, who it's for, and which holiday or date I'm selling toward, and wait. [ ]\n\nThen ask me and wait: what do people buy from me, or ask me for, right now? [ ]\n\nGive me three gift versions of it. For each:\n- What the person receiving it opens or books\n- Who buys it, and who they buy it for\n- How it gets delivered as a gift (a printable card, an email on the day, a booking link)\n- A price\n\nRules:\n- Each one has to make sense to someone who has never had a reading, a session or a course.\n- Use only what I tell you about my work. Mark [FILL IN] where a detail is missing.\n\nThen tell me which one fits my holiday best, and save my pick to my One Offer file."},
+
+ {n:"The Sale Price", job:"A price that's easy to say yes to before your deadline.", p:"Help me price my offer so it's easy to say yes to before my deadline.\n\nIf my One Offer file is in my Biz Brain, read it first. If it isn't, ask me what my offer is, who it's for, and which holiday or date I'm selling toward, and wait. [ ]\n\nAsk me and wait:\n- What do I charge for my main work now, if anything? [ ]\n- What do I want this offer to bring in, in total, by my deadline? [ ]\n\nThen give me:\n- Three prices: one that feels like a gift, one in the middle, one that pays for my time in full\n- How many sales each price needs to reach my total\n- Whether an early price for the first few days or first few buyers would help, and what it would be\n\nRules:\n- Show the math. Do not invent what other people charge.\n- Count the time it takes me to deliver it, as well as the thing itself.\n\nThen tell me the price you'd pick in one line, and save my choice to my One Offer file."},
+
+ {n:"The Gift Card", job:"Let people buy your work for someone they love.", p:"Help me make a gift card for my offer that someone can buy and give.\n\nIf my One Offer file is in my Biz Brain, read it first. If it isn't, ask me what my offer is, who it's for, and which holiday or date I'm selling toward, and wait. [ ]\n\nAsk me and wait: how do people pay me now (Stripe, PayPal, Square, Etsy, my booking tool, nothing yet)? [ ]\n\nThen give me:\n- The gift card wording: what it's for, to and from lines, how to redeem it, and when it expires if it does\n- The simplest way to sell it with what I already use, one step at a time\n- How the buyer gets the card to give (print it, forward an email, or both)\n- An image prompt for the card design, in my brand colors if I tell you them\n\nRules:\n- Walk me through the payment setup one step at a time, and check I'm done before the next step.\n- Mark [FILL IN] where a detail is missing.\n\nThen write the one line I'd post to say gift cards are open."},
+
+ {n:"The Mini Offer", job:"A smaller, faster version of your main thing.", p:"Help me make a smaller, faster version of what I do.\n\nIf my One Offer file is in my Biz Brain, read it first. If it isn't, ask me what my offer is, who it's for, and which holiday or date I'm selling toward, and wait. [ ]\n\nAsk me and wait: what is my main offer, or the main thing I help people with? [ ]\n\nThen give me three mini versions. For each:\n- What it is and how long it takes to deliver\n- The one result someone walks away with\n- A price\n- How it could lead to my main offer later, if I have one\n\nRules:\n- Each one is something I can deliver in under an hour per buyer, or make once and sell many times.\n- Use only what I tell you. Mark [FILL IN] where a detail is missing.\n\nThen ask me which one I want, and save it to my One Offer file."},
+
+ {n:"The Season Ahead", job:"A reading or planning session for the season coming up.", p:"Help me build a season-ahead offer: a reading, session or planning tool for the months after my holiday.\n\nIf my One Offer file is in my Biz Brain, read it first. If it isn't, ask me what my offer is, who it's for, and which holiday or date I'm selling toward, and wait. [ ]\n\nAsk me and wait:\n- Which stretch of time is it for (the year ahead, the spring ahead, the next three months)? [ ]\n- How do I work: readings, coaching, a course, a downloadable tool? [ ]\n\nThen give me:\n- The offer, in one sentence\n- What's inside, step by step (for a reading, the spread and what each position covers; for a session, the parts of the call; for a tool, the pages)\n- What they leave with\n- A price, and how long it takes me per person\n\nRules:\n- Use only what I tell you about my work.\n- Describe what they get. Make no predictions or promises about their year.\n\nThen write the one-line description I'd put on my sales page."},
+
+ {n:"The Offer Name", job:"A name people understand the first time they hear it.", p:"Help me name my offer so people understand it the first time they hear it.\n\nIf my One Offer file is in my Biz Brain, read it first. If it isn't, ask me what my offer is, who it's for, and which holiday or date I'm selling toward, and wait. [ ]\n\nGive me ten names in three groups:\n- Plain: says exactly what it is\n- With the holiday in it\n- With my own flavor, still clear\n\nFor each, a one-line subtitle that says who it's for and what they get.\n\nRules:\n- Every name passes this test: could someone hear it once, out loud, and tell a friend what it is?\n- No made-up words and no puns that need explaining.\n\nThen tell me your top two and why, and save my pick to my One Offer file."},
+
+ {n:"The What's Inside List", job:"Every piece of it, written so a buyer can picture getting it.", p:"Help me write the list of what's inside my offer, so a buyer can picture getting it.\n\nIf my One Offer file is in my Biz Brain, read it first. If it isn't, ask me what my offer is, who it's for, and which holiday or date I'm selling toward, and wait. [ ]\n\nAsk me and wait: list every piece of the offer, even the small ones, in my own words. [ ]\n\nThen rewrite each piece as one line:\n- What it is\n- What they do with it, or what it gives them\n\nOrder the list from the piece they'll care about most to the least.\n\nRules:\n- Use only the pieces I gave you. Add no bonuses or features I don't offer.\n- Plain words. If a buyer would have to ask what something means, rename it.\n\nThen ask me about anything buyers usually expect that's missing, and save the list to my One Offer file."},
+
+ {n:"The Delivery Plan", job:"How it reaches them after they pay, start to finish.", p:"Help me plan exactly what happens after someone buys, start to finish.\n\nIf my One Offer file is in my Biz Brain, read it first. If it isn't, ask me what my offer is, who it's for, and which holiday or date I'm selling toward, and wait. [ ]\n\nAsk me and wait: what tools do I already use (email, booking, payments, file storage)? [ ]\n\nThen lay out every step from the moment they pay:\n- What they receive right away, and from which tool\n- What they do next\n- What I do, and when\n- When it's finished, and how they know\n\nFor each step, say whether it happens on its own or needs me.\n\nRules:\n- Use the tools I already have. If something is missing, give me the free option first.\n- Walk me through any setup one step at a time, and check I'm done before the next.\n\nThen name the step most likely to go wrong, and how to test it before my first sale."},
+
+ {n:"The Bonus", job:"One extra that makes buying this week the smart move.", p:"Help me add one bonus that makes buying before my deadline the smart move.\n\nIf my One Offer file is in my Biz Brain, read it first. If it isn't, ask me what my offer is, who it's for, and which holiday or date I'm selling toward, and wait. [ ]\n\nAsk me and wait: what have I already made that I could add (a PDF, a spread, a recording, a template, a short call)? [ ]\n\nThen give me three bonus ideas. For each:\n- What it is\n- What it adds to the main offer\n- How long it takes me to make or deliver\n- Who gets it (the first ten buyers, everyone who buys before a date, everyone who buys this week)\n\nRules:\n- Bonuses come from things I have or can make in an afternoon.\n- The bonus deadline is real, and I keep it.\n\nThen tell me which one to use, and save it to my One Offer file."},
+
+ {n:"The Checkout Link", job:"A way to pay that works tonight.", p:"Help me set up a way for people to pay for my offer, working tonight.\n\nIf my One Offer file is in my Biz Brain, read it first. If it isn't, ask me what my offer is, who it's for, and which holiday or date I'm selling toward, and wait. [ ]\n\nAsk me and wait: what do I already have (Stripe, PayPal, Square, Etsy, Gumroad, Skool, a website, nothing)? [ ]\n\nThen pick the simplest option for what I have and walk me through it one step at a time:\n- The product name, price and description to type in, written for me\n- What the buyer sees after paying\n- How I find out someone bought\n\nCheck I've finished each step before giving me the next.\n\nRules:\n- Assume I have never done this. No jargon.\n- If I have nothing yet, start with the free option that takes the least setup.\n\nThen tell me how to test it with a small payment I refund, and save the link to my One Offer file."},
+
+ {n:"The Sales Page", job:"One page that says what it is, who it's for and how to buy.", p:"Help me write one simple sales page for my offer.\n\nIf my One Offer file is in my Biz Brain, read it first. If it isn't, ask me what my offer is, who it's for, and which holiday or date I'm selling toward, and wait. [ ]\n\nRead whatever else is in my One Offer file: the name, price, what's inside, the bonus, the deadline. Ask me for anything missing, and wait. [ ]\n\nThen write the page in this order:\n- A headline that says what it is and who it's for\n- Two or three lines on the moment the reader is in right now\n- What they get\n- What it's like after, in one short paragraph\n- The price, the bonus and the deadline\n- The button text\n- Three questions people ask, answered\n\nRules:\n- Keep my voice. If my voice guide is in my Biz Brain, read it first.\n- No invented testimonials, numbers or results. Mark [FILL IN] where proof would help.\n- Short enough to read on a phone in two minutes.\n\nThen tell me a free place I could put this page tonight, using what I already have."},
+
+ {n:"The Gift Message", job:"The words that go with it when someone buys it as a gift.", p:"Help me write the words that go with my offer when someone gives it as a gift.\n\nIf my One Offer file is in my Biz Brain, read it first. If it isn't, ask me what my offer is, who it's for, and which holiday or date I'm selling toward, and wait. [ ]\n\nWrite me:\n- A short gift note the buyer can send or print, with blanks for the names\n- The email the person receiving it gets, saying what it is and what to do next\n- One line for the checkout page explaining how buying it as a gift works\n\nRules:\n- Warm, plain and short. The person receiving it may never have heard of me.\n- Use only what's in my offer. Mark [FILL IN] for details I haven't given.\n\nThen save all three to my One Offer file."},
+
+ {n:"The Deadline", job:"The last day to buy, and the reason it's the last day.", p:"Help me set the last day to buy, with a true reason for it.\n\nIf my One Offer file is in my Biz Brain, read it first. If it isn't, ask me what my offer is, who it's for, and which holiday or date I'm selling toward, and wait. [ ]\n\nAsk me and wait:\n- What date is my holiday? [ ]\n- How long does delivery take, from purchase to finished? [ ]\n- Which days can't I work in that stretch? [ ]\n\nThen give me:\n- The last day to buy, worked back from my holiday so everyone gets theirs in time\n- The reason, in one sentence I can say in posts and emails\n- What I say 7 days out, 3 days out, 1 day out, and the morning of the last day\n\nRules:\n- The reason has to be true. If it comes from my calendar or my delivery time, say that plainly.\n\nThen save the deadline and the reason to my One Offer file."},
+
+ {n:"The FAQ", job:"Every question someone asks before they pay, answered.", p:"Help me answer every question someone asks before they buy my offer.\n\nIf my One Offer file is in my Biz Brain, read it first. If it isn't, ask me what my offer is, who it's for, and which holiday or date I'm selling toward, and wait. [ ]\n\nAsk me and wait: what have people asked me about this, or about my work in general? [ ]\n\nThen list the questions a buyer is likely to have, covering:\n- What exactly they get, and when\n- Whether it's right for them (beginners, people far away, people who've never done this before)\n- Price, payment and refunds\n- Gifts: how it works when someone else is buying\n- Time: how long it takes, and what happens if they're busy\n\nAnswer each one in two sentences or fewer.\n\nRules:\n- Answers about my policies use only what I told you. Ask me when you don't know, and mark [FILL IN].\n- Keep my voice. If my voice guide is in my Biz Brain, read it first.\n\nThen tell me the three questions to put on the sales page itself."},
+
+ {n:"The Announcement Post", job:"Tell your people it exists.", p:"Help me write the post that tells people my offer exists.\n\nIf my One Offer file is in my Biz Brain, read it first. If it isn't, ask me what my offer is, who it's for, and which holiday or date I'm selling toward, and wait. [ ]\n\nAsk me which platform it's for, and wait. [ ]\n\nWrite the post:\n- A first line that makes the right person stop: a question they'd answer yes to\n- What it is, who it's for, and what they get\n- The price, the deadline and how to buy\n- One clear next step\n\nThen give me:\n- A headline for the image, different from the first line\n- An image prompt for ChatGPT or Canva\n- A short version for stories\n\nRules:\n- Keep my voice. If my voice guide is in my Biz Brain, read it first.\n- No invented results. Use what's in my One Offer file."},
+
+ {n:"The Posting Plan", job:"Your posts from today to your deadline, one for every day you post.", p:"Help me plan every post from today to my deadline.\n\nIf my One Offer file is in my Biz Brain, read it first. If it isn't, ask me what my offer is, who it's for, and which holiday or date I'm selling toward, and wait. [ ]\n\nAsk me and wait:\n- Which platforms do I post on, and how many times a week can I really post? [ ]\n- What's today's date? [ ]\n\nThen make a plan from today to my deadline. For each post:\n- The date and platform\n- The kind of post: teach, story, proof, invitation or conversation\n- The first line\n- One line on what it covers\n\nKeep direct pitches to one post in three, and lean into the deadline in the last three days.\n\nRules:\n- Use only what's in my offer. No invented results.\n- If I use the 2027 Content Calendar from Soul-Forged Founders, match each post to that day's slot.\n\nThen give me the full prompt to write the first post."},
+
+ {n:"The Story Post", job:"Why you made this, told in one post.", p:"Help me tell the story of why I made this offer, in one post.\n\nIf my One Offer file is in my Biz Brain, read it first. If it isn't, ask me what my offer is, who it's for, and which holiday or date I'm selling toward, and wait. [ ]\n\nAsk me these one at a time, and wait for each answer:\n- What made me want to make this? A moment, a client, a question I kept hearing. [ ]\n- What did I notice that other people miss? [ ]\n- Who did I picture when I made it? [ ]\n\nThen write the post:\n- Open in the middle of the moment\n- What I saw, and what I made because of it\n- Who it's for, and how to get it\n\nRules:\n- Use only my story. No invented details.\n- Keep my voice. If my voice guide is in my Biz Brain, read it first.\n- I'm the person who figured something out.\n\nThen give me a headline for the image."},
+
+ {n:"The Email Run", job:"The emails that sell it, from first mention to last call.", p:"Help me write the emails that sell my offer.\n\nIf my One Offer file is in my Biz Brain, read it first. If it isn't, ask me what my offer is, who it's for, and which holiday or date I'm selling toward, and wait. [ ]\n\nAsk me and wait: do I have an email list, and roughly how many people are on it? If I have none, say so and we'll turn these into DMs or posts. [ ]\n\nThen write four short emails:\n1. It's here: what it is, who it's for, how to get it\n2. The story: why I made it\n3. The questions: the top three things people ask, answered\n4. Last call: the deadline, sent the morning of the last day\n\nFor each: the subject line, the preview line and the email.\n\nRules:\n- Each one reads in under a minute.\n- One link per email, to the sales page or the checkout.\n- Keep my voice. If my voice guide is in my Biz Brain, read it first. Use only what's in my offer. Mark [FILL IN] where a detail is missing.\n\nThen give me the date to send each one, worked back from my deadline."},
+
+ {n:"The Personal Invite", job:"DMs to the five people who'd want it most.", p:"Help me write personal invites to the five people most likely to want my offer.\n\nIf my One Offer file is in my Biz Brain, read it first. If it isn't, ask me what my offer is, who it's for, and which holiday or date I'm selling toward, and wait. [ ]\n\nAsk me and wait: who are five people who'd want this? A past client, a friend who's asked, someone who always comments. One line on each, first names only. [ ]\n\nThen write each one a short DM:\n- Something real about them, from what I told you\n- Why I thought of them\n- What the offer is, in one line\n- An easy way to say no\n\nRules:\n- Each DM sounds like me talking to that one person.\n- Under 80 words each.\n- Use only what I told you about each person.\n\nThen tell me what to say if one of them replies with a question."},
+
+ {n:"The Big Shopping Days", job:"Your season's biggest buying days, planned, or your decision to sit them out.", p:"Help me decide what I'll do on the biggest buying days before my holiday.\n\nIf my One Offer file is in my Biz Brain, read it first. If it isn't, ask me what my offer is, who it's for, and which holiday or date I'm selling toward, and wait. [ ]\n\nName the big buying days for my season (Black Friday to Cyber Monday before Christmas, the week before Valentine's Day, the weekend before Mother's Day).\n\nThen give me three options:\n- A sale\n- A bonus instead of a discount\n- Sitting it out, and saying what I'm doing instead\n\nFor each, what I'd post and send, and what it costs me. Ask me which one I want, and wait. [ ]\n\nThen write the post and the email for my choice.\n\nRules:\n- A discount still pays me fairly for my time. Show me the math.\n- Use only what's in my offer."},
+
+ {n:"The Last Call", job:"The final 24 hours, written before you need them.", p:"Help me write everything for the last 24 hours of my sale, before I need it.\n\nIf my One Offer file is in my Biz Brain, read it first. If it isn't, ask me what my offer is, who it's for, and which holiday or date I'm selling toward, and wait. [ ]\n\nWrite me:\n- The last-call email, sent the morning of the last day\n- A post for that morning\n- A story or short post for the evening, a few hours before it closes\n- A DM for anyone who asked about it and hasn't bought\n- The post for the next morning, thanking everyone and saying what's next\n\nRules:\n- The deadline is real. Write no extension message.\n- Keep my voice. If my voice guide is in my Biz Brain, read it first. Use only what's in my One Offer file.\n\nThen put them in order with the time to send each one."},
+
+ {n:"The Thank-You Note", job:"What every buyer gets the minute they pay.", p:"Help me write what a buyer gets the minute they pay.\n\nIf my One Offer file is in my Biz Brain, read it first. If it isn't, ask me what my offer is, who it's for, and which holiday or date I'm selling toward, and wait. [ ]\n\nWrite me:\n- The thank-you message they see on the screen after paying\n- The confirmation email: what they bought, what happens next and when, and how to reach me\n- A short personal note I can send by hand within a day\n\nRules:\n- Every message tells them the next step and when it happens.\n- Warm and short. Use only what's in my offer and delivery plan. Mark [FILL IN] where a detail is missing.\n\nThen tell me where to paste each one in the tools I use."},
+
+ {n:"The Testimonial Ask", job:"The message you'll send buyers asking what it did for them, written before your first sale.", p:"Help me write the message I'll send buyers asking what my offer did for them.\n\nIf my One Offer file is in my Biz Brain, read it first. If it isn't, ask me what my offer is, who it's for, and which holiday or date I'm selling toward, and wait. [ ]\n\nWrite me:\n- The ask, sent a few days after they receive it, with three easy questions:\n  - What was going on before?\n  - What did you get from it?\n  - What would you tell a friend who's thinking about it?\n- A line asking if I can share their words, and how they'd like to be named (full name, first name or anonymous)\n- A follow-up for anyone who hasn't answered after a week\n\nRules:\n- Short and easy to answer on a phone.\n- No pressure and no rewards for a good review.\n\nThen save these to my One Offer file, and tell me when to send them, counted from my delivery date."},
+
+ {n:"The Gift Guide", job:"Your offer plus a few favorite things, in a list people want to share.", p:"Help me make a gift guide people want to share, with my offer in it.\n\nIf my One Offer file is in my Biz Brain, read it first. If it isn't, ask me what my offer is, who it's for, and which holiday or date I'm selling toward, and wait. [ ]\n\nAsk me and wait: list eight to twelve things I love and would give someone (books, decks, candles, tools, other small businesses), plus my own offer. [ ]\n\nThen:\n- Group them into three or four sections my people would care about\n- Write one line for each, saying who it's perfect for\n- Place my offer where it fits, with its link and deadline\n- Write a title and a one-line intro\n- Give me a post to share it, and an image prompt for the cover\n\nRules:\n- Only things I named. No invented products or links. Mark [FILL IN] for links I haven't given.\n\nThen tell me where to put it so people can find it all season."}
+];
+
+const CENTER = {n:"The One Offer", job:"Start here. The one thing you'll sell before your holiday, in one sentence.", p:"Help me pick the one offer I'll build and sell before the next holiday, and save it where the rest of this board can read it.\n\nFirst, ask me where my business files live, give me these three answers to pick from, and wait:\n1. In a Google Drive folder (my Biz Brain) that you can open\n2. Somewhere else, and I will tell you where\n3. Nowhere yet, so keep it here in this chat\n[ ]\n\n- If I pick 1 or 2, make a file there called One Offer. If you cannot open it yet, walk me through connecting it one step at a time, and check I finished each step before you give me the next.\n- If I pick 3, keep it here and I will paste it into each square instead.\n\nThen ask me these one at a time, and wait for each answer:\n- Which holiday or date am I selling toward? Christmas, New Year, Valentine's Day, Mother's Day, my business birthday, or any date that matters to my people. [ ]\n- What do I already do that people ask me for, or that I love doing? [ ]\n- Who would buy it, in one sentence? [ ]\n- How much time can I give this before that date? [ ]\n\nThen give me three offer ideas I could build and sell before that date. For each: what it is, who it's for, a starting price, and how long it would take me to make. Make at least one small enough to finish in a weekend.\n\nAsk me which one I pick, and wait. [ ]\n\nThen write it into my One Offer file:\n- The offer, in one sentence\n- Who it's for\n- The holiday or date, and the last day to buy\n- The price, if I chose one\n\nThen tell me which square on this board to do next, and why. These are the squares:\n- Gift Version: something you already do, turned into a gift someone buys for someone else\n- Sale Price: a price that's easy to say yes to before your deadline\n- Gift Card: let people buy your work for someone they love\n- Mini Offer: a smaller, faster version of your main thing\n- Season Ahead: a reading or planning session for the season coming up\n- Offer Name: a name people understand the first time they hear it\n- What's Inside List: every piece of it, written so a buyer can picture getting it\n- Delivery Plan: how it reaches them after they pay, start to finish\n- Bonus: one extra that makes buying this week the smart move\n- Checkout Link: a way to pay that works tonight\n- Sales Page: one page that says what it is, who it's for and how to buy\n- Gift Message: the words that go with it when someone buys it as a gift\n- Deadline: the last day to buy, and the reason it's the last day\n- FAQ: every question someone asks before they pay, answered\n- Announcement Post: tell your people it exists\n- Posting Plan: your posts from today to your deadline, one for every day you post\n- Story Post: why you made this, told in one post\n- Email Run: the emails that sell it, from first mention to last call\n- Personal Invite: dMs to the five people who'd want it most\n- Big Shopping Days: your season's biggest buying days, planned, or your decision to sit them out\n- Last Call: the final 24 hours, written before you need them\n- Thank-You Note: what every buyer gets the minute they pay\n- Testimonial Ask: the message you'll send buyers asking what it did for them, written before your first sale\n- Gift Guide: your offer plus a few favorite things, in a list people want to share\n\nRules:\n- Assume I have never set up a connector. No jargon.\n- A brand-new business counts. If I have no clients yet, build the ideas from what I do for friends, what I'm learning, or what I love.\n- Use only what I tell you. Mark [FILL IN] where a detail is missing."};
+
+const KEY = 'forge-board-2026-11';
+const FREE = 12;               // centre square, index in the 25-cell grid
+const END  = new Date('2026-12-01T00:00:00');
+
+// grid index -> SQUARES index (centre is free, so everything after it shifts by one)
+function sqIndex(cell){ return cell < FREE ? cell : cell - 1; }
+
+function lineName(i){
+  if(i < 5)  return 'Row ' + (i+1);
+  if(i < 10) return 'Column ' + (i-4);
+  return i === 10 ? 'Corner to corner, top left' : 'Corner to corner, top right';
+}
+
+const LINES = (() => {
+  const L = [];
+  for(let r=0;r<5;r++) L.push([0,1,2,3,4].map(c=>r*5+c));
+  for(let c=0;c<5;c++) L.push([0,1,2,3,4].map(r=>r*5+c));
+  L.push([0,6,12,18,24]);
+  L.push([4,8,12,16,20]);
+  return L;
+})();
+
+let state = JSON.parse(localStorage.getItem(KEY) || '{}');
+const save = () => localStorage.setItem(KEY, JSON.stringify(state));
+const isDone = cell => cell === FREE || !!state[cell];
+
+// post links live in their own key, so an older saved board still loads fine
+const LKEY = KEY + ':links';
+let links = JSON.parse(localStorage.getItem(LKEY) || '{}');
+const saveLinks = () => localStorage.setItem(LKEY, JSON.stringify(links));
+
+const board = document.getElementById('board');
+
+function makeSlot(li){
+  const b = document.createElement('button');
+  b.className = 'bslot';
+  b.type = 'button';
+  b.dataset.line = li;
+  b.innerHTML = '<span class="bw">BINGO</span>';
+  b.title = lineName(li);
+  b.onclick = () => {
+    if(!b.classList.contains('won')) return;
+    navigator.clipboard.writeText(bingoPost(li)).then(() => toast('Bingo post copied'));
+  };
+  return b;
+}
+
+for(let cell=0; cell<25; cell++){
+  const el = document.createElement('div');
+  if(cell === FREE){
+    el.className = 'sq free';
+    el.id = 'freeSq';
+    el.innerHTML = '<span class="freehint">Start here</span><div class="glyph">✦</div><div class="nm">'+CENTER.n+'</div>';
+    el.addEventListener('click', openCenter);
+  } else {
+    const s = SQUARES[sqIndex(cell)];
+    el.className = 'sq';
+    el.dataset.cell = cell;
+    el.innerHTML = '<span class="mark"></span><div class="num">'+String(sqIndex(cell)+1).padStart(2,'0')+
+                   '</div><div class="nm">'+s.n+'</div>';
+    el.addEventListener('click', () => open(cell));
+  }
+  board.appendChild(el);
+  if(cell % 5 === 4) board.appendChild(makeSlot((cell - 4) / 5));   // end of that row
+}
+for(let c=0; c<5; c++) board.appendChild(makeSlot(5 + c));          // foot of each column
+
+function completedLines(){
+  return LINES.filter(l => l.every(isDone));
+}
+
+function paint(){
+  let done = 0;
+  document.querySelectorAll('.sq[data-cell]').forEach(el => {
+    const cell = +el.dataset.cell;
+    el.classList.toggle('done', isDone(cell));
+    el.classList.remove('inline');
+    if(isDone(cell)) done++;
+  });
+  const lines = completedLines();
+  const hot = new Set();
+  lines.forEach(l => l.forEach(c => hot.add(c)));
+  const freeEl = document.getElementById('freeSq');
+  if(freeEl) freeEl.classList.toggle('inline', hot.has(FREE));
+  hot.forEach(c => {
+    const el = document.querySelector('.sq[data-cell="'+c+'"]');
+    if(el) el.classList.add('inline');
+  });
+  document.getElementById('sDone').textContent  = done;
+  document.getElementById('sLines').textContent = lines.length;
+  paintBingos(lines);
+  const days = Math.max(0, Math.ceil((END - new Date()) / 86400000));
+  document.getElementById('sLeft').textContent = days;
+}
+
+// ── one copyable post per completed line ─────────────────────
+function bingoPost(li){
+  const rows = LINES[li].map(cell => {
+    if(cell === FREE) return '✦  ' + CENTER.n;
+    const s = SQUARES[sqIndex(cell)];
+    const u = (links[cell] || '').trim();
+    return String(sqIndex(cell)+1).padStart(2,'0') + '  ' + s.n + '  ' + (u || '(link not saved)');
+  });
+  return '🔥 I got a bingo! ' + lineName(li) + '.\n\n' +
+         'The Monthly Claude Challenge · November: Holiday Ready\n\n' +
+         rows.join('\n');
+}
+
+function paintBingos(lines){
+  const idx = lines.map(l => LINES.indexOf(l));
+
+  // rows and columns light up in the grid, at the end of the line they finished
+  document.querySelectorAll('.bslot').forEach(b => {
+    b.classList.toggle('won', idx.includes(+b.dataset.line));
+  });
+
+  // the diagonals have no edge to sit on, so they get cards under the board
+  const box = document.getElementById('bingos');
+  const diag = idx.filter(i => i >= 10);
+  box.classList.toggle('on', diag.length > 0);
+  box.innerHTML = diag.map(i => {
+    const withLinks = LINES[i].filter(c => c !== FREE && (links[c]||'').trim()).length;
+    const real = LINES[i].filter(c => c !== FREE).length;
+    return '<div class="bingo">' +
+             '<span class="bn">🔥 ' + lineName(i) + '</span>' +
+             '<span class="bd">' + withLinks + ' of ' + real + ' with links saved</span>' +
+             '<button data-line="' + i + '">Copy my bingo post</button>' +
+           '</div>';
+  }).join('');
+  box.querySelectorAll('button').forEach(b => {
+    b.onclick = () => navigator.clipboard.writeText(bingoPost(+b.dataset.line))
+      .then(() => toast('Bingo post copied'));
+  });
+}
+
+const veil  = document.getElementById('veil');
+const sheet = document.getElementById('sheet');
+
+function open(cell){
+  const s = SQUARES[sqIndex(cell)];
+  const on = isDone(cell);
+  sheet.innerHTML =
+    '<button class="close" aria-label="Close">&times;</button>' +
+    '<div class="num">Square '+String(sqIndex(cell)+1).padStart(2,'0')+'</div>' +
+    '<h3>'+s.n+'</h3>' +
+    '<div class="job">'+s.job+'</div>' +
+    '<div class="pbox" id="pbox"></div>' +
+    '<div class="acts">' +
+      '<button class="btn copy" id="cp">Copy the prompt</button>' +
+      '<button class="btn mark'+(on?' is':'')+'" id="mk">'+(on?'✓ Built':'Mark it built')+'</button>' +
+    '</div>' +
+    '<div class="linkwrap">' +
+      '<label for="lk">Community post link</label>' +
+      '<input id="lk" type="url" placeholder="Paste the link to your post in the community">' +
+      '<div class="hint">The link to your post inside the community, not to the thing you made. Save it as you go and your bingo post writes itself. It is also how a bingo gets checked, so a line with missing links takes longer to confirm.</div>' +
+    '</div>';
+  document.getElementById('pbox').textContent = s.p;
+  const lk = document.getElementById('lk');
+  lk.value = links[cell] || '';
+  lk.addEventListener('input', () => {
+    const v = lk.value.trim();
+    if(v) links[cell] = v; else delete links[cell];
+    saveLinks();
+  });
+  veil.classList.add('on');
+  document.body.style.overflow = 'hidden';
+
+  sheet.querySelector('.close').onclick = close;
+  document.getElementById('cp').onclick = e => {
+    navigator.clipboard.writeText(s.p).then(() => {
+      e.target.textContent = 'Copied';
+      e.target.classList.add('ok');
+      toast('Prompt copied');
+      setTimeout(() => { e.target.textContent = 'Copy the prompt'; e.target.classList.remove('ok'); }, 1800);
+    });
+  };
+  document.getElementById('mk').onclick = e => {
+    const before = completedLines().length;
+    if(state[cell]) delete state[cell]; else state[cell] = 1;
+    save(); paint();
+    const now = completedLines().length;
+    e.target.classList.toggle('is', !!state[cell]);
+    e.target.textContent = state[cell] ? '✓ Built' : 'Mark it built';
+    if(now > before) toast(now === 1 ? 'That is a line. One entry in.' : 'Another line. '+now+' entries.');
+  };
+}
+
+function openCenter(){
+  sheet.innerHTML =
+    '<button class="close" aria-label="Close">&times;</button>' +
+    '<div class="num">The centre square · start here</div>' +
+    '<h3>'+CENTER.n+'</h3>' +
+    '<div class="job">'+CENTER.job+'</div>' +
+    '<div class="pbox" id="pbox"></div>' +
+    '<div class="acts"><button class="btn copy" id="cp">Copy the prompt</button></div>' +
+    '<div class="linkwrap"><div class="hint">This is the square the rest of the board builds on, so do it first. Once your One Offer file is saved, every other square reads from it instead of asking you again.</div></div>';
+  document.getElementById('pbox').textContent = CENTER.p;
+  veil.classList.add('on');
+  document.body.style.overflow = 'hidden';
+  sheet.querySelector('.close').onclick = close;
+  document.getElementById('cp').onclick = e => {
+    navigator.clipboard.writeText(CENTER.p).then(() => {
+      e.target.textContent = 'Copied';
+      e.target.classList.add('ok');
+      toast('Prompt copied');
+      setTimeout(() => { e.target.textContent = 'Copy the prompt'; e.target.classList.remove('ok'); }, 1800);
+    });
+  };
+}
+
+function close(){ veil.classList.remove('on'); document.body.style.overflow = ''; }
+veil.addEventListener('click', e => { if(e.target === veil) close(); });
+document.addEventListener('keydown', e => { if(e.key === 'Escape') close(); });
+
+const toastEl = document.getElementById('toast');
+let tid;
+function toast(msg){
+  toastEl.textContent = msg;
+  toastEl.classList.add('up');
+  clearTimeout(tid);
+  tid = setTimeout(() => toastEl.classList.remove('up'), 2400);
+}
+
+document.getElementById('copyTmpl').onclick = e => {
+  navigator.clipboard.writeText(document.getElementById('tmpl').textContent).then(() => {
+    e.target.textContent = 'Copied';
+    e.target.classList.add('ok');
+    toast('Template copied');
+    setTimeout(() => { e.target.textContent = 'Copy the template'; e.target.classList.remove('ok'); }, 1800);
+  });
+};
+
+// ── clear the board ──────────────────────────────────────────
+document.getElementById('clearAll').onclick = () => {
+  const n = Object.keys(state).length;
+  if(!n){ toast('Nothing to clear'); return; }
+  if(!confirm('Clear all ' + n + ' built squares and any links you saved?\n\nThis cannot be undone.')) return;
+  state = {}; links = {};
+  save(); saveLinks(); paint();
+  toast('Board cleared');
+};
+
+const em = document.getElementById('embers');
+for(let i=0;i<20;i++){
+  const s = document.createElement('div');
+  s.className = 'ember';
+  s.style.left = Math.random()*100+'%';
+  s.style.animationDuration = (7+Math.random()*9)+'s';
+  s.style.animationDelay = (Math.random()*11)+'s';
+  s.style.transform = 'scale('+(0.6+Math.random()*1.4)+')';
+  em.appendChild(s);
+}
+
+paint();
+</script>
+</body>
+</html>
