@@ -711,8 +711,9 @@ for(let i=0;i<20;i++){
 paint();
 </script>
 <script>
-/* Each Spark opens itself on its Saturday */
+/* A Spark opens on its Saturday only once Sunny has run it, recorded its training and approved it. Flip its flag in APPROVED to open it. */
 (function(){
+  var APPROVED={spark01:false,spark02:false,spark03:false,spark04:false};
   var S=[
     ['spark01',[2026,10,7],'The Offer Builder','Build one offer you can sell before your holiday, one step at a time, and leave with a one-page offer sheet.','offer-builder/','Open the builder'],
     ['spark02',[2026,10,14],'The Gift Card Maker','Make a gift card for your work that someone can buy and give, then download it ready to print or send.','gift-card-maker/','Make your card'],
@@ -722,7 +723,7 @@ paint();
   var now=new Date();
   S.forEach(function(x){
     var c=document.getElementById(x[0]); if(!c) return;
-    if(now<new Date(x[1][0],x[1][1],x[1][2])) return;
+    if(!APPROVED[x[0]] || now<new Date(x[1][0],x[1][1],x[1][2])) return;
     c.className='unlock open';
     c.innerHTML='<span class="freetag">Free</span><div class="u">Open now</div><h4>'+x[2]+'</h4><p>'+x[3]+' <a href="'+x[4]+'">'+x[5]+' &rarr;</a></p>';
   });
