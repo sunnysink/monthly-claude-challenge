@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Gift Card Maker</title>
+<meta name="description" content="Make a gift card for your readings or sessions that someone can buy and give, then download it, print it, and announce it with a ready post and caption prompt. A free Spark from Soul-Forged Founders.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="The Gift Card Maker">
+<meta property="og:description" content="Make a gift card for your readings or sessions that someone can buy and give, then download it, print it, and announce it with a ready post and caption prompt. A free Spark from Soul-Forged Founders.">
+<meta property="og:url" content="https://sunnysink.github.io/monthly-claude-challenge/november-holiday-ready/gift-card-maker/">
+<meta property="og:image" content="https://sunnysink.github.io/monthly-claude-challenge/november-holiday-ready/gift-card-maker/preview.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The Gift Card Maker">
+<meta name="twitter:description" content="Make a gift card for your readings or sessions that someone can buy and give, then download it, print it, and announce it with a ready post and caption prompt. A free Spark from Soul-Forged Founders.">
+<meta name="twitter:image" content="https://sunnysink.github.io/monthly-claude-challenge/november-holiday-ready/gift-card-maker/preview.jpg">
+<link rel="canonical" href="https://sunnysink.github.io/monthly-claude-challenge/november-holiday-ready/gift-card-maker/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* The November "hearth and frost" skin, token for token from the Holiday Ready board. */
+  :root{
+    color-scheme:dark;
+    --bg:#10141C; --bg2:#1A2030; --ink:#F3EEE6; --ink-dim:#B3ADA6;
+    --copper:#C9A35C; --copper-lt:#EBD9AE; --ember:#CF5B67; --ember-glow:#E8A2A8;
+    --forest:#3E7A62; --mauve:#8E9BC0; --gold:#F0D58C;
+    --green:#6FAF8F;
+    --heading:#E9C77A;
+    --copper-rgb:201,163,92;    --copper-lt-rgb:235,217,174;
+    --ember-rgb:207,91,103;     --ember-glow-rgb:232,162,168;
+    --gold-rgb:240,213,140;     --mauve-rgb:142,155,192;
+    --forest-rgb:62,122,98;     --green-rgb:111,175,143;
+    --card-rgb:30,36,52;
+    --bg-rgb:16,20,28;    --bg2-rgb:26,32,48;
+    --veil-rgb:7,9,13;       --well-rgb:18,22,32;   --sheet-rgb:32,38,56;
+    --serif:'Cormorant Garamond','Hoefler Text',Georgia,serif;
+    --sans:'Hanken Grotesk',system-ui,-apple-system,'Segoe UI',Arial,sans-serif;
+    --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+    --card:rgba(var(--card-rgb),0.70); --cardborder:rgba(var(--copper-rgb),0.24);
+    --glow-a:rgba(var(--ember-rgb),0.16);
+    --glow-b:rgba(var(--forest-rgb),0.14);
+    --glow-c:rgba(var(--copper-rgb),0.12);
+    --on-accent:#10141C; --well-ink:#EEE9E2;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:var(--sans);color:var(--ink);background:var(--bg);
+    background-image:
+      radial-gradient(900px 520px at 10% -10%, var(--glow-a), transparent 60%),
+      radial-gradient(820px 500px at 100% 0%, var(--glow-b), transparent 55%),
+      radial-gradient(760px 620px at 55% 120%, var(--glow-c), transparent 60%);
+    min-height:100vh;padding:44px 16px 80px;position:relative;overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;line-height:1.65;
+  }
+  .embers{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+  .ember{position:absolute;bottom:-12px;width:3px;height:3px;border-radius:50%;
+    background:var(--ember-glow);box-shadow:0 0 6px 1px rgba(var(--ember-glow-rgb),0.6);
+    opacity:0;animation:rise linear infinite}
+  @keyframes rise{0%{transform:translateY(0) translateX(0);opacity:0}
+    12%{opacity:.7}100%{transform:translateY(-104vh) translateX(26px);opacity:0}}
+  @media(prefers-reduced-motion:reduce){.ember{display:none}}
+  .wrap{max-width:1080px;margin:0 auto;position:relative;z-index:1}
+
+  header{text-align:center;margin-bottom:28px}
+  .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.34em;text-transform:uppercase;
+    color:var(--copper);opacity:.9;margin-bottom:12px}
+  h1{font-family:var(--serif);font-weight:600;font-size:clamp(44px,8vw,84px);line-height:.95;
+    background:linear-gradient(92deg,var(--copper-lt),var(--ember-glow) 38%,var(--gold) 70%,var(--copper));
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:.5px}
+  .sub{font-family:var(--serif);font-style:italic;font-size:clamp(19px,2.4vw,25px);color:var(--ink-dim);margin-top:10px}
+  .lede{font-size:15.5px;color:var(--ink-dim);margin:16px auto 0;max-width:660px}
+
+  .section-label{font-family:var(--mono);font-size:11px;letter-spacing:.28em;text-transform:uppercase;
+    color:var(--ink-dim);margin:30px 0 16px;display:flex;align-items:center;gap:12px}
+  .section-label::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,rgba(var(--copper-rgb),0.35),transparent)}
+
+  .acts{display:flex;gap:11px;margin-top:18px;flex-wrap:wrap}
+  .btn{border:none;border-radius:30px;padding:12px 22px;font-family:var(--sans);font-size:14px;
+    font-weight:700;cursor:pointer;transition:transform .18s,box-shadow .18s}
+  .btn.copy{background:linear-gradient(135deg,var(--copper),var(--ember));color:var(--on-accent)}
+  .btn.ok{background:linear-gradient(135deg,var(--forest),var(--green));color:var(--on-accent)}
+  .btn.line{background:transparent;color:var(--copper-lt);border:1.5px solid rgba(var(--copper-rgb),.5)}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 8px 22px -8px rgba(var(--ember-rgb),.6)}
+  .btn:focus-visible,.tool:focus-visible{outline:2px solid var(--heading);outline-offset:2px}
+
+  .tool{background:none;border:1px solid rgba(var(--copper-rgb),.34);border-radius:30px;
+    padding:8px 17px;font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;
+    text-transform:uppercase;color:var(--ink-dim);cursor:pointer;transition:color .18s,border-color .18s,background .18s}
+  .tool:hover{color:var(--ember-glow);border-color:rgba(var(--ember-rgb),.6);background:rgba(var(--ember-rgb),.07)}
+  .tool.danger:hover{color:var(--mauve);border-color:rgba(var(--mauve-rgb),.6);background:rgba(var(--mauve-rgb),.07)}
+
+  .panel{background:var(--card);border:1px solid var(--cardborder);border-radius:16px;padding:22px 24px;backdrop-filter:blur(14px)}
+  .panel p{font-size:15px;color:var(--ink-dim);margin-bottom:10px}
+  .panel p:last-child{margin-bottom:0}
+  .panel b{color:var(--ink)}
+  @media(max-width:520px){.panel{padding:18px 16px}}
+
+  .field{margin-bottom:15px}
+  .field label,.field .lbl{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:7px}
+  .field input,.field select,.field textarea{width:100%;background:rgba(var(--well-rgb),.5);
+    border:1px solid rgba(var(--copper-rgb),.28);border-radius:10px;padding:11px 14px;
+    font-family:var(--sans);font-size:14.5px;color:var(--ink);outline:none;transition:border-color .18s}
+  .field textarea{min-height:80px;resize:vertical;line-height:1.5}
+  .field input:focus,.field select:focus,.field textarea:focus{border-color:rgba(var(--ember-rgb),.65)}
+  .field input::placeholder,.field textarea::placeholder{color:var(--ink-dim);opacity:.55}
+  .field input:disabled{opacity:.45}
+  .field .hint{font-size:12px;color:var(--ink-dim);margin-top:6px;opacity:.85}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:520px){.two{grid-template-columns:1fr}}
+
+  .seg{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+  .seg.four{grid-template-columns:repeat(4,1fr)}
+  @media(max-width:620px){.seg.four{grid-template-columns:repeat(2,1fr)}}
+  .seg label{margin:0;cursor:pointer;position:relative}
+  .seg input{position:absolute;opacity:0;width:0;height:0}
+  .seg span{display:block;text-align:center;padding:10px 6px;border-radius:10px;border:1px solid rgba(var(--copper-rgb),.3);
+    font-family:var(--sans);font-size:13.5px;font-weight:600;letter-spacing:0;text-transform:none;color:var(--ink-dim);transition:all .18s}
+  .seg input:checked + span{background:linear-gradient(135deg,var(--forest),var(--green));color:var(--on-accent);border-color:transparent}
+  .seg input:focus-visible + span{outline:2px solid var(--heading);outline-offset:2px}
+
+  .check{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--ink-dim);cursor:pointer;margin:6px 0 2px}
+  .check input{width:18px;height:18px;accent-color:var(--green);flex:none}
+
+  /* designs */
+  .designs{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+  @media(max-width:620px){.designs{grid-template-columns:1fr}}
+  .dz{position:relative;cursor:pointer}
+  .dz input{position:absolute;opacity:0;width:0;height:0}
+  .dz .sw{display:block;border-radius:14px;border:1.5px solid rgba(var(--copper-rgb),.3);padding:12px;transition:border-color .18s,background .18s;background:rgba(var(--card-rgb),.7)}
+  .dz .chipcard{display:block;height:74px;border-radius:9px;position:relative;overflow:hidden}
+  .dz .chipcard::after{content:"";position:absolute;inset:7px;border-radius:5px;border:1.5px solid var(--a)}
+  .dz b{display:block;font-family:var(--serif);font-size:21px;font-weight:600;color:var(--ink);margin-top:9px;line-height:1.1}
+  .dz small{font-size:12.5px;color:var(--ink-dim)}
+  .dz input:checked + .sw{border-color:rgba(var(--ember-rgb),.8);background:linear-gradient(150deg,rgba(var(--ember-rgb),.18),rgba(var(--card-rgb),.88))}
+  .dz input:focus-visible + .sw{outline:2px solid var(--heading);outline-offset:2px}
+  .colours{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
+  .colours input[type=color]{height:46px;padding:4px;cursor:pointer}
+  .logo-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  .logo-row .hint{flex:1;min-width:200px}
+
+  /* steps */
+  .steps{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:26px 0 0;padding:5px;border-radius:40px;
+    background:rgba(var(--card-rgb),.7);border:1px solid var(--cardborder);backdrop-filter:blur(12px)}
+  .stp{display:flex;align-items:center;justify-content:center;gap:8px;background:none;border:none;border-radius:30px;padding:10px 6px;cursor:pointer;
+    font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-dim);min-width:0}
+  .stp .sn{flex:none;display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;border:1px solid rgba(var(--copper-rgb),.5);font-size:10px}
+  .stp .sl{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .stp.done{color:var(--copper-lt)} .stp.done .sn{background:rgba(var(--ember-rgb),.25);border-color:transparent}
+  .stp.on{background:linear-gradient(135deg,var(--forest),var(--green));color:var(--on-accent);font-weight:700}
+  .stp.on .sn{border-color:var(--on-accent)}
+  .stp:focus-visible{outline:2px solid var(--heading);outline-offset:2px}
+  @media(max-width:760px){.stp .sl{display:none}.stp{padding:9px 4px}}
+  .bar{height:4px;border-radius:4px;background:rgba(var(--copper-rgb),.16);margin:10px 6px 0;overflow:hidden}
+  .bar i{display:block;height:100%;width:20%;background:linear-gradient(90deg,var(--copper),var(--ember),var(--gold));transition:width .3s}
+  .topline{display:flex;justify-content:flex-end;margin-top:12px}
+  .view{display:none}
+  .view.on{display:block}
+  .steplede{font-size:15px;color:var(--ink-dim);margin:-4px 0 16px}
+  .stepnav{margin-top:24px}
+
+  .preview{margin-top:18px}
+  .preview canvas{display:block;width:100%;height:auto;border-radius:12px;box-shadow:0 24px 60px -30px #000}
+  .preview .cap{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:8px}
+  .outs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:13px;margin-top:18px}
+  .pcard{background:var(--card);border:1px solid var(--cardborder);border-radius:14px;padding:19px 18px;
+    backdrop-filter:blur(12px);display:flex;flex-direction:column;gap:8px}
+  .pcard .u{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mauve)}
+  .pcard h4{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--heading);line-height:1.15}
+  .pcard p{font-size:13.5px;color:var(--ink-dim);line-height:1.5}
+  .pcard .grow{flex:1}
+  .pcard .btn{align-self:flex-start;padding:10px 20px;font-size:13.5px}
+  .pcard .field{margin-bottom:6px}
+  .postprev{max-width:280px}
+  .note{margin-top:18px;padding:16px 18px;border-radius:14px;border:1px dashed rgba(var(--gold-rgb),.4);background:rgba(var(--gold-rgb),.05);font-size:14.5px;color:var(--ink-dim)}
+  .note b{color:var(--ink)}
+
+  .veil{position:fixed;inset:0;background:rgba(var(--veil-rgb),.82);backdrop-filter:blur(7px);
+    z-index:60;display:none;align-items:flex-start;justify-content:center;padding:34px 16px;overflow-y:auto}
+  .veil.on{display:flex}
+  .sheet{background:linear-gradient(150deg,rgba(var(--sheet-rgb),.97),rgba(var(--bg-rgb),.99));
+    border:1px solid rgba(var(--copper-rgb),.36);border-radius:18px;max-width:620px;width:100%;
+    padding:30px 30px 26px;position:relative;box-shadow:0 30px 90px -30px #000}
+  .sheet .num{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--copper)}
+  .sheet h3{font-family:var(--serif);font-size:31px;font-weight:600;line-height:1.12;margin:7px 0 18px;color:var(--heading)}
+  .close{position:absolute;top:15px;right:17px;background:none;border:none;color:var(--ink-dim);font-size:25px;cursor:pointer;line-height:1;padding:4px 8px}
+  .close:hover{color:var(--ember-glow)}
+  @media(max-width:520px){.sheet{padding:26px 18px 22px}}
+  .pbox{background:rgba(var(--well-rgb),.72);border:1px solid rgba(var(--copper-rgb),.2);border-radius:12px;
+    padding:17px 18px;font-family:var(--mono);font-size:12.5px;line-height:1.75;color:var(--well-ink);white-space:pre-wrap;max-height:46vh;overflow-y:auto;overflow-wrap:anywhere}
+
+  .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);opacity:0;
+    background:linear-gradient(135deg,var(--forest),var(--green));color:var(--on-accent);font-weight:700;font-size:14px;
+    padding:11px 22px;border-radius:30px;z-index:80;transition:opacity .25s,transform .25s;pointer-events:none;max-width:calc(100vw - 32px);text-align:center}
+  .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  .joinsff{margin:40px auto 0;text-align:center;background:linear-gradient(135deg,rgba(var(--ember-rgb),0.10),rgba(var(--card-rgb),0.82));border:1px solid rgba(var(--copper-rgb),0.30);border-radius:16px;padding:24px 24px}
+  .joinsff p{font-size:14.5px;color:var(--ink-dim);line-height:1.6;margin:0 auto 15px;max-width:480px}
+  .joinsff a{display:inline-block;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;background:var(--ember);color:var(--on-accent);text-decoration:none;padding:13px 30px;border-radius:30px;font-weight:600}
+  .joinsff a:hover{background:var(--copper)}
+  footer{margin-top:34px;text-align:center;font-family:var(--mono);font-size:10px;letter-spacing:.24em;color:var(--ink-dim);opacity:.7}
+
+  #printcard{display:none}
+  @media print{
+    @page{size:6in 4in;margin:0}
+    html,body{background:#fff !important;background-image:none !important;padding:0;margin:0;min-height:0}
+    body > *{display:none !important}
+    #printcard{display:flex !important;width:6in;height:4in;align-items:center;justify-content:center}
+    #printcard img{width:6in;height:3.6in;display:block}
+  }
+</style>
+</head>
+<body>
+<div class="embers" id="embers"></div>
+<div class="wrap">
+
+  <header>
+    <div class="kicker">Soul-Forged Founders · A Free Spark</div>
+    <h1>The Gift Card Maker</h1>
+    <div class="sub">A gift card for your work, ready to sell and give.</div>
+    <p class="lede">Make a gift card someone can buy for a person they love. Download it, print it, and announce it with a ready post and a caption prompt for Claude.</p>
+  </header>
+
+  <nav class="steps" id="steps" aria-label="Steps"></nav>
+  <div class="bar" aria-hidden="true"><i id="bar"></i></div>
+  <div class="topline"><button class="tool danger" id="startOver" type="button">Start over</button></div>
+
+  <!-- STEP 1 -->
+  <section class="view" id="v-1">
+    <div class="section-label">Step 1 · What it's for</div>
+    <p class="steplede">Name the thing the card buys. One clear session or reading is the easiest gift to choose.</p>
+    <div class="panel">
+      <div class="field"><label for="f-biz">Your business name</label><input id="f-biz" data-k="biz" placeholder="Moon and Thread Tarot" autocomplete="organization"></div>
+      <div class="field"><label for="f-for">What the card is for</label><input id="f-for" data-k="forWhat" placeholder="A 3-card reading" autocomplete="off"></div>
+      <div class="field"><label for="f-val">Value or price on the card</label><input id="f-val" data-k="value" placeholder="$45" autocomplete="off"><div class="hint">Optional. Leave it empty to keep the price off the card.</div></div>
+    </div>
+    <div class="acts stepnav"><button class="btn ok" data-done="1" type="button">Done, next: how to redeem →</button></div>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="view" id="v-2">
+    <div class="section-label">Step 2 · How to redeem</div>
+    <p class="steplede">Tell the person holding the card exactly how to claim it. Use whatever you already have. A DM works fine.</p>
+    <div class="panel">
+      <div class="field"><span class="lbl">They claim it by</span>
+        <div class="seg four" role="radiogroup" aria-label="How they claim it">
+          <label><input type="radio" name="rtype" value="dm"><span>Instagram DM</span></label>
+          <label><input type="radio" name="rtype" value="email"><span>Email</span></label>
+          <label><input type="radio" name="rtype" value="link"><span>Booking link</span></label>
+          <label><input type="radio" name="rtype" value="custom"><span>My own words</span></label>
+        </div>
+      </div>
+      <div class="field" id="handle-field"><label for="f-handle" id="handle-label">Your Instagram handle</label><input id="f-handle" data-k="handle" autocomplete="off"></div>
+      <div class="field" id="custom-field"><label for="f-custom">How to redeem, in your words</label><input id="f-custom" data-k="custom" placeholder="Text me at 555 0100 to book your time" autocomplete="off"></div>
+      <div class="field"><span class="lbl">On the card it reads</span><div class="hint" id="redeem-read" style="font-size:14.5px;opacity:1;color:var(--ink)"></div></div>
+      <div class="field"><span class="lbl">Use by</span>
+        <div class="seg" role="radiogroup" aria-label="Use by">
+          <label><input type="radio" name="xmode" value="none"><span>No expiry</span></label>
+          <label><input type="radio" name="xmode" value="date"><span>Use by a date</span></label>
+        </div>
+      </div>
+      <div class="field" id="date-field"><label for="f-useby">Use by date</label><input id="f-useby" data-k="useBy" type="date"><div class="hint">Rules on gift card expiry dates differ from place to place, so check yours before you pick one.</div></div>
+    </div>
+    <div class="acts stepnav"><button class="btn line" data-go="1" type="button">← Back</button><button class="btn ok" data-done="2" type="button">Done, next: the look →</button></div>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="view" id="v-3">
+    <div class="section-label">Step 3 · The look</div>
+    <p class="steplede">Pick a design. Add your own brand colours or a small logo if you have them.</p>
+    <div class="designs" role="radiogroup" aria-label="Design">
+      <label class="dz"><input type="radio" name="design" value="hearth"><span class="sw"><span class="chipcard" style="--a:#E9C77A;background:linear-gradient(135deg,#1F2638,#10141C)"></span><b>Hearth</b><small>Midnight and gold</small></span></label>
+      <label class="dz"><input type="radio" name="design" value="cranberry"><span class="sw"><span class="chipcard" style="--a:#F0D58C;background:linear-gradient(135deg,#7A2434,#3A0F19)"></span><b>Cranberry</b><small>Deep red and gold</small></span></label>
+      <label class="dz"><input type="radio" name="design" value="frost"><span class="sw"><span class="chipcard" style="--a:#2F4A7A;background:linear-gradient(135deg,#F2F5FA,#C9D5E8)"></span><b>Frost</b><small>Pale blue and ink</small></span></label>
+    </div>
+    <div class="panel" style="margin-top:14px">
+      <label class="check"><input type="checkbox" id="f-brand"> Use my own brand colours</label>
+      <div class="colours" id="colours">
+        <div class="field"><label for="f-c1">Background</label><input type="color" id="f-c1" data-k="c1"></div>
+        <div class="field"><label for="f-c2">Accent</label><input type="color" id="f-c2" data-k="c2"></div>
+      </div>
+      <div class="field" style="margin-top:12px;margin-bottom:0"><span class="lbl">Your logo (optional)</span>
+        <div class="logo-row">
+          <button class="btn line" id="logoBtn" type="button">Add a logo</button>
+          <button class="tool" id="logoClear" type="button" style="display:none">Remove logo</button>
+          <input type="file" id="logoFile" accept="image/png,image/jpeg,image/webp,image/svg+xml" style="display:none">
+          <span class="hint" id="logo-hint">A small PNG with a clear background looks best. It stays on this page only while it's open, so add it again next time.</span>
+        </div>
+      </div>
+    </div>
+    <div class="preview"><div class="cap">Live preview</div><canvas id="cv3" width="1500" height="900" aria-label="Gift card preview"></canvas></div>
+    <div class="acts stepnav"><button class="btn line" data-go="2" type="button">← Back</button><button class="btn ok" data-done="3" type="button">Done, next: the words →</button></div>
+  </section>
+
+  <!-- STEP 4 -->
+  <section class="view" id="v-4">
+    <div class="section-label">Step 4 · The words</div>
+    <p class="steplede">Fill in who it's for and who it's from, or leave the lines blank so the buyer can write them in by hand.</p>
+    <div class="panel">
+      <div class="two">
+        <div class="field"><label for="f-to">To</label><input id="f-to" data-k="to" placeholder="Jordan" autocomplete="off">
+          <label class="check"><input type="checkbox" id="f-toBlank"> Leave blank so they can write it in</label></div>
+        <div class="field"><label for="f-from">From</label><input id="f-from" data-k="from" placeholder="Sam" autocomplete="off">
+          <label class="check"><input type="checkbox" id="f-fromBlank"> Leave blank so they can write it in</label></div>
+      </div>
+      <div class="field"><label for="f-msg">A short message</label><textarea id="f-msg" data-k="msg" maxlength="160" placeholder="A little time with the cards, just for you."></textarea><div class="hint" id="msg-ct">Optional. Up to 160 characters.</div></div>
+      <div class="field"><label for="f-code">Card number or code</label>
+        <div class="two"><input id="f-code" data-k="code" placeholder="GC-001" autocomplete="off"><button class="btn line" id="makeCode" type="button">Make a code</button></div>
+        <div class="hint">Optional. A code makes each card easy to check off on your list.</div></div>
+    </div>
+    <div class="preview"><div class="cap">Live preview</div><canvas id="cv4" width="1500" height="900" aria-label="Gift card preview"></canvas></div>
+    <div class="acts stepnav"><button class="btn line" data-go="3" type="button">← Back</button><button class="btn ok" data-done="4" type="button">Done, next: your card →</button></div>
+  </section>
+
+  <!-- STEP 5 -->
+  <section class="view" id="v-5">
+    <div class="section-label">Step 5 · Your card</div>
+    <p class="steplede">Here it is. Download it, print it, and tell people they can buy one.</p>
+    <div class="preview"><canvas id="cv5" width="1500" height="900" aria-label="Your gift card"></canvas></div>
+    <div class="acts">
+      <button class="btn copy" id="dlCard" type="button">Download the card (PNG)</button>
+      <button class="btn line" id="printCard" type="button">Print it</button>
+    </div>
+    <p class="hint" style="margin-top:10px;font-size:12.5px;color:var(--ink-dim)">Print prints the card at postcard size, 6 by 4 inches. Pick card stock in your printer settings if you have it.</p>
+
+    <div class="section-label">Tell people</div>
+    <div class="outs">
+      <div class="pcard">
+        <div class="u">For your feed</div>
+        <h4>A "gift cards are open" post</h4>
+        <div class="field"><label for="f-get">How someone gets one</label><input id="f-get" data-k="getOne" autocomplete="off"><div class="hint">This goes on the post. Clear it to go back to the suggestion.</div></div>
+        <canvas id="cvPost" class="postprev" width="1080" height="1350" style="width:100%;max-width:280px;height:auto;border-radius:10px" aria-label="Announcement post preview"></canvas>
+        <button class="btn copy" id="dlPost" type="button">Download the post (PNG)</button>
+      </div>
+      <div class="pcard">
+        <div class="u">For Claude</div>
+        <h4>Your caption prompt</h4>
+        <div class="field"><label for="f-occ">Occasion you're timing it for</label><input id="f-occ" data-k="occasion" placeholder="The holidays, Mother's Day, a birthday" autocomplete="off"><div class="hint">Optional. Pick any holiday, or leave it empty.</div></div>
+        <p class="grow">Claude gets everything you filled in here and writes the announcement caption in your voice. It asks you for anything missing first.</p>
+        <div class="acts" style="margin-top:4px"><button class="btn copy" id="copyCap" type="button">Copy a caption prompt</button><button class="btn line" id="seeCap" type="button">See it</button></div>
+      </div>
+      <div class="pcard">
+        <div class="u">For you</div>
+        <h4>Keep a list</h4>
+        <p class="grow">Sell it however you take payment now. A DM and a payment link works. A gift card is paid upfront, so keep a list of who bought one and who it's for.</p>
+        <button class="btn copy" id="copyTrack" type="button">Copy a gift card tracker</button>
+        <p style="font-size:12.5px">Paste it into a note or the first row of a spreadsheet. Each heading lands in its own column.</p>
+      </div>
+    </div>
+    <div class="acts stepnav"><button class="btn line" data-go="4" type="button">← Back</button></div>
+  </section>
+
+  <div class="joinsff">
+    <p>Built inside Soul-Forged Founders, where tarot readers, coaches, and healers create tools like these with Claude.</p>
+    <a href="https://www.skool.com/soul-forged-founders" target="_blank" rel="noopener">Come build with us →</a>
+  </div>
+
+  <footer>THE GIFT CARD MAKER · A FREE SPARK INSIDE SOUL-FORGED FOUNDERS</footer>
+</div>
+
+<div id="printcard"><img id="printimg" alt="Gift card"></div>
+
+<div class="veil" id="veil" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+  <div class="sheet">
+    <button class="close" id="close" type="button" aria-label="Close">×</button>
+    <div class="num" id="sheet-num">Prompt</div>
+    <h3 id="sheet-title">Caption prompt</h3>
+    <div id="sheet-body"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+  var KEY='spark-2026-11-gift-card-maker';
+  var STEPS=["What it's for",'How to redeem','The look','The words','Your card'];
+  var N=STEPS.length;
+  var DEF={step:1,done:0,biz:'',forWhat:'',value:'',rtype:'dm',handle:'',custom:'',xmode:'none',useBy:'',
+    design:'hearth',brand:false,c1:'#1E2B3A',c2:'#E9C77A',to:'',toBlank:true,from:'',fromBlank:true,msg:'',code:'',getOne:'',occasion:''};
+  var $=function(id){return document.getElementById(id);};
+  var MON=['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+  var state;
+  try{ state=JSON.parse(localStorage.getItem(KEY)); }catch(e){ state=null; }
+  if(!state || typeof state!=='object') state={};
+  state=Object.assign({},DEF,state);
+  function save(){ try{ localStorage.setItem(KEY,JSON.stringify(state)); }catch(e){} }
+
+  var logoImg=null; /* memory only, never stored */
+
+  /* ---------- text helpers ---------- */
+  function clean(s){ return String(s==null?'':s).trim(); }
+  function handleClean(){ return clean(state.handle).replace(/^@+/,''); }
+  function redeemText(){
+    var h=state.rtype==='dm'?handleClean():clean(state.handle);
+    if(state.rtype==='dm') return 'Send me a DM on Instagram @'+(h||'___');
+    if(state.rtype==='email') return 'Email me at '+(h||'___');
+    if(state.rtype==='link') return 'Book at '+(h||'___');
+    return clean(state.custom)||'___';
+  }
+  function redeemReady(){ return state.rtype==='custom'?!!clean(state.custom):!!clean(state.handle); }
+  function niceDate(s){ if(!s) return ''; var p=s.split('-'); if(p.length<3) return s; return MON[+p[1]-1]+' '+(+p[2])+', '+p[0]; }
+  function expiryText(){ return state.xmode==='date'&&state.useBy?'Use by '+niceDate(state.useBy):'No expiry'; }
+  function suggestGet(){
+    var h=state.rtype==='dm'?handleClean():clean(state.handle);
+    if(state.rtype==='dm'&&h) return 'DM me on Instagram @'+h+' to get one';
+    if(state.rtype==='email'&&h) return 'Email me at '+h+' to get one';
+    return 'Send me a message to get one';
+  }
+  function getOneText(){ return clean(state.getOne)||suggestGet(); }
+
+  /* ---------- palettes ---------- */
+  function hexRgb(h){ h=String(h||'').replace('#',''); if(h.length===3) h=h.replace(/./g,function(c){return c+c;}); var n=parseInt(h,16); if(isNaN(n)) n=0; return [n>>16&255,n>>8&255,n&255]; }
+  function rgbHex(r){ return '#'+r.map(function(v){ v=Math.max(0,Math.min(255,Math.round(v))); return (v<16?'0':'')+v.toString(16); }).join(''); }
+  function lum(h){ var c=hexRgb(h).map(function(v){ v/=255; return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4); }); return .2126*c[0]+.7152*c[1]+.0722*c[2]; }
+  function shade(h,amt){ var c=hexRgb(h); return rgbHex(c.map(function(v){ return amt<0?v*(1+amt):v+(255-v)*amt; })); }
+  function rgba(h,a){ var c=hexRgb(h); return 'rgba('+c[0]+','+c[1]+','+c[2]+','+a+')'; }
+  var DESIGNS={
+    hearth:{bg1:'#1F2638',bg2:'#10141C',glow:'#CF5B67',glowA:.22,accent:'#E9C77A',ink:'#F3EEE6',dim:'#B3ADA6'},
+    cranberry:{bg1:'#7A2434',bg2:'#3A0F19',glow:'#F0D58C',glowA:.16,accent:'#F0D58C',ink:'#FBF1EA',dim:'#E7C6C3'},
+    frost:{bg1:'#F2F5FA',bg2:'#C9D5E8',glow:'#8E9BC0',glowA:.45,accent:'#2F4A7A',ink:'#1A2030',dim:'#4A5468'}
+  };
+  function palette(){
+    if(state.brand){
+      var bg=state.c1||'#1E2B3A', light=lum(bg)>.4;
+      return {bg1:shade(bg,light?.08:.12),bg2:shade(bg,light?-.12:-.35),glow:state.c2||'#E9C77A',glowA:.18,
+        accent:state.c2||'#E9C77A',ink:light?'#151820':'#F6F2EC',dim:light?'#3E4350':'#D3CEC8'};
+    }
+    return DESIGNS[state.design]||DESIGNS.hearth;
+  }
+
+  /* ---------- canvas helpers ---------- */
+  var SERIF='"Cormorant Garamond", Georgia, "Times New Roman", serif';
+  var SANS='"Hanken Grotesk", "Segoe UI", Arial, sans-serif';
+  var MONO='"JetBrains Mono", Consolas, "Courier New", monospace';
+  function wrap(ctx,text,maxW){
+    var words=String(text).split(/\s+/).filter(Boolean), lines=[], line='';
+    words.forEach(function(w){
+      while(ctx.measureText(w).width>maxW && w.length>1){
+        var k=w.length; while(k>1 && ctx.measureText(w.slice(0,k)).width>maxW) k--;
+        if(line){ lines.push(line); line=''; }
+        lines.push(w.slice(0,k)); w=w.slice(k);
+      }
+      var t=line?line+' '+w:w;
+      if(ctx.measureText(t).width>maxW && line){ lines.push(line); line=w; } else line=t;
+    });
+    if(line) lines.push(line);
+    return lines;
+  }
+  /* shrink until it fits in maxLines, then clip with an ellipsis */
+  function fit(ctx,text,font,size,minSize,maxW,maxLines){
+    var lines;
+    for(var s=size;s>=minSize;s-=2){ ctx.font=font.replace('%',s); lines=wrap(ctx,text,maxW); if(lines.length<=maxLines) return {size:s,lines:lines}; }
+    ctx.font=font.replace('%',minSize); lines=wrap(ctx,text,maxW);
+    if(lines.length>maxLines){ lines=lines.slice(0,maxLines); var l=lines[maxLines-1]; while(l.length>1 && ctx.measureText(l+'…').width>maxW) l=l.slice(0,-1); lines[maxLines-1]=l+'…'; }
+    return {size:minSize,lines:lines};
+  }
+  function spaced(ctx,text,x,y,sp,align){
+    var w=0, k; for(k=0;k<text.length;k++) w+=ctx.measureText(text[k]).width+(k<text.length-1?sp:0);
+    var sx=align==='right'?x-w:align==='center'?x-w/2:x;
+    var old=ctx.textAlign; ctx.textAlign='left';
+    for(k=0;k<text.length;k++){ ctx.fillText(text[k],sx,y); sx+=ctx.measureText(text[k]).width+sp; }
+    ctx.textAlign=old;
+  }
+  function diamond(ctx,x,y,r){ ctx.beginPath(); ctx.moveTo(x,y-r); ctx.lineTo(x+r,y); ctx.lineTo(x,y+r); ctx.lineTo(x-r,y); ctx.closePath(); ctx.fill(); }
+  function background(ctx,W,H,P){
+    var g=ctx.createLinearGradient(0,0,W,H); g.addColorStop(0,P.bg1); g.addColorStop(1,P.bg2);
+    ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+    var r=ctx.createRadialGradient(W*.85,H*.1,0,W*.85,H*.1,Math.max(W,H)*.7);
+    r.addColorStop(0,rgba(P.glow,P.glowA)); r.addColorStop(1,rgba(P.glow,0));
+    ctx.fillStyle=r; ctx.fillRect(0,0,W,H);
+    var r2=ctx.createRadialGradient(W*.1,H*1.05,0,W*.1,H*1.05,Math.max(W,H)*.55);
+    r2.addColorStop(0,rgba(P.accent,P.glowA*.5)); r2.addColorStop(1,rgba(P.accent,0));
+    ctx.fillStyle=r2; ctx.fillRect(0,0,W,H);
+  }
+  function frame(ctx,W,H,P,o){
+    ctx.strokeStyle=P.accent; ctx.lineWidth=3; ctx.strokeRect(o,o,W-2*o,H-2*o);
+    ctx.strokeStyle=rgba(P.accent,.45); ctx.lineWidth=1.5; ctx.strokeRect(o+12,o+12,W-2*o-24,H-2*o-24);
+    ctx.fillStyle=P.accent; [[o,o],[W-o,o],[o,H-o],[W-o,H-o]].forEach(function(p){ diamond(ctx,p[0],p[1],10); });
+  }
+
+  /* ---------- the card, 1500 x 900 ---------- */
+  function drawCard(cv){
+    var W=1500,H=900, ctx=cv.getContext('2d'), P=palette(), L=110, R=W-110;
+    ctx.save(); ctx.clearRect(0,0,W,H); ctx.textBaseline='alphabetic'; ctx.textAlign='left';
+    background(ctx,W,H,P); frame(ctx,W,H,P,36);
+
+    /* top row */
+    ctx.fillStyle=P.accent; ctx.font='600 24px '+MONO; spaced(ctx,'GIFT CARD',L,138,7);
+    var code=clean(state.code);
+    if(code){ ctx.fillStyle=P.dim; ctx.font='500 22px '+MONO; ctx.textAlign='right'; ctx.fillText('No. '+code,R,138); ctx.textAlign='left'; }
+    var logoW=0;
+    if(logoImg){
+      var box=150, sc=Math.min(box/logoImg.width,box/logoImg.height), lw=logoImg.width*sc, lh=logoImg.height*sc;
+      var ly=code?165:100; ctx.drawImage(logoImg,R-lw,ly+(box-lh)/2,lw,lh); logoW=box+30;
+    }
+    var biz=clean(state.biz)||'Your business name';
+    var b=fit(ctx,biz,'600 %px '+SERIF,56,38,R-L-logoW,1);
+    ctx.fillStyle=clean(state.biz)?P.ink:rgba(P.ink,.45); ctx.font='600 '+b.size+'px '+SERIF; ctx.fillText(b.lines[0],L,205);
+
+    /* middle block */
+    var fw=clean(state.forWhat)||'What the card is for';
+    var f=fit(ctx,fw,'600 %px '+SERIF,104,58,R-L,2);
+    var val=clean(state.value), msg=clean(state.msg);
+    var lhF=f.size*1.02, blockH=f.lines.length*lhF;
+    var m=null; if(msg){ m=fit(ctx,msg,'italic 500 %px '+SERIF,40,30,R-L,2); blockH+=18+m.lines.length*m.size*1.2; }
+    if(val) blockH+=20+76;
+    var top=250, bottom=640, y=top+Math.max(0,(bottom-top-blockH)/2)+f.size*.82;
+    ctx.fillStyle=clean(state.forWhat)?P.ink:rgba(P.ink,.45); ctx.font='600 '+f.size+'px '+SERIF;
+    f.lines.forEach(function(l,i){ ctx.fillText(l,L,y+i*lhF); });
+    y+=(f.lines.length-1)*lhF;
+    if(val){ y+=20+64; ctx.fillStyle=P.accent; var v=fit(ctx,val,'700 %px '+SERIF,72,44,R-L,1); ctx.font='700 '+v.size+'px '+SERIF; ctx.fillText(v.lines[0],L,y); }
+    if(m){ y+=18+m.size*1.05; ctx.fillStyle=P.dim; ctx.font='italic 500 '+m.size+'px '+SERIF; m.lines.forEach(function(l,i){ ctx.fillText(l,L,y+i*m.size*1.2); }); }
+
+    /* divider */
+    var dy=668; var dg=ctx.createLinearGradient(L,0,R,0); dg.addColorStop(0,rgba(P.accent,.7)); dg.addColorStop(1,rgba(P.accent,.08));
+    ctx.fillStyle=dg; ctx.fillRect(L,dy,R-L,2);
+
+    /* to / from */
+    function who(label,val,blank,x){
+      ctx.fillStyle=P.accent; ctx.font='600 19px '+MONO; spaced(ctx,label,x,722,5);
+      if(blank || !clean(val)){ ctx.fillStyle=rgba(P.ink,.55); ctx.fillRect(x,790,320,2); }
+      else { var t=fit(ctx,clean(val),'600 %px '+SERIF,44,28,330,1); ctx.fillStyle=P.ink; ctx.font='600 '+t.size+'px '+SERIF; ctx.fillText(t.lines[0],x,780); }
+    }
+    who('TO',state.to,state.toBlank,L);
+    who('FROM',state.from,state.fromBlank,L+370);
+
+    /* redeem */
+    var rx=860, rw=R-rx;
+    ctx.fillStyle=P.accent; ctx.font='600 19px '+MONO; spaced(ctx,'HOW TO REDEEM',rx,722,5);
+    var rd=fit(ctx,redeemText(),'500 %px '+SANS,28,21,rw,2);
+    ctx.fillStyle=P.ink; ctx.font='500 '+rd.size+'px '+SANS;
+    rd.lines.forEach(function(l,i){ ctx.fillText(l,rx,764+i*rd.size*1.3); });
+    ctx.fillStyle=P.dim; ctx.font='500 19px '+MONO; ctx.fillText(expiryText(),rx,830);
+    ctx.restore();
+  }
+
+  /* ---------- the announcement post, 1080 x 1350 ---------- */
+  var cardBuf=document.createElement('canvas'); cardBuf.width=1500; cardBuf.height=900;
+  function drawPost(cv){
+    var W=1080,H=1350, ctx=cv.getContext('2d'), P=palette(), L=96, R=W-96;
+    ctx.save(); ctx.clearRect(0,0,W,H); ctx.textAlign='center'; ctx.textBaseline='alphabetic';
+    background(ctx,W,H,P); frame(ctx,W,H,P,34);
+    ctx.fillStyle=P.accent; ctx.font='600 26px '+MONO; spaced(ctx,'NOW OPEN',W/2,140,9,'center');
+    ctx.fillStyle=P.ink; ctx.font='600 112px '+SERIF; ctx.fillText('Gift cards',W/2,262); ctx.fillText('are open',W/2,368);
+    var biz=clean(state.biz)||'Your business name';
+    var b=fit(ctx,biz,'italic 600 %px '+SERIF,52,34,R-L,1);
+    ctx.fillStyle=P.accent; ctx.font='italic 600 '+b.size+'px '+SERIF; ctx.fillText(b.lines[0],W/2,440);
+
+    /* the card itself, tilted a touch */
+    drawCard(cardBuf);
+    var cw=820, ch=cw*.6, cx=W/2, cy=718;
+    ctx.save(); ctx.translate(cx,cy); ctx.rotate(-0.035);
+    ctx.shadowColor='rgba(0,0,0,.45)'; ctx.shadowBlur=50; ctx.shadowOffsetY=24;
+    ctx.fillStyle=P.bg2; ctx.fillRect(-cw/2,-ch/2,cw,ch); ctx.shadowColor='transparent';
+    ctx.drawImage(cardBuf,-cw/2,-ch/2,cw,ch); ctx.restore();
+
+    var fw=clean(state.forWhat)||'What the card is for', val=clean(state.value);
+    var line=val?fw+' · '+val:fw;
+    var t=fit(ctx,line,'600 %px '+SANS,40,28,R-L,2);
+    ctx.fillStyle=P.ink; ctx.font='600 '+t.size+'px '+SANS;
+    var y=1060; t.lines.forEach(function(l,i){ ctx.fillText(l,W/2,y+i*t.size*1.25); });
+    y+=(t.lines.length-1)*t.size*1.25+66;
+    ctx.fillStyle=P.accent; ctx.font='600 22px '+MONO; spaced(ctx,'HOW TO GET ONE',W/2,y,6,'center');
+    var g=fit(ctx,getOneText(),'500 %px '+SANS,36,26,R-L,2);
+    ctx.fillStyle=P.ink; ctx.font='500 '+g.size+'px '+SANS;
+    g.lines.forEach(function(l,i){ ctx.fillText(l,W/2,y+52+i*g.size*1.3); });
+    ctx.restore();
+  }
+
+  function draw(){
+    var v=state.step;
+    if(v===3) drawCard($('cv3'));
+    if(v===4) drawCard($('cv4'));
+    if(v===5){ drawCard($('cv5')); drawPost($('cvPost')); }
+  }
+  var raf=0; function redraw(){ if(raf) return; raf=requestAnimationFrame(function(){ raf=0; draw(); }); }
+
+  /* ---------- prompts ---------- */
+  function FI(s){ return clean(s)||'[FILL IN]'; }
+  function CAPTION(){
+    return "Write an Instagram caption announcing that I'm selling gift cards for my work. It goes with an image I already made that says \"Gift cards are open\" with my business name and a picture of the card.\n\n"+
+      "My business: "+FI(state.biz)+"\n"+
+      "What the gift card is for: "+FI(state.forWhat)+"\n"+
+      "Price or value: "+(clean(state.value)||'[FILL IN]')+"\n"+
+      "How someone buys one: "+getOneText()+"\n"+
+      "How the person receiving it redeems it: "+(redeemReady()?redeemText():'[FILL IN]')+"\n"+
+      "Use by: "+(state.xmode==='date'&&state.useBy?niceDate(state.useBy):'No expiry')+"\n"+
+      "Occasion I'm timing this for: "+(clean(state.occasion)||'[FILL IN, or none]')+"\n\n"+
+      "1. If anything above says [FILL IN], ask me only for those pieces and wait for my answer. Ask me nothing else first.\n"+
+      "2. Open the caption on its own hook line, one that makes someone think of the person they'd give this to. Keep it different from the words on the image.\n"+
+      "3. Say what the person receiving it gets, how the buyer gets one, and how the card is redeemed.\n"+
+      "4. Keep it short, warm and plain, in my voice. No em dashes.\n"+
+      "5. End with one clear call to action that matches how someone buys one.\n"+
+      "6. Only use what I gave you. Do not invent prices, dates, results, reviews or anything about my work. If you need a fact you do not have, ask me.";
+  }
+  var TRACK=['Date bought','Bought by','Their contact','Gift card for (name)','Card code','What it is for','Amount paid','Paid how','Use by','Redeemed on'].join('\t');
+
+  /* ---------- toast, copy, download ---------- */
+  var toastT;
+  function toast(m){ var t=$('toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(function(){t.classList.remove('on');},2000); }
+  function copy(text,msg){
+    function fallback(){ var ta=document.createElement('textarea'); ta.value=text; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy');}catch(e){} document.body.removeChild(ta); toast(msg); }
+    if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(text).then(function(){toast(msg);},fallback); } else fallback();
+  }
+  function blobDownload(name,blob){
+    var url=URL.createObjectURL(blob);
+    var a=document.createElement('a'); a.href=url; a.download=name; document.body.appendChild(a); a.click();
+    document.body.removeChild(a); setTimeout(function(){ URL.revokeObjectURL(url); },1500);
+  }
+  function slug(s){ return clean(s).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,40)||'my'; }
+  function canvasPng(cv,name){
+    try{
+      if(cv.toBlob){ cv.toBlob(function(b){ if(b) blobDownload(name,b); else toast('That download did not work. Try another browser.'); },'image/png'); }
+      else { var a=document.createElement('a'); a.href=cv.toDataURL('image/png'); a.download=name; a.click(); }
+    }catch(e){ toast('That download did not work. Remove the logo and try again.'); }
+  }
+
+  /* ---------- sheet ---------- */
+  var lastFocus=null;
+  function openSheet(num,title,body){
+    lastFocus=document.activeElement;
+    $('sheet-num').textContent=num; $('sheet-title').textContent=title; $('sheet-body').innerHTML=body;
+    $('veil').classList.add('on');
+    var f=$('sheet-body').querySelector('button'); if(f) f.focus();
+  }
+  function closeSheet(){ $('veil').classList.remove('on'); if(lastFocus) try{lastFocus.focus();}catch(e){} }
+  $('close').addEventListener('click',closeSheet);
+  $('veil').addEventListener('click',function(e){ if(e.target===$('veil')) closeSheet(); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape' && $('veil').classList.contains('on')) closeSheet(); });
+
+  /* ---------- render ---------- */
+  function renderSteps(){
+    $('steps').innerHTML=STEPS.map(function(s,i){
+      var n=i+1, cls=n===state.step?'on':(n<=state.done?'done':'');
+      return '<button class="stp '+cls+'" data-go="'+n+'" type="button" aria-label="Step '+n+': '+s+'"'+(n===state.step?' aria-current="step"':'')+'><span class="sn">'+(n<=state.done&&n!==state.step?'✓':n)+'</span><span class="sl">'+s+'</span></button>';
+    }).join('');
+    for(var n=1;n<=N;n++) $('v-'+n).classList.toggle('on',n===state.step);
+    $('bar').style.width=(Math.max(state.done,state.step-1)/ (N-1) *100||0)+'%';
+  }
+  function syncForm(){
+    document.querySelectorAll('[data-k]').forEach(function(el){ var k=el.getAttribute('data-k'); if(el.value!==String(state[k]||'')) el.value=state[k]||''; });
+    document.querySelectorAll('input[name=rtype]').forEach(function(r){ r.checked=r.value===state.rtype; });
+    document.querySelectorAll('input[name=xmode]').forEach(function(r){ r.checked=r.value===state.xmode; });
+    document.querySelectorAll('input[name=design]').forEach(function(r){ r.checked=r.value===state.design; });
+    $('f-brand').checked=!!state.brand; $('f-toBlank').checked=!!state.toBlank; $('f-fromBlank').checked=!!state.fromBlank;
+    $('f-get').placeholder=suggestGet();
+    renderBits();
+  }
+  var HANDLE={dm:['Your Instagram handle','yourhandle'],email:['Your email address','you@example.com'],link:['Your booking link','calendly.com/yourname']};
+  function renderBits(){
+    var custom=state.rtype==='custom';
+    $('handle-field').style.display=custom?'none':'';
+    $('custom-field').style.display=custom?'':'none';
+    if(!custom){ $('handle-label').textContent=HANDLE[state.rtype][0]; $('f-handle').placeholder=HANDLE[state.rtype][1]; $('f-handle').type=state.rtype==='email'?'email':'text'; }
+    $('redeem-read').textContent=redeemText()+' · '+expiryText();
+    $('date-field').style.display=state.xmode==='date'?'':'none';
+    $('colours').style.display=state.brand?'':'none';
+    $('f-to').disabled=!!state.toBlank; $('f-from').disabled=!!state.fromBlank;
+    $('msg-ct').textContent=clean(state.msg).length?clean(state.msg).length+' of 160 characters.':'Optional. Up to 160 characters.';
+    $('logoClear').style.display=logoImg?'':'none';
+    $('logoBtn').textContent=logoImg?'Change the logo':'Add a logo';
+    $('f-get').placeholder=suggestGet();
+  }
+  function render(){ renderSteps(); syncForm(); fontsGo(); }
+
+  function go(n){
+    n=Math.max(1,Math.min(N,n)); state.step=n; save(); renderSteps(); redraw();
+    window.scrollTo({top:Math.max(0,$('steps').offsetTop-20),behavior:'smooth'});
+  }
+  function need(n){
+    if(n===1){ if(!clean(state.biz)){ $('f-biz').focus(); toast('Add your business name first'); return false; }
+      if(!clean(state.forWhat)){ $('f-for').focus(); toast('Say what the card is for'); return false; } }
+    if(n===2){ if(!redeemReady()){ (state.rtype==='custom'?$('f-custom'):$('f-handle')).focus(); toast('Add how they claim it'); return false; }
+      if(state.xmode==='date' && !state.useBy){ $('f-useby').focus(); toast('Pick the use by date, or choose No expiry'); return false; } }
+    return true;
+  }
+
+  /* ---------- events ---------- */
+  document.addEventListener('click',function(e){
+    var d=e.target.closest('[data-done]');
+    if(d){ var n=+d.getAttribute('data-done'); if(!need(n)) return; state.done=Math.max(state.done,n); go(n+1); return; }
+    var g=e.target.closest('[data-go]'); if(g){ go(+g.getAttribute('data-go')); return; }
+  });
+  document.addEventListener('input',function(e){
+    var k=e.target.getAttribute && e.target.getAttribute('data-k');
+    if(k){ state[k]=e.target.value; save(); renderBits(); redraw(); }
+  });
+  document.addEventListener('change',function(e){
+    var t=e.target;
+    if(t.name==='rtype'||t.name==='xmode'||t.name==='design'){ state[t.name]=t.value; if(t.name==='design') state.brand=false; save(); syncForm(); redraw(); return; }
+    if(t.id==='f-brand'){ state.brand=t.checked; save(); renderBits(); redraw(); return; }
+    if(t.id==='f-toBlank'){ state.toBlank=t.checked; save(); renderBits(); redraw(); return; }
+    if(t.id==='f-fromBlank'){ state.fromBlank=t.checked; save(); renderBits(); redraw(); return; }
+  });
+
+  $('makeCode').addEventListener('click',function(){
+    var A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789', s='';
+    for(var k=0;k<5;k++) s+=A[Math.floor(Math.random()*A.length)];
+    state.code='GC-'+s; $('f-code').value=state.code; save(); redraw(); toast('Code made. Change it any time.');
+  });
+
+  $('logoBtn').addEventListener('click',function(){ $('logoFile').click(); });
+  $('logoClear').addEventListener('click',function(){ logoImg=null; $('logo-hint').textContent='Logo removed.'; renderBits(); redraw(); });
+  $('logoFile').addEventListener('change',function(e){
+    var f=e.target.files[0]; e.target.value=''; if(!f) return;
+    if(f.size>5*1024*1024){ toast('That file is over 5 MB. Try a smaller one.'); return; }
+    var r=new FileReader();
+    r.onload=function(){
+      var im=new Image();
+      im.onload=function(){ logoImg=im; $('logo-hint').textContent='Logo added. It stays only while this page is open.'; renderBits(); redraw(); };
+      im.onerror=function(){ toast('That image would not open. Try a PNG or JPG.'); };
+      im.src=r.result;
+    };
+    r.readAsDataURL(f);
+  });
+
+  $('dlCard').addEventListener('click',function(){ drawCard($('cv5')); canvasPng($('cv5'),slug(state.biz)+'-gift-card.png'); });
+  $('dlPost').addEventListener('click',function(){ drawPost($('cvPost')); canvasPng($('cvPost'),slug(state.biz)+'-gift-cards-open-post.png'); });
+  $('printCard').addEventListener('click',function(){
+    drawCard($('cv5'));
+    try{ $('printimg').src=$('cv5').toDataURL('image/png'); }catch(e){ toast('Printing did not work. Download the card and print that.'); return; }
+    setTimeout(function(){ window.print(); },150);
+  });
+  $('copyCap').addEventListener('click',function(){ copy(CAPTION(),'Copied. Paste it into Claude.'); });
+  $('seeCap').addEventListener('click',function(){
+    var t=CAPTION();
+    openSheet('For Claude','Your caption prompt','<div class="pbox" id="p-text"></div><div class="acts"><button class="btn copy" id="p-copy" type="button">Copy the prompt</button></div>');
+    $('p-text').textContent=t;
+    $('p-copy').addEventListener('click',function(){ copy(t,'Copied. Paste it into Claude.'); });
+  });
+  $('copyTrack').addEventListener('click',function(){ copy(TRACK,'Tracker copied. Paste it into a note or spreadsheet.'); });
+
+  $('startOver').addEventListener('click',function(){
+    if(!confirm('Start over? This clears everything you filled in here.')) return;
+    state=Object.assign({},DEF); logoImg=null; save(); render(); window.scrollTo(0,0);
+  });
+
+  /* ---------- fonts first, then draw ---------- */
+  var fontsReady=false;
+  function fontsGo(){
+    if(fontsReady){ redraw(); return; }
+    redraw();
+    if(!document.fonts || !document.fonts.load){ fontsReady=true; return; }
+    var loads=['600 40px "Cormorant Garamond"','700 40px "Cormorant Garamond"','italic 500 40px "Cormorant Garamond"','italic 600 40px "Cormorant Garamond"',
+      '500 20px "Hanken Grotesk"','600 20px "Hanken Grotesk"','500 20px "JetBrains Mono"','600 20px "JetBrains Mono"'].map(function(f){ return document.fonts.load(f).catch(function(){}); });
+    var done=function(){ fontsReady=true; redraw(); };
+    Promise.all(loads).then(function(){ return document.fonts.ready; }).then(done,done);
+    setTimeout(done,3000);
+  }
+
+  /* rising embers, same as the board */
+  (function(){
+    var box=$('embers'), n=window.innerWidth<600?14:26;
+    for(var k=0;k<n;k++){
+      var e=document.createElement('span'); e.className='ember';
+      e.style.left=(Math.random()*100)+'%';
+      e.style.animationDuration=(9+Math.random()*12)+'s';
+      e.style.animationDelay=(-Math.random()*20)+'s';
+      e.style.opacity=(.3+Math.random()*.5);
+      box.appendChild(e);
+    }
+  })();
+
+  render();
+})();
+</script>
+</body>
+</html>

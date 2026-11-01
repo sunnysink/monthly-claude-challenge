@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Holiday Countdown</title>
+<meta name="description" content="Pick any holiday and your last day to buy, and get a day-by-day plan of posts and emails or DMs, each with a ready Claude prompt, plus a calendar file. A free Spark from Soul-Forged Founders.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="The Holiday Countdown">
+<meta property="og:description" content="Pick any holiday and your last day to buy, and get a day-by-day plan of posts and emails or DMs, each with a ready Claude prompt, plus a calendar file. A free Spark from Soul-Forged Founders.">
+<meta property="og:url" content="https://sunnysink.github.io/monthly-claude-challenge/november-holiday-ready/holiday-countdown/">
+<meta property="og:image" content="https://sunnysink.github.io/monthly-claude-challenge/november-holiday-ready/holiday-countdown/preview.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The Holiday Countdown">
+<meta name="twitter:description" content="Pick any holiday and your last day to buy, and get a day-by-day plan of posts and emails or DMs, each with a ready Claude prompt, plus a calendar file. A free Spark from Soul-Forged Founders.">
+<meta name="twitter:image" content="https://sunnysink.github.io/monthly-claude-challenge/november-holiday-ready/holiday-countdown/preview.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* The November "hearth and frost" skin, token for token from the Holiday Ready board. */
+  :root{
+    color-scheme:dark;
+    --bg:#10141C; --bg2:#1A2030; --ink:#F3EEE6; --ink-dim:#B3ADA6;
+    --copper:#C9A35C; --copper-lt:#EBD9AE; --ember:#CF5B67; --ember-glow:#E8A2A8;
+    --forest:#3E7A62; --mauve:#8E9BC0; --gold:#F0D58C;
+    --green:#6FAF8F;
+    --heading:#E9C77A;
+    --copper-rgb:201,163,92;    --copper-lt-rgb:235,217,174;
+    --ember-rgb:207,91,103;     --ember-glow-rgb:232,162,168;
+    --gold-rgb:240,213,140;     --mauve-rgb:142,155,192;
+    --forest-rgb:62,122,98;     --green-rgb:111,175,143;
+    --card-rgb:30,36,52;
+    --bg-rgb:16,20,28;    --bg2-rgb:26,32,48;
+    --veil-rgb:7,9,13;       --well-rgb:18,22,32;   --sheet-rgb:32,38,56;
+    --serif:'Cormorant Garamond','Hoefler Text',Georgia,serif;
+    --sans:'Hanken Grotesk',system-ui,-apple-system,sans-serif;
+    --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;
+    --card:rgba(var(--card-rgb),0.70); --cardborder:rgba(var(--copper-rgb),0.24);
+    --glow-a:rgba(var(--ember-rgb),0.16);
+    --glow-b:rgba(var(--forest-rgb),0.14);
+    --glow-c:rgba(var(--copper-rgb),0.12);
+    --on-accent:#10141C; --well-ink:#EEE9E2;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:var(--sans);color:var(--ink);background:var(--bg);
+    background-image:
+      radial-gradient(900px 520px at 10% -10%, var(--glow-a), transparent 60%),
+      radial-gradient(820px 500px at 100% 0%, var(--glow-b), transparent 55%),
+      radial-gradient(760px 620px at 55% 120%, var(--glow-c), transparent 60%);
+    min-height:100vh;padding:44px 16px 80px;position:relative;overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;line-height:1.65;
+  }
+  .embers{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+  .ember{position:absolute;bottom:-12px;width:3px;height:3px;border-radius:50%;
+    background:var(--ember-glow);box-shadow:0 0 6px 1px rgba(var(--ember-glow-rgb),0.6);
+    opacity:0;animation:rise linear infinite}
+  @keyframes rise{0%{transform:translateY(0) translateX(0);opacity:0}
+    12%{opacity:.7}100%{transform:translateY(-104vh) translateX(26px);opacity:0}}
+  @media(prefers-reduced-motion:reduce){.ember{display:none}}
+  .wrap{max-width:900px;margin:0 auto;position:relative;z-index:1}
+
+  header{text-align:center;margin-bottom:28px}
+  .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.34em;text-transform:uppercase;
+    color:var(--copper);opacity:.9;margin-bottom:12px}
+  h1{font-family:var(--serif);font-weight:600;font-size:clamp(42px,8vw,80px);line-height:.95;
+    background:linear-gradient(92deg,var(--copper-lt),var(--heading) 38%,var(--gold) 70%,var(--copper));
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:.5px}
+  .sub{font-family:var(--serif);font-style:italic;font-size:clamp(19px,2.4vw,25px);color:var(--ink-dim);margin-top:10px}
+  .lede{font-size:15.5px;color:var(--ink-dim);margin:16px auto 0;max-width:660px}
+
+  .section-label{font-family:var(--mono);font-size:11px;letter-spacing:.28em;text-transform:uppercase;
+    color:var(--ink-dim);margin:30px 0 16px;display:flex;align-items:center;gap:12px}
+  .section-label::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,rgba(var(--copper-rgb),0.35),transparent)}
+  .section-label .ct{color:var(--copper)}
+
+  .acts{display:flex;gap:11px;margin-top:18px;flex-wrap:wrap}
+  .btn{border:none;border-radius:30px;padding:12px 22px;font-family:var(--sans);font-size:14px;
+    font-weight:700;cursor:pointer;transition:transform .18s,box-shadow .18s}
+  .btn.copy{background:linear-gradient(135deg,var(--copper),var(--ember));color:var(--on-accent)}
+  .btn.ok{background:linear-gradient(135deg,var(--forest),var(--green));color:var(--on-accent)}
+  .btn.line{background:transparent;color:var(--copper-lt);border:1.5px solid rgba(var(--copper-rgb),.5)}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 8px 22px -8px rgba(var(--ember-rgb),.6)}
+  .btn:focus-visible,.tool:focus-visible,.mini:focus-visible{outline:2px solid var(--heading);outline-offset:2px}
+
+  .tool{background:none;border:1px solid rgba(var(--copper-rgb),.34);border-radius:30px;
+    padding:8px 17px;font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;
+    text-transform:uppercase;color:var(--ink-dim);cursor:pointer;transition:color .18s,border-color .18s,background .18s}
+  .tool:hover{color:var(--ember-glow);border-color:rgba(var(--ember-rgb),.6);background:rgba(var(--ember-rgb),.07)}
+  .tool.danger:hover{color:var(--mauve);border-color:rgba(var(--mauve-rgb),.6);background:rgba(var(--mauve-rgb),.07)}
+
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 2px}
+  .chip{background:rgba(var(--card-rgb),.6);border:1px solid rgba(var(--copper-rgb),.32);border-radius:30px;
+    padding:8px 15px;font-family:var(--sans);font-size:13.5px;font-weight:600;color:var(--ink-dim);cursor:pointer;
+    transition:color .18s,border-color .18s,background .18s}
+  .chip:hover{color:var(--ink);border-color:rgba(var(--copper-lt-rgb),.55)}
+  .chip.on{background:linear-gradient(135deg,var(--forest),var(--green));color:var(--on-accent);border-color:transparent}
+  .chip:focus-visible{outline:2px solid var(--heading);outline-offset:2px}
+
+  .panel{background:var(--card);border:1px solid var(--cardborder);border-radius:16px;padding:22px 24px;backdrop-filter:blur(14px)}
+  .panel p{font-size:15px;color:var(--ink-dim);margin-bottom:10px}
+  .panel p:last-child{margin-bottom:0}
+  .panel b{color:var(--ink)}
+  @media(max-width:520px){.panel{padding:18px 16px}}
+
+  .field{margin-bottom:16px}
+  .field:last-child{margin-bottom:0}
+  .field label,.field .lbl{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:7px}
+  .field input,.field select,.field textarea{width:100%;background:rgba(var(--well-rgb),.5);
+    border:1px solid rgba(var(--copper-rgb),.28);border-radius:10px;padding:11px 14px;
+    font-family:var(--sans);font-size:14.5px;color:var(--ink);outline:none;transition:border-color .18s}
+  .field textarea{min-height:70px;resize:vertical;line-height:1.5}
+  .field input:focus,.field select:focus,.field textarea:focus{border-color:rgba(var(--ember-rgb),.65)}
+  .field input::placeholder,.field textarea::placeholder{color:var(--ink-dim);opacity:.55}
+  .field .hint{font-size:12.5px;color:var(--ink-dim);margin-top:6px;opacity:.85}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:520px){.two{grid-template-columns:1fr}}
+  .seg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .seg.two-up{grid-template-columns:repeat(2,1fr)}
+  .seg.week{grid-template-columns:repeat(7,1fr);gap:6px}
+  .seg label{margin:0;cursor:pointer;position:relative}
+  .seg input{position:absolute;opacity:0;width:0;height:0}
+  .seg span{display:block;text-align:center;padding:10px 4px;border-radius:10px;border:1px solid rgba(var(--copper-rgb),.3);
+    font-family:var(--sans);font-size:13.5px;font-weight:600;letter-spacing:0;text-transform:none;color:var(--ink-dim);transition:all .18s}
+  .seg input:checked + span{background:linear-gradient(135deg,var(--forest),var(--green));color:var(--on-accent);border-color:transparent}
+  .seg input:focus-visible + span{outline:2px solid var(--heading);outline-offset:2px}
+  @media(max-width:420px){.seg.week span{font-size:12px;padding:10px 0}.seg{grid-template-columns:1fr}.seg.week{grid-template-columns:repeat(7,1fr)}.seg.two-up{grid-template-columns:repeat(2,1fr)}}
+
+  .err{display:none;margin-top:14px;padding:13px 16px;border-radius:12px;border:1px solid rgba(var(--ember-rgb),.6);
+    background:rgba(var(--ember-rgb),.12);color:var(--ink);font-size:14.5px}
+  .err.on{display:block}
+  .note{margin-top:14px;padding:13px 16px;border-radius:12px;background:rgba(var(--well-rgb),.6);
+    border:1px solid rgba(var(--copper-rgb),.2);font-size:14.5px;color:var(--ink-dim)}
+  .note b{color:var(--heading);font-weight:600}
+  .note:empty{display:none}
+
+  /* step strip */
+  .steps{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:26px 0 4px;padding:5px;border-radius:40px;
+    background:rgba(var(--card-rgb),.7);border:1px solid var(--cardborder);backdrop-filter:blur(12px)}
+  .stp{display:flex;align-items:center;justify-content:center;gap:8px;background:none;border:none;border-radius:30px;padding:10px 6px;cursor:pointer;
+    font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-dim)}
+  .stp[disabled]{cursor:default;opacity:.5}
+  .stp .sn{flex:none;display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;border:1px solid rgba(var(--copper-rgb),.5);font-size:10px}
+  .stp.done{color:var(--copper-lt)} .stp.done .sn{background:rgba(var(--ember-rgb),.3);border-color:transparent}
+  .stp.on{background:linear-gradient(135deg,var(--forest),var(--green));color:var(--on-accent);font-weight:700}
+  .stp.on .sn{border-color:var(--on-accent)}
+  .stp:focus-visible{outline:2px solid var(--heading);outline-offset:2px}
+  @media(max-width:760px){.stp .sl{display:none}.stp{padding:9px 4px}}
+  .view{display:none}
+  .view.on{display:block}
+  .steplede{font-size:15px;color:var(--ink-dim);margin:-4px 0 16px}
+  .stepnav{margin-top:26px}
+
+  /* countdown items */
+  .summary{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:baseline;justify-content:space-between;margin-bottom:14px}
+  .summary .big{font-family:var(--serif);font-size:26px;font-weight:600;color:var(--heading);line-height:1.15}
+  .summary .ct{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--copper)}
+  .daygroup{margin-top:18px}
+  .dayhead{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--copper);
+    display:flex;gap:10px;align-items:center;margin-bottom:8px}
+  .dayhead .left{color:var(--ink-dim);letter-spacing:.08em}
+  .dayhead .dl{color:var(--ember-glow)}
+  .item{position:relative;display:flex;gap:14px;align-items:flex-start;background:rgba(var(--card-rgb),.88);border:1px solid var(--cardborder);
+    border-radius:6px 14px 14px 6px;padding:15px 16px 15px 22px;margin-bottom:9px;contain:layout paint}
+  .item::before{content:"";position:absolute;left:0;top:0;bottom:0;width:7px;border-radius:6px 0 0 6px;background:linear-gradient(180deg,var(--forest),var(--green))}
+  .item.t-story::before{background:linear-gradient(180deg,var(--mauve),var(--copper-lt))}
+  .item.t-proof::before{background:linear-gradient(180deg,var(--copper),var(--gold))}
+  .item.t-invitation::before{background:linear-gradient(180deg,var(--ember),var(--ember-glow))}
+  .item.t-conversation::before{background:linear-gradient(180deg,#5C6C8E,var(--mauve))}
+  .item.mail::before{background:repeating-linear-gradient(180deg,var(--heading) 0 8px,var(--ember) 8px 16px)}
+  .item.done{opacity:.6}
+  .item.done .idea{text-decoration:line-through;text-decoration-color:rgba(var(--copper-rgb),.6)}
+  .tick{flex:none;margin-top:2px;position:relative;width:26px;height:26px}
+  .tick input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;margin:0}
+  .tick span{display:grid;place-items:center;width:26px;height:26px;border-radius:8px;border:1.5px solid rgba(var(--copper-rgb),.55);color:var(--on-accent);font-weight:700;font-size:14px}
+  .tick input:checked + span{background:linear-gradient(135deg,var(--forest),var(--green));border-color:transparent}
+  .tick input:focus-visible + span{outline:2px solid var(--heading);outline-offset:2px}
+  .item .body{flex:1;min-width:0}
+  .item .ty{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--copper);margin-bottom:3px}
+  .item .ty .dlt{color:var(--ember-glow)}
+  .item .idea{font-size:15px;color:var(--ink);line-height:1.5}
+  .item .row-acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+  .mini{background:none;border:1px solid rgba(var(--copper-rgb),.32);border-radius:20px;padding:6px 12px;
+    font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-dim);cursor:pointer;
+    transition:color .18s,border-color .18s,background .18s}
+  .mini:hover{color:var(--ember-glow);border-color:rgba(var(--ember-rgb),.6);background:rgba(var(--ember-rgb),.07)}
+  .mini.go{color:var(--heading);border-color:rgba(var(--ember-rgb),.55)}
+  .key{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--ink-dim);margin-top:4px}
+  .key i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+  .none{font-size:14.5px;color:var(--ink-dim);padding:12px 4px}
+
+  .takes{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:13px}
+  .pcard{background:var(--card);border:1px solid var(--cardborder);border-radius:14px;padding:19px 18px;
+    backdrop-filter:blur(12px);display:flex;flex-direction:column;gap:8px}
+  .pcard .u{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mauve)}
+  .pcard h4{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--heading);line-height:1.15}
+  .pcard p{font-size:13.5px;color:var(--ink-dim);line-height:1.5;flex:1}
+  .pcard .btn{align-self:flex-start;padding:10px 20px;font-size:13.5px}
+
+  /* sheet */
+  .veil{position:fixed;inset:0;background:rgba(var(--veil-rgb),.82);backdrop-filter:blur(7px);
+    z-index:60;display:none;align-items:flex-start;justify-content:center;padding:34px 16px;overflow-y:auto}
+  .veil.on{display:flex}
+  .sheet{background:linear-gradient(150deg,rgba(var(--sheet-rgb),.97),rgba(var(--bg-rgb),.99));
+    border:1px solid rgba(var(--copper-rgb),.36);border-radius:18px;max-width:640px;width:100%;
+    padding:30px 30px 26px;position:relative;box-shadow:0 30px 90px -30px #000}
+  .sheet .num{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--copper)}
+  .sheet h3{font-family:var(--serif);font-size:29px;font-weight:600;line-height:1.12;margin:7px 0 18px;color:var(--heading)}
+  .close{position:absolute;top:15px;right:17px;background:none;border:none;color:var(--ink-dim);font-size:25px;cursor:pointer;line-height:1;padding:4px 8px}
+  .close:hover{color:var(--ember-glow)}
+  @media(max-width:520px){.sheet{padding:26px 18px 22px}}
+  .pbox{background:rgba(var(--well-rgb),.72);border:1px solid rgba(var(--copper-rgb),.2);border-radius:12px;
+    padding:17px 18px;font-family:var(--mono);font-size:12.5px;line-height:1.75;color:var(--well-ink);white-space:pre-wrap;overflow-wrap:anywhere;max-height:50vh;overflow-y:auto}
+
+  .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);opacity:0;
+    background:linear-gradient(135deg,var(--forest),var(--green));color:var(--on-accent);font-weight:700;font-size:14px;
+    padding:11px 22px;border-radius:30px;z-index:80;transition:opacity .25s,transform .25s;pointer-events:none;max-width:calc(100vw - 32px);text-align:center}
+  .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  .savebar{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:34px}
+  .hint{font-size:12.5px;color:var(--ink-dim)}
+
+  .joinsff{margin:30px auto 0;text-align:center;background:linear-gradient(135deg,rgba(var(--ember-rgb),0.10),rgba(var(--card-rgb),0.82));border:1px solid rgba(var(--copper-rgb),0.30);border-radius:16px;padding:24px 24px}
+  .joinsff p{font-size:14.5px;color:var(--ink-dim);line-height:1.6;margin:0 auto 15px;max-width:480px}
+  .joinsff a{display:inline-block;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;background:var(--ember);color:var(--on-accent);text-decoration:none;padding:13px 30px;border-radius:30px;font-weight:600}
+  .joinsff a:hover{background:var(--copper)}
+  footer{margin-top:34px;text-align:center;font-family:var(--mono);font-size:10px;letter-spacing:.24em;color:var(--ink-dim);opacity:.7}
+
+  #printplan{display:none}
+  @media print{
+    body{background:#fff;color:#111;padding:0;font-size:12pt}
+    body>*:not(#printplan){display:none !important}
+    #printplan{display:block;font-family:Georgia,serif;color:#111}
+    #printplan h1{font-family:Georgia,serif;font-size:22pt;-webkit-text-fill-color:#111;background:none;color:#111;margin-bottom:6pt}
+    #printplan .meta{font-size:11pt;margin-bottom:14pt;line-height:1.5}
+    #printplan .pi{border-top:1px solid #bbb;padding:7pt 0;break-inside:avoid;font-size:11pt;line-height:1.45}
+    #printplan .pi b{font-family:Arial,sans-serif;font-size:9pt;letter-spacing:.06em;text-transform:uppercase}
+    #printplan .box{display:inline-block;width:10pt;height:10pt;border:1px solid #333;margin-right:6pt;vertical-align:-1pt;text-align:center;line-height:9pt;font-size:9pt}
+  }
+</style>
+</head>
+<body>
+<div class="embers" id="embers"></div>
+<div class="wrap">
+
+  <header>
+    <div class="kicker">Soul-Forged Founders · A Free Spark</div>
+    <h1>The Holiday Countdown</h1>
+    <div class="sub">A post for every day until your last day to buy.</div>
+    <p class="lede">Tell it your offer, your holiday and the days you post. You leave with a day-by-day plan of posts and emails or DMs, a ready Claude prompt for each one, and a calendar file.</p>
+  </header>
+
+  <nav class="steps" id="steps" aria-label="Steps"></nav>
+
+  <!-- STEP 1 -->
+  <section class="view" id="v-1">
+    <div class="section-label">Step 1 · Your offer</div>
+    <p class="steplede">The one thing you're selling before your holiday. A small reading, a gift card or one download is plenty.</p>
+    <div class="panel">
+      <div class="field"><label for="f-what">What it is, in one sentence</label>
+        <input id="f-what" data-f="what" placeholder="A three-card reading for the year ahead, delivered as a recorded video" autocomplete="off"></div>
+      <div class="field"><label for="f-who">Who it's for</label>
+        <input id="f-who" data-f="who" placeholder="People who want a clear start to the new year" autocomplete="off"></div>
+      <div class="field"><label for="f-price">The price (optional)</label>
+        <input id="f-price" data-f="price" placeholder="$44, or leave it blank if you're still deciding" autocomplete="off"></div>
+      <div class="field"><span class="lbl" id="buy-lbl">How people buy</span>
+        <div class="seg" role="radiogroup" aria-labelledby="buy-lbl">
+          <label><input type="radio" name="buy" value="dm"><span>DM me</span></label>
+          <label><input type="radio" name="buy" value="link"><span>A link</span></label>
+          <label><input type="radio" name="buy" value="other"><span>Other</span></label>
+        </div>
+        <div class="hint">No website or payment tool yet? "DM me" works. They message you, you send them how to pay.</div>
+      </div>
+      <div class="field" id="w-link"><label for="f-link">The link</label>
+        <input id="f-link" data-f="link" type="url" placeholder="https://" autocomplete="off"></div>
+      <div class="field" id="w-other"><label for="f-other">How they buy</label>
+        <input id="f-other" data-f="other" placeholder="Reply to my email, book a call, comment on the post" autocomplete="off"></div>
+    </div>
+    <div class="err" id="err-1"></div>
+    <div class="acts stepnav"><button class="btn ok" data-next="1" type="button">Done: pick the holiday →</button></div>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="view" id="v-2">
+    <div class="section-label">Step 2 · The holiday</div>
+    <p class="steplede">Pick the day you're selling toward, or type your own. Then set your last day to buy and the day you start.</p>
+    <div class="panel">
+      <div class="field"><span class="lbl">The holiday</span>
+        <div class="chips" id="hol-chips"></div>
+      </div>
+      <div class="two" id="w-custom">
+        <div class="field"><label for="f-cname">Its name</label><input id="f-cname" placeholder="My shop's birthday" autocomplete="off"></div>
+        <div class="field"><label for="f-cdate">Its date</label><input id="f-cdate" type="date"></div>
+      </div>
+      <div class="note" id="hol-note"></div>
+    </div>
+    <div class="panel" style="margin-top:14px">
+      <div class="two">
+        <div class="field"><label for="f-last">Last day to buy</label><input id="f-last" type="date">
+          <div class="hint">Starts at five days before the holiday, so there's time to deliver. Change it to suit you.</div></div>
+        <div class="field"><label for="f-start">Start date</label><input id="f-start" type="date">
+          <div class="hint">Starts at today.</div></div>
+      </div>
+    </div>
+    <div class="err" id="err-2"></div>
+    <div class="acts stepnav"><button class="btn line" data-go="1" type="button">← Back</button><button class="btn ok" data-next="2" type="button">Done: set your rhythm →</button></div>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="view" id="v-3">
+    <div class="section-label">Step 3 · Your rhythm</div>
+    <p class="steplede">Pick the days you'll post. Three a week is a steady pace you can keep up.</p>
+    <div class="panel">
+      <div class="field"><span class="lbl" id="days-lbl">The days you post</span>
+        <div class="seg week" id="days" role="group" aria-labelledby="days-lbl"></div>
+      </div>
+      <div class="field"><span class="lbl" id="list-lbl">Do you have an email list?</span>
+        <div class="seg two-up" role="radiogroup" aria-labelledby="list-lbl">
+          <label><input type="radio" name="list" value="yes"><span>Yes</span></label>
+          <label><input type="radio" name="list" value="no"><span>Not yet</span></label>
+        </div>
+        <div class="hint" id="list-hint"></div>
+      </div>
+    </div>
+    <div class="err" id="err-3"></div>
+    <div class="acts stepnav"><button class="btn line" data-go="2" type="button">← Back</button><button class="btn ok" data-next="3" type="button">Done: build my countdown →</button></div>
+  </section>
+
+  <!-- STEP 4 -->
+  <section class="view" id="v-4">
+    <div class="section-label">Step 4 · Your countdown</div>
+    <div class="summary"><div class="big" id="sum-big"></div><div class="ct" id="sum-ct"></div></div>
+    <p class="steplede" id="sum-lede"></p>
+    <div class="key">
+      <span><i style="background:var(--green)"></i>Teach</span><span><i style="background:var(--mauve)"></i>Story</span>
+      <span><i style="background:var(--gold)"></i>Proof</span><span><i style="background:var(--ember)"></i>Invitation</span>
+      <span><i style="background:#5C6C8E"></i>Conversation</span><span><i style="background:var(--heading)"></i><span id="key-mail">Email</span></span>
+    </div>
+    <div id="plan"></div>
+    <div class="acts stepnav"><button class="btn line" data-go="3" type="button">← Back</button><button class="btn ok" data-next="4" type="button">Done: take it with you →</button></div>
+  </section>
+
+  <!-- STEP 5 -->
+  <section class="view" id="v-5">
+    <div class="section-label">Step 5 · Take it with you</div>
+    <p class="steplede">Put your countdown where you'll see it every day. Your ticks save on this device, so you can come back here too.</p>
+    <div class="takes">
+      <div class="pcard"><div class="u">Calendar</div><h4>Every item on its day</h4>
+        <p>One all-day event for each post and each touch, with its Claude prompt inside. Opens in Google Calendar, Apple Calendar or Outlook.</p>
+        <button class="btn copy" id="ics" type="button">Download the calendar (.ics)</button></div>
+      <div class="pcard"><div class="u">Plain text</div><h4>The whole plan</h4>
+        <p>Every date, type and idea, ready to paste into your notes, a doc or a chat with Claude.</p>
+        <button class="btn line" id="copyplan" type="button">Copy the whole plan</button></div>
+      <div class="pcard"><div class="u">Paper</div><h4>A list for the wall</h4>
+        <p>A clean printout with a box to tick for each day.</p>
+        <button class="btn line" id="print" type="button">Print it</button></div>
+    </div>
+    <div class="acts stepnav"><button class="btn line" data-go="4" type="button">← Back to my countdown</button></div>
+  </section>
+
+  <div class="savebar"><button type="button" class="tool danger" id="startover">Start over</button></div>
+
+  <div class="joinsff">
+    <p>Built inside Soul-Forged Founders, where tarot readers, coaches, and healers create tools like these with Claude.</p>
+    <a href="https://www.skool.com/soul-forged-founders" target="_blank" rel="noopener">Come build with us →</a>
+  </div>
+
+  <footer>THE HOLIDAY COUNTDOWN · A FREE SPARK FROM SOUL-FORGED FOUNDERS<br>Your plan saves on this device.</footer>
+</div>
+
+<div id="printplan"></div>
+
+<div class="veil" id="veil" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+  <div class="sheet">
+    <button class="close" id="close" type="button" aria-label="Close">×</button>
+    <div class="num" id="sheet-num"></div>
+    <h3 id="sheet-title"></h3>
+    <div id="sheet-body"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+  var KEY='spark-2026-11-holiday-countdown';
+  var STEPS=['Your offer','The holiday','Your rhythm','Your countdown','Take it with you'];
+  var DOW=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var DOWLONG=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var MON=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var CYCLE=['teach','story','proof','invitation','conversation'];
+  var TYPE={
+    teach:{n:'Teach',d:'Teach one useful thing, tied to what you sell.'},
+    story:{n:'Story',d:'A true story from your work or your life.'},
+    proof:{n:'Proof',d:'Show the work: a sample, a result, or kind words someone gave you.'},
+    invitation:{n:'Invitation',d:'Ask them to buy, plainly, with the how and the when.'},
+    conversation:{n:'Conversation',d:'Ask a question and talk with whoever answers.'}
+  };
+
+  var $=function(id){return document.getElementById(id);};
+  function pad(n){ return String(n).padStart(2,'0'); }
+  function iso(d){ return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+  function parse(s){ if(!s||!/^\d{4}-\d{2}-\d{2}$/.test(s)) return null; var p=s.split('-'); return new Date(+p[0],+p[1]-1,+p[2]); }
+  function addDays(s,n){ var d=parse(s); d.setDate(d.getDate()+n); return iso(d); }
+  function diff(a,b){ return Math.round((parse(b)-parse(a))/86400000); }
+  function today(){ return iso(new Date()); }
+  function nice(s){ var d=parse(s); if(!d) return ''; return DOW[d.getDay()]+' '+MON[d.getMonth()].slice(0,3)+' '+d.getDate(); }
+  function niceY(s){ var d=parse(s); if(!d) return ''; return DOWLONG[d.getDay()]+', '+MON[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear(); }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+
+  /* holidays: next occurrence on or after today */
+  function nthDow(y,m,dow,n){ var d=new Date(y,m,1); var off=(dow-d.getDay()+7)%7; return new Date(y,m,1+off+7*(n-1)); }
+  var HOLS=[
+    {k:'nyd',n:"New Year's Day",f:function(y){return new Date(y,0,1);}},
+    {k:'val',n:"Valentine's Day",f:function(y){return new Date(y,1,14);}},
+    {k:'mom',n:"Mother's Day",f:function(y){return nthDow(y,4,0,2);},note:'US, the second Sunday of May'},
+    {k:'dad',n:"Father's Day",f:function(y){return nthDow(y,5,0,3);},note:'US, the third Sunday of June'},
+    {k:'hal',n:'Halloween',f:function(y){return new Date(y,9,31);}},
+    {k:'bf',n:'Black Friday',f:function(y){var t=nthDow(y,10,4,4); t.setDate(t.getDate()+1); return t;},note:'the day after US Thanksgiving'},
+    {k:'xmas',n:'Christmas',f:function(y){return new Date(y,11,25);}}
+  ];
+  function holFind(k){ for(var i=0;i<HOLS.length;i++) if(HOLS[i].k===k) return HOLS[i]; return null; }
+  function nextOcc(h){ var t=today(), y=new Date().getFullYear(), d=iso(h.f(y)); if(d<t) d=iso(h.f(y+1)); return d; }
+
+  function fresh(){
+    var h=holFind('xmas'), hd=nextOcc(h);
+    return {step:1,reached:1,
+      offer:{what:'',who:'',price:'',buy:'dm',link:'',other:''},
+      hol:{k:'xmas',cname:'',cdate:'',date:hd,last:addDays(hd,-5),start:today()},
+      days:[1,3,5],list:'yes',done:{}};
+  }
+  var state;
+  try{ state=JSON.parse(localStorage.getItem(KEY)); }catch(e){ state=null; }
+  if(!state || !state.offer || !state.hol){ state=fresh(); }
+  if(!state.done) state.done={};
+  if(!Array.isArray(state.days)) state.days=[1,3,5];
+  if(!state.reached) state.reached=state.step||1;
+  function save(){ try{ localStorage.setItem(KEY,JSON.stringify(state)); }catch(e){} }
+
+  function holName(){ if(state.hol.k==='custom') return state.hol.cname.trim()||'my holiday'; var h=holFind(state.hol.k); return h?h.n:'my holiday'; }
+  function holDate(){ return state.hol.k==='custom'?state.hol.cdate:state.hol.date; }
+  function noList(){ return state.list==='no'; }
+  function touchName(){ return noList()?'DM or story':'Email'; }
+
+  /* offer phrases */
+  function F(v){ return (v&&String(v).trim())||'[FILL IN]'; }
+  function what(){ var w=(state.offer.what||'').trim().replace(/[.\s]+$/,''); if(!w) return 'your offer'; return /^[A-Z][a-z\s-]/.test(w)?w.charAt(0).toLowerCase()+w.slice(1):w; }
+  function cap(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
+  function who(){ var w=(state.offer.who||'').trim().replace(/[.\s]+$/,''); if(!w) return 'your people'; return /^[A-Z][a-z\s-]/.test(w)?w.charAt(0).toLowerCase()+w.slice(1):w; }
+  function buyLine(){
+    var o=state.offer;
+    if(o.buy==='link') return o.link.trim()?'at this link: '+o.link.trim():'at my link [FILL IN: the link]';
+    if(o.buy==='other') return o.other.trim()?o.other.trim():'[FILL IN: how people buy]';
+    return 'by sending me a DM';
+  }
+  function buyShort(){
+    var o=state.offer;
+    if(o.buy==='link') return 'the link';
+    if(o.buy==='other') return o.other.trim()||'how to buy';
+    return 'send you a DM';
+  }
+
+  /* validation */
+  function check(n){
+    if(n===1){
+      if(!state.offer.what.trim()) return {msg:'Write what your offer is in one sentence first. A rough line is fine, you can change it later.',focus:'f-what'};
+      return null;
+    }
+    if(n===2){
+      var t=today(), hd=holDate(), L=state.hol.last, S=state.hol.start;
+      if(state.hol.k==='custom' && !state.hol.cname.trim()) return {msg:'Give your holiday a name.',focus:'f-cname'};
+      if(state.hol.k==='custom' && !parse(hd)) return {msg:'Pick the date of your holiday.',focus:'f-cdate'};
+      if(!parse(L)) return {msg:'Pick your last day to buy.',focus:'f-last'};
+      if(!parse(S)) return {msg:'Pick the day you want to start.',focus:'f-start'};
+      if(L<t) return {msg:'Your last day to buy, '+nice(L)+', has already passed. Pick a day from today onward.',focus:'f-last'};
+      if(L<S) return {msg:'Your last day to buy, '+nice(L)+', comes before your start date, '+nice(S)+'. Pick again so the start comes first.',focus:'f-last'};
+      return null;
+    }
+    if(n===3){
+      if(!state.days.length) return {msg:'Pick at least one day of the week you post.',focus:null};
+      if(state.list!=='yes' && state.list!=='no') return {msg:'Say whether you have an email list.',focus:null};
+      return null;
+    }
+    return null;
+  }
+  function firstBad(){ for(var n=1;n<=3;n++) if(check(n)) return n; return 0; }
+
+  /* the plan */
+  function plan(){
+    var S=state.hol.start, L=state.hol.last, items=[];
+    if(!parse(S)||!parse(L)||L<S) return items;
+    var posts=[];
+    for(var d=S; d<=L; d=addDays(d,1)){ if(state.days.indexOf(parse(d).getDay())>-1) posts.push(d); }
+    var n=posts.length;
+    posts.forEach(function(d,i){
+      var t=CYCLE[i%CYCLE.length], dl=false, fromEnd=n-1-i;
+      if(fromEnd<3){ dl=true; t=fromEnd===0?'invitation':fromEnd===1?'conversation':'story'; }
+      items.push({id:'p'+d,kind:'post',date:d,type:t,dl:dl});
+    });
+    /* never more than one invitation in any three posts in a row */
+    for(var i=0;i<items.length;i++){
+      if(items[i].type!=='invitation') continue;
+      for(var j=Math.max(0,i-2);j<i;j++){ if(items[j].type==='invitation'){ items[i].type=items[i].dl?'story':'conversation'; break; } }
+    }
+    var span=diff(S,L), mid=addDays(S,Math.round(span/2));
+    items.push({id:'eA'+S,kind:'mail',date:S,type:'announce'});
+    items.push({id:'eS'+mid,kind:'mail',date:mid,type:'mstory'});
+    items.push({id:'eL'+L,kind:'mail',date:L,type:'last'});
+    items.sort(function(a,b){ if(a.date!==b.date) return a.date<b.date?-1:1; if(a.type==='last') return -1; if(b.type==='last') return 1; return a.kind===b.kind?0:(a.kind==='mail'?1:-1); });
+    return items;
+  }
+  function left(d){ var n=diff(d,state.hol.last); return n===0?'last day to buy':n===1?'1 day left':n+' days left'; }
+  var MAIL={announce:'Announce',mstory:'Story',last:'Last call'};
+  function label(x){ return x.kind==='post'?'Post · '+TYPE[x.type].n+(x.dl?' · deadline':''):touchName()+' · '+MAIL[x.type]; }
+  function idea(x){
+    var W=what(), P=who(), H=holName(), Ld=nice(state.hol.last), dleft=diff(x.date,state.hol.last);
+    if(x.kind==='mail'){
+      if(x.type==='announce') return noList()?'Tell people it\'s open: '+W+'. Message the people who\'d want it, and post it to your stories. Open until '+Ld+'.':'Tell your list it\'s open: '+W+', for '+P+'. Open until '+Ld+'.';
+      if(x.type==='mstory') return 'One true story that shows why '+W+' matters before '+H+', with how to buy at the end.';
+      return 'The morning of the last day. '+cap(W)+' closes today. Say what they get and how to buy: '+buyShort()+'.';
+    }
+    if(x.dl){
+      if(x.type==='story') return dleft+' days left. A true story about why this season is the time for '+W+'.';
+      if(x.type==='conversation') return 'Answer the questions '+P+' ask before they buy, and remind them it closes '+Ld+'.';
+      if(x.type==='invitation') return 'Last call. '+cap(W)+' closes '+(dleft===0?'today':Ld+', '+dleft+' day'+(dleft===1?'':'s')+' from now')+'. Say what they get and how to buy: '+buyShort()+'.';
+      return TYPE[x.type].d+' Remind them it closes '+Ld+'.';
+    }
+    if(x.type==='teach') return 'Teach one small thing '+P+' can use before '+H+', the kind of help '+W+' gives.';
+    if(x.type==='story') return 'The story of why you made this, or the moment you knew '+P+' needed it.';
+    if(x.type==='proof') return 'Show the work behind '+W+': a sample, a peek at how you make it, or kind words if you have them.';
+    if(x.type==='invitation') return 'Invite '+P+' to get '+W+' before '+Ld+'. Say how: '+buyShort()+'.';
+    return 'Ask '+P+' one easy question about their '+H+' plans, and reply to every answer.';
+  }
+
+  /* prompts */
+  function facts(){
+    var o=state.offer;
+    return 'About my offer:\n'+
+      '- What it is: '+F(o.what)+'\n'+
+      '- Who it\'s for: '+F(o.who)+'\n'+
+      '- Price: '+(o.price.trim()||'[FILL IN] (ask me, I may still be deciding)')+'\n'+
+      '- How people buy: '+buyLine()+'\n'+
+      '- The holiday: '+holName()+(holDate()?' on '+niceY(holDate()):'')+'\n'+
+      '- Last day to buy: '+niceY(state.hol.last)+'\n';
+  }
+  var RULES='Rules:\n'+
+    '- Before you write, ask me anything you need that isn\'t here, and wait for my answers. Never invent facts, prices, results, client stories, numbers or quotes. Where a detail is missing, mark it [FILL IN].\n'+
+    '- Write in my voice: plain, warm, short sentences. If you can see my voice notes or past posts, read them first.\n'+
+    '- No made-up urgency. The only deadline is my real last day to buy.\n';
+  function postGuide(t){
+    if(t==='teach') return 'Teach one small, useful thing my reader can try today. Tie it back to my offer in one line at the end.';
+    if(t==='story') return 'Ask me for a true story first (from my work, a session, or my own life) and wait. Build the post around the story I give you.';
+    if(t==='proof') return 'Ask me whether I have a result, kind words or a message from someone, and wait. If I paste one, use it word for word and check I have their OK to share it. If I have none, show my work instead: a sample, a behind-the-scenes look, what\'s included, or why I made it. Never write a testimonial or a result for me.';
+    if(t==='invitation') return 'Invite my reader to buy, plainly. Say what they get, who it\'s for, the price if I gave it, how to buy, and the last day.';
+    return 'Ask my reader one easy question they\'ll enjoy answering in the comments. Keep the selling to one soft line at the end, if any.';
+  }
+  function PROMPT(x){
+    var dleft=diff(x.date,state.hol.last), when=nice(x.date)+' ('+left(x.date)+')';
+    if(x.kind==='post'){
+      return 'Write one social media post for my business. It goes out on '+when+'.\n\n'+facts()+'\n'+
+        'This post: '+TYPE[x.type].n+'. '+TYPE[x.type].d+'\n'+
+        'The idea: '+idea(x)+'\n\n'+
+        'How to write it: '+postGuide(x.type)+'\n'+
+        (x.dl?'This is one of my last three posts before the last day to buy. Name the date'+(dleft>0?' and that there are '+dleft+' day'+(dleft===1?'':'s')+' left':' and that today is the last day')+'. Keep the deadline clear and calm.\n':'')+'\n'+
+        'Give me:\n1. A graphic hook: a short headline for the image, under ten words.\n2. The caption, opening on its own hook line'+(x.type==='invitation'||x.dl?', and ending with how to buy':'')+'.\n\n'+RULES;
+    }
+    var job=x.type==='announce'?'tells people my offer is open. Say what it is, who it\'s for, the price if I gave it, how to buy, and the last day.':
+      x.type==='mstory'?'is built around one true story. Ask me for the story first and wait. Then lead from the story to my offer, with how to buy and the last day at the end.':
+      'is the last call, sent the morning of the last day. Keep it short. Say it closes today, what they get, and how to buy.';
+    var out=noList()?
+      'I don\'t have an email list yet, so write this as:\n1. A short DM I can send one person at a time, to people who have shown interest in my work. It should sound like me talking to one friend.\n2. Text for two or three story frames (Instagram or Facebook stories), each one short, with the first frame opening on its own hook.':
+      'Give me:\n1. Three subject lines, each one opening on its own hook.\n2. A preview line.\n3. The email, short enough to read in a minute.';
+    return 'Write one '+(noList()?'DM and story set':'email')+' for my business. It goes out on '+when+'.\n\n'+facts()+'\n'+
+      'This one '+job+'\n\n'+out+'\n\n'+RULES;
+  }
+
+  /* toast and copy */
+  var toastT;
+  function toast(m){ var t=$('toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(function(){t.classList.remove('on');},2000); }
+  function copy(text,msg){
+    function fallback(){ var ta=document.createElement('textarea'); ta.value=text; ta.setAttribute('readonly',''); ta.style.position='fixed'; ta.style.top='0'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); var ok=false; try{ok=document.execCommand('copy');}catch(e){} document.body.removeChild(ta); if(ok) toast(msg); else showText('Copy it from here','Your browser blocked copying',text); }
+    if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(text).then(function(){toast(msg);},fallback); } else fallback();
+  }
+
+  /* render */
+  function renderSteps(){
+    $('steps').innerHTML=STEPS.map(function(s,i){
+      var n=i+1, cls=n===state.step?'on':n<state.reached||(n<state.step)?'done':'';
+      var dis=n>state.reached?' disabled':'';
+      return '<button class="stp '+cls+'" data-go="'+n+'" type="button"'+dis+(n===state.step?' aria-current="step"':'')+' aria-label="Step '+n+': '+s+'"><span class="sn">'+n+'</span><span class="sl">'+s+'</span></button>';
+    }).join('');
+    for(var n=1;n<=5;n++) $('v-'+n).classList.toggle('on',n===state.step);
+  }
+  function renderOffer(){
+    ['what','who','price','link','other'].forEach(function(k){ var el=$('f-'+k); if(el && document.activeElement!==el) el.value=state.offer[k]||''; });
+    document.querySelectorAll('input[name=buy]').forEach(function(r){ r.checked=r.value===state.offer.buy; });
+    $('w-link').style.display=state.offer.buy==='link'?'':'none';
+    $('w-other').style.display=state.offer.buy==='other'?'':'none';
+  }
+  function renderHol(){
+    var chips=HOLS.map(function(h){ return '<button class="chip'+(state.hol.k===h.k?' on':'')+'" data-hol="'+h.k+'" type="button" aria-pressed="'+(state.hol.k===h.k)+'">'+esc(h.n)+'</button>'; }).join('')+
+      '<button class="chip'+(state.hol.k==='custom'?' on':'')+'" data-hol="custom" type="button" aria-pressed="'+(state.hol.k==='custom')+'">My own date</button>';
+    $('hol-chips').innerHTML=chips;
+    $('w-custom').style.display=state.hol.k==='custom'?'':'none';
+    if(document.activeElement!==$('f-cname')) $('f-cname').value=state.hol.cname||'';
+    $('f-cdate').value=state.hol.cdate||'';
+    $('f-last').value=state.hol.last||'';
+    $('f-start').value=state.hol.start||'';
+    var hd=holDate(), h=holFind(state.hol.k), txt='';
+    if(parse(hd)){
+      var dd=diff(today(),hd);
+      txt='<b>'+esc(holName())+'</b> falls on '+esc(niceY(hd))+(h&&h.note?' ('+esc(h.note)+')':'')+'. '+(dd>0?dd+' day'+(dd===1?'':'s')+' from today.':dd===0?'That\'s today.':'That date has passed.');
+    }
+    $('hol-note').innerHTML=txt;
+  }
+  function renderRhythm(){
+    $('days').innerHTML=[1,2,3,4,5,6,0].map(function(d){
+      return '<label><input type="checkbox" data-day="'+d+'"'+(state.days.indexOf(d)>-1?' checked':'')+' aria-label="'+DOWLONG[d]+'"><span>'+DOW[d]+'</span></label>';
+    }).join('');
+    document.querySelectorAll('input[name=list]').forEach(function(r){ r.checked=r.value===state.list; });
+    $('list-hint').textContent=state.list==='no'?'Your three touches become DMs and stories. You can start a list any time.':'You\'ll get three emails: an announcement, a story, and a last call.';
+  }
+  function renderPlan(){
+    var items=plan(), posts=items.filter(function(x){return x.kind==='post';}), mails=items.length-posts.length;
+    var done=items.filter(function(x){return state.done[x.id];}).length;
+    $('key-mail').textContent=touchName();
+    $('sum-big').textContent=posts.length+' post'+(posts.length===1?'':'s')+' and '+mails+' '+(noList()?'DM or story touches':'emails');
+    $('sum-ct').textContent=done+' of '+items.length+' done';
+    $('sum-lede').textContent='From '+nice(state.hol.start)+' to your last day to buy, '+nice(state.hol.last)+', for '+holName()+'. Tick each one as it goes out.';
+    if(!items.length){ $('plan').innerHTML='<p class="none">Go back to step 2 and check your dates.</p>'; return; }
+    var h='', cur='';
+    if(!posts.length) h+='<p class="note">None of your post days fall between '+esc(nice(state.hol.start))+' and '+esc(nice(state.hol.last))+'. Go back to step 3 and add a day, or move your start date in step 2.</p>';
+    items.forEach(function(x){
+      if(x.date!==cur){
+        if(cur) h+='</div>';
+        cur=x.date;
+        var lft=left(x.date);
+        h+='<div class="daygroup"><div class="dayhead">'+esc(nice(x.date))+' <span class="left'+(lft==='last day to buy'?' dl':'')+'">· '+esc(lft)+'</span></div>';
+      }
+      var cls=x.kind==='mail'?'mail':'t-'+x.type, on=!!state.done[x.id];
+      h+='<article class="item '+cls+(on?' done':'')+'" data-id="'+x.id+'">'+
+        '<label class="tick"><input type="checkbox" data-tick="'+x.id+'"'+(on?' checked':'')+' aria-label="Done: '+esc(label(x))+' on '+esc(nice(x.date))+'"><span>'+(on?'✓':'')+'</span></label>'+
+        '<div class="body"><div class="ty">'+esc(label(x))+'</div><div class="idea">'+esc(idea(x))+'</div>'+
+        '<div class="row-acts"><button class="mini go" data-copy="'+x.id+'" type="button">Copy the prompt</button><button class="mini" data-read="'+x.id+'" type="button">Read it first</button></div></div></article>';
+    });
+    if(cur) h+='</div>';
+    $('plan').innerHTML=h;
+  }
+  function render(){
+    renderSteps(); renderOffer(); renderHol(); renderRhythm();
+    if(state.step>=4) renderPlan();
+    ['1','2','3'].forEach(function(n){ $('err-'+n).classList.remove('on'); });
+  }
+
+  function go(n){
+    n=Math.max(1,Math.min(5,n));
+    if(n>3){ var bad=firstBad(); if(bad){ n=bad; } }
+    if(n>state.reached) n=state.reached;
+    state.step=n; save(); render();
+    var top=$('steps').getBoundingClientRect().top+window.pageYOffset-20;
+    if(window.pageYOffset>top) window.scrollTo({top:top,behavior:'smooth'});
+  }
+  function next(n){
+    var c=check(n);
+    if(c){ var e=$('err-'+n); if(e){ e.textContent=c.msg; e.classList.add('on'); } if(c.focus) $(c.focus).focus(); return; }
+    state.reached=Math.max(state.reached,n+1);
+    go(n+1);
+  }
+
+  /* sheet */
+  var lastFocus=null;
+  function openSheet(num,title,body){
+    lastFocus=document.activeElement;
+    $('sheet-num').textContent=num; $('sheet-title').textContent=title; $('sheet-body').innerHTML=body;
+    $('veil').classList.add('on');
+    var f=$('sheet-body').querySelector('button'); if(f) f.focus();
+  }
+  function closeSheet(){ $('veil').classList.remove('on'); if(lastFocus) try{lastFocus.focus();}catch(e){} }
+  $('close').addEventListener('click',closeSheet);
+  $('veil').addEventListener('click',function(e){ if(e.target===$('veil')) closeSheet(); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape' && $('veil').classList.contains('on')) closeSheet(); });
+  function showText(num,title,text){
+    openSheet(num,title,'<div class="pbox" id="p-text"></div><p class="hint" style="margin-top:10px">Press and hold, or select all, to copy it.</p>');
+    $('p-text').textContent=text;
+  }
+  function promptSheet(x){
+    var t=PROMPT(x);
+    openSheet(nice(x.date)+' · '+label(x),idea(x),'<div class="pbox" id="p-text"></div><div class="acts"><button class="btn copy" id="p-copy" type="button">Copy the prompt</button></div>');
+    $('p-text').textContent=t;
+    $('p-copy').addEventListener('click',function(){ copy(t,'Copied. Paste it into Claude.'); });
+  }
+  function itemById(id){ var it=plan(); for(var i=0;i<it.length;i++) if(it[i].id===id) return it[i]; return null; }
+
+  /* plain text and print */
+  function header(){
+    var o=state.offer;
+    return 'My Holiday Countdown\n\n'+
+      'Offer: '+F(o.what)+'\nFor: '+F(o.who)+'\n'+(o.price.trim()?'Price: '+o.price.trim()+'\n':'')+'How to buy: '+buyLine()+'\n'+
+      'Holiday: '+holName()+(holDate()?', '+niceY(holDate()):'')+'\nLast day to buy: '+niceY(state.hol.last)+'\n';
+  }
+  function PLANTEXT(){
+    return header()+'\n'+plan().map(function(x){
+      return (state.done[x.id]?'[x] ':'[ ] ')+nice(x.date)+' ('+left(x.date)+') · '+label(x)+'\n'+idea(x);
+    }).join('\n\n');
+  }
+  function buildPrint(){
+    var o=state.offer;
+    $('printplan').innerHTML='<h1>My Holiday Countdown</h1><div class="meta"><b>Offer:</b> '+esc(F(o.what))+'<br><b>For:</b> '+esc(F(o.who))+'<br><b>How to buy:</b> '+esc(buyLine())+
+      '<br><b>Holiday:</b> '+esc(holName())+(holDate()?', '+esc(niceY(holDate())):'')+'<br><b>Last day to buy:</b> '+esc(niceY(state.hol.last))+'</div>'+
+      plan().map(function(x){ return '<div class="pi"><span class="box">'+(state.done[x.id]?'✓':'')+'</span><b>'+esc(nice(x.date))+' · '+esc(label(x))+'</b><br>'+esc(idea(x))+'</div>'; }).join('');
+  }
+  window.addEventListener('beforeprint',buildPrint);
+
+  /* calendar file */
+  function icsEsc(s){ return String(s||'').replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\r?\n/g,'\\n'); }
+  function fold(line){
+    var out='', bytes=0, chars=Array.from(line);
+    for(var i=0;i<chars.length;i++){
+      var c=chars[i], b=unescape(encodeURIComponent(c)).length;
+      if(bytes+b>73){ out+='\r\n '; bytes=1; }
+      out+=c; bytes+=b;
+    }
+    return out;
+  }
+  function ICS(){
+    var stamp=new Date().toISOString().replace(/[-:]/g,'').replace(/\.\d+Z$/,'Z');
+    var lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Soul-Forged Founders//Holiday Countdown//EN','CALSCALE:GREGORIAN','METHOD:PUBLISH','X-WR-CALNAME:'+icsEsc('Holiday Countdown: '+holName())];
+    plan().forEach(function(x){
+      var end=addDays(x.date,1).replace(/-/g,'');
+      lines.push('BEGIN:VEVENT','UID:'+x.id+'-'+state.hol.last+'@holiday-countdown','DTSTAMP:'+stamp,
+        'DTSTART;VALUE=DATE:'+x.date.replace(/-/g,''),'DTEND;VALUE=DATE:'+end,
+        'SUMMARY:'+icsEsc(label(x)+' ('+holName()+')'),
+        'DESCRIPTION:'+icsEsc(idea(x)+'\n\nCopy this prompt into Claude:\n\n'+PROMPT(x)),
+        'TRANSP:TRANSPARENT','END:VEVENT');
+    });
+    lines.push('END:VCALENDAR');
+    return lines.map(fold).join('\r\n')+'\r\n';
+  }
+  function blobDownload(name,content,type){
+    var blob=new Blob([content],{type:type}); var url=URL.createObjectURL(blob);
+    var a=document.createElement('a'); a.href=url; a.download=name; document.body.appendChild(a); a.click();
+    document.body.removeChild(a); setTimeout(function(){ URL.revokeObjectURL(url); },800);
+  }
+  function dl(name,content,type){
+    if(window.claude && window.claude.use){
+      window.claude.use('downloads').then(function(d){
+        if(d && d.save){ d.save({filename:name,data:content}).catch(function(){ blobDownload(name,content,type); }); } else { blobDownload(name,content,type); }
+      }).catch(function(){ blobDownload(name,content,type); });
+    } else { blobDownload(name,content,type); }
+  }
+  function slug(s){ return String(s).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'holiday'; }
+
+  /* events */
+  document.addEventListener('click',function(e){
+    var g=e.target.closest('[data-go]'); if(g){ if(!g.disabled) go(+g.getAttribute('data-go')); return; }
+    var nx=e.target.closest('[data-next]'); if(nx){ next(+nx.getAttribute('data-next')); return; }
+    var ho=e.target.closest('[data-hol]');
+    if(ho){
+      var k=ho.getAttribute('data-hol'); state.hol.k=k;
+      if(k!=='custom'){ state.hol.date=nextOcc(holFind(k)); state.hol.last=addDays(state.hol.date,-5); }
+      else if(parse(state.hol.cdate)){ state.hol.last=addDays(state.hol.cdate,-5); }
+      save(); renderHol(); $('err-2').classList.remove('on');
+      if(k==='custom') $('f-cname').focus();
+      return;
+    }
+    var c=e.target.closest('[data-copy]'); if(c){ var x=itemById(c.getAttribute('data-copy')); if(x) copy(PROMPT(x),'Copied. Paste it into Claude.'); return; }
+    var r=e.target.closest('[data-read]'); if(r){ var y=itemById(r.getAttribute('data-read')); if(y) promptSheet(y); return; }
+  });
+  document.addEventListener('input',function(e){
+    var f=e.target.getAttribute && e.target.getAttribute('data-f');
+    if(f){ state.offer[f]=e.target.value; save(); $('err-1').classList.remove('on'); return; }
+    if(e.target.id==='f-cname'){ state.hol.cname=e.target.value; save(); renderHol(); }
+  });
+  document.addEventListener('change',function(e){
+    var t=e.target;
+    if(t.name==='buy'){ state.offer.buy=t.value; save(); renderOffer(); return; }
+    if(t.name==='list'){ state.list=t.value; save(); renderRhythm(); return; }
+    if(t.hasAttribute && t.hasAttribute('data-day')){
+      var d=+t.getAttribute('data-day');
+      state.days=state.days.filter(function(x){return x!==d;}); if(t.checked) state.days.push(d);
+      save(); $('err-3').classList.remove('on'); return;
+    }
+    if(t.hasAttribute && t.hasAttribute('data-tick')){
+      var id=t.getAttribute('data-tick'); if(t.checked) state.done[id]=true; else delete state.done[id];
+      save(); renderPlan(); return;
+    }
+    if(t.id==='f-cdate'){ state.hol.cdate=t.value; if(parse(t.value)) state.hol.last=addDays(t.value,-5); save(); renderHol(); $('err-2').classList.remove('on'); return; }
+    if(t.id==='f-last'){ state.hol.last=t.value; save(); $('err-2').classList.remove('on'); return; }
+    if(t.id==='f-start'){ state.hol.start=t.value; save(); $('err-2').classList.remove('on'); return; }
+  });
+
+  $('ics').addEventListener('click',function(){
+    if(firstBad()){ go(firstBad()); return; }
+    dl('holiday-countdown-'+slug(holName())+'.ics',ICS(),'text/calendar');
+    toast('Calendar file downloaded');
+  });
+  $('copyplan').addEventListener('click',function(){ copy(PLANTEXT(),'Plan copied'); });
+  $('print').addEventListener('click',function(){ buildPrint(); window.print(); });
+  $('startover').addEventListener('click',function(){
+    if(!confirm('Start over? This clears your offer, dates and ticks on this device.')) return;
+    state=fresh(); save(); render(); window.scrollTo(0,0);
+  });
+
+  /* rising embers */
+  (function(){
+    var box=$('embers'), n=window.innerWidth<600?14:26;
+    for(var k=0;k<n;k++){
+      var e=document.createElement('span'); e.className='ember';
+      e.style.left=(Math.random()*100)+'%';
+      e.style.animationDuration=(9+Math.random()*12)+'s';
+      e.style.animationDelay=(-Math.random()*20)+'s';
+      e.style.opacity=(.3+Math.random()*.5);
+      box.appendChild(e);
+    }
+  })();
+
+  if(state.step>3 && firstBad()) state.step=firstBad();
+  render();
+})();
+</script>
+</body>
+</html>

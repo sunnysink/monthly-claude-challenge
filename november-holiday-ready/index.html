@@ -354,10 +354,10 @@ The part that surprised me: [one honest sentence, this is the bit people actuall
   <div class="section-label">Your free Sparks</div>
   <p class="sparklead"><b>Free things, one a week, yours just for being here.</b> No square to finish and nothing to buy. Each one opens on its date, so check back on a Saturday.</p>
   <div class="unlocks" id="unlocks">
-    <div class="unlock"><div class="u">Opens Sat Nov 7</div><h4>Spark 01</h4><p>A free thing, yours on the day it opens.</p></div>
-    <div class="unlock"><div class="u">Opens Sat Nov 14</div><h4>Spark 02</h4><p>A free thing, yours on the day it opens.</p></div>
-    <div class="unlock"><div class="u">Opens Sat Nov 21</div><h4>Spark 03</h4><p>A free thing, yours on the day it opens.</p></div>
-    <div class="unlock"><div class="u">Opens Sat Nov 28</div><h4>Spark 04</h4><p>A free thing, yours on the day it opens.</p></div>
+    <div class="unlock" id="spark01"><div class="u">Opens Sat Nov 7</div><h4>Spark 01</h4><p>A free thing, yours on the day it opens.</p></div>
+    <div class="unlock" id="spark02"><div class="u">Opens Sat Nov 14</div><h4>Spark 02</h4><p>A free thing, yours on the day it opens.</p></div>
+    <div class="unlock" id="spark03"><div class="u">Opens Sat Nov 21</div><h4>Spark 03</h4><p>A free thing, yours on the day it opens.</p></div>
+    <div class="unlock" id="spark04"><div class="u">Opens Sat Nov 28</div><h4>Spark 04</h4><p>A free thing, yours on the day it opens.</p></div>
   </div>
 
   <div class="section-label">The crown</div>
@@ -709,6 +709,24 @@ for(let i=0;i<20;i++){
 }
 
 paint();
+</script>
+<script>
+/* Each Spark opens itself on its Saturday */
+(function(){
+  var S=[
+    ['spark01',[2026,10,7],'The Offer Builder','Build one offer you can sell before your holiday, one step at a time, and leave with a one-page offer sheet.','offer-builder/','Open the builder'],
+    ['spark02',[2026,10,14],'The Gift Card Maker','Make a gift card for your work that someone can buy and give, then download it ready to print or send.','gift-card-maker/','Make your card'],
+    ['spark03',[2026,10,21],'The Holiday Countdown','Pick any holiday and your last day to buy, and get every post and email between now and then, each with a Claude prompt.','holiday-countdown/','Start the countdown'],
+    ['spark04',[2026,10,28],'The Sales Tally','Log every sale as it lands and watch the running total climb toward your goal.','sales-tally/','Open the tally']
+  ];
+  var now=new Date();
+  S.forEach(function(x){
+    var c=document.getElementById(x[0]); if(!c) return;
+    if(now<new Date(x[1][0],x[1][1],x[1][2])) return;
+    c.className='unlock open';
+    c.innerHTML='<span class="freetag">Free</span><div class="u">Open now</div><h4>'+x[2]+'</h4><p>'+x[3]+' <a href="'+x[4]+'">'+x[5]+' &rarr;</a></p>';
+  });
+})();
 </script>
 </body>
 </html>
