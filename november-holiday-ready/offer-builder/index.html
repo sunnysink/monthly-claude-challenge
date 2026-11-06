@@ -391,11 +391,12 @@
     </div>
     <div class="osheet" id="osheet" style="margin-top:14px"></div>
     <div class="acts">
+      <button class="btn copy" data-p="save" type="button">Copy the Save it to my Biz Brain prompt</button>
       <button class="btn line" data-p="file" type="button">Copy my offer file</button>
       <button class="btn line" id="print" type="button">Print or save as PDF</button>
       <button class="btn ok" data-new type="button">+ Create a new offer</button>
     </div>
-    <p class="hint" style="margin-top:10px">Save your offer file in an Offers folder in your Biz Brain, named for this offer, or keep it to paste. Every square on the Holiday Ready board reads it. This offer also stays on your offer shelf at the top of the page, in this browser. Bookmark the page to come back to it.</p>
+    <p class="hint" style="margin-top:10px">The Save it to my Biz Brain prompt has your offer file inside it. Paste it into Claude with Google Drive connected and Claude files it in Biz Brain, then Offers, named for this offer. No Drive? Claude gives it back to you ready to keep in a Claude Project or a doc. Every square on the Holiday Ready board reads it from there. This offer also stays on your offer shelf at the top of the page, in this browser. Bookmark the page to come back to it.</p>
   </section>
 
   <div class="acts stepnav" id="stepnav"></div>
@@ -676,6 +677,15 @@
     else L.push('1. '+FILL);
     return L.join('\n');
   }
+  function SAVEPROMPT(){
+    var nm=has(state.name)?state.name.trim():'My offer';
+    return "Save my offer file below into my Biz Brain, the folder where I keep my business files. Do it now, without asking me anything first.\n\n"+
+      "1. If you can save to my Google Drive or another drive I've connected: find my folder called Biz Brain, or make it if it isn't there. Inside it, find or make a folder called Offers. Save the offer file there as a document named \""+nm+"\", exactly as written below. If a file with that name is already in Offers, update it instead of making a second one. Then tell me in one line where it is.\n"+
+      "2. If you can't save to a drive, say so in one line. Then give me the offer file as one block I can copy, and the two places it can live: in a Claude Project, add it as a project file named \""+nm+"\"; or in Google Drive, in a folder called Biz Brain, then a folder called Offers, as a doc named \""+nm+"\".\n"+
+      "3. Keep every word of the file as it is, including anything marked [FILL IN].\n\n"+
+      "Then tell me in one line what's next: every square on the Holiday Ready board reads this file.\n\n"+
+      "MY OFFER FILE:\n"+FILE();
+  }
   function NAMEPROMPT(){
     return "Help me name an offer I'm selling before a holiday or date.\n\n"+
       "The idea:\n"+(has(state.idea)?state.idea.trim():FILL)+"\n"+
@@ -729,8 +739,8 @@
     $('p-text').textContent=text;
   }
   function promptSheet(kind){
-    var text=kind==='name'?NAMEPROMPT():kind==='launch'?LAUNCHPROMPT():FILE();
-    var title=kind==='name'?'The naming prompt':kind==='launch'?'Your sales page + launch dashboard prompt':'Your offer file';
+    var text=kind==='name'?NAMEPROMPT():kind==='launch'?LAUNCHPROMPT():kind==='save'?SAVEPROMPT():FILE();
+    var title=kind==='name'?'The naming prompt':kind==='launch'?'Your sales page + launch dashboard prompt':kind==='save'?'Save it to my Biz Brain':'Your offer file';
     var btn=kind==='file'?'Copy the file':'Copy the prompt';
     var msg=kind==='file'?'Copied. Save it wherever you keep notes.':'Copied. Paste it into Claude.';
     openSheet(kind==='file'?'Plain text':'For Claude',title,'<div class="pbox" id="p-text"></div><div class="acts"><button class="btn copy" id="p-copy" type="button">'+btn+'</button></div>');
