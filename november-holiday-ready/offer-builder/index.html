@@ -379,7 +379,7 @@
     <p class="steplede">Your whole offer on one page, and the prompt that turns it into your sales page and launch dashboard. Anything marked [FILL IN] is still open: go back to that step, or Claude leaves a marked gap for you to fill.</p>
     <div class="panel">
       <span class="lbl">Your next step</span>
-      <p>Copy this prompt and paste it into Claude. You get <b>your sales page</b>, ready to paste into a post, an email or a DM, and <b>your launch dashboard</b>: a countdown to your last day to buy, your sales goal with a tally, and a dated plan of every post and email until doors close, with the words written.</p>
+      <p>Copy this prompt and paste it into Claude. You get two separate pages. <b>Your sales page</b> is the one you share with buyers, or paste into a post, an email or a DM. <b>Your launch dashboard</b> stays private to you: a countdown to your last day to buy, your sales goal with a tally, and a dated plan of every post and email until doors close, with the words written.</p>
       <div class="acts"><button class="btn copy" data-p="launch" type="button">Copy my sales page + launch dashboard prompt</button></div>
     </div>
     <div class="osheet" id="osheet" style="margin-top:14px"></div>
@@ -678,14 +678,14 @@
 
   function LAUNCHPROMPT(){
     return "Make my sales page and my launch dashboard for the offer on my offer sheet below. Today is "+nice(today())+". Work out who it's for, a subtitle and the change it makes from the idea on the sheet.\n\n"+FILE()+"\n\n"+
-      "Make one artifact (an interactive page) with two tabs: Sales page and Launch dashboard. Only these two tabs, in this order, with no intro before them.\n\n"+
-      "SALES PAGE TAB\n"+
+      "Make two separate artifacts, in this order, with no intro before them. The first is my sales page, a page I will publish and share with buyers. The second is my launch dashboard, which is only for me. Keep my sales goal, my sales count and my launch plan off the sales page completely.\n\n"+
+      "ARTIFACT 1: MY SALES PAGE\n"+
       "1. Sections, in order: the name as the headline, the subtitle, who it's for and the moment in their life it meets, what's inside (each piece with what it gives them), the bonus and who gets it, the price, the last day to buy and the date it's timed for, how to buy and what happens after they pay, and one line that tells them exactly how to buy, using my payment link or where they message me.\n"+
       "2. Write about my buyer's life and the change they want. Leave out how-to for my own method, like how to read cards or lay out a spread.\n"+
       "3. Use only what is on the sheet. Where the sheet says [FILL IN], or where a real testimonial or result would go, put a clearly marked [FILL IN: what goes here] instead. No made-up testimonials, results, numbers, guarantees or limited spots.\n"+
       "4. Plain, warm language in short sentences, written to someone who can make this choice for themselves. No em dashes. No 'it's not X, it's Y' lines, including the short kind like 'Not a reading. A roadmap.'\n"+
       "5. A Copy button that copies the whole page as plain text, so I can paste it into a post, an email, a DM or a free page.\n\n"+
-      "LAUNCH DASHBOARD TAB\n"+
+      "ARTIFACT 2: MY LAUNCH DASHBOARD (private, for me)\n"+
       "1. A countdown to my last day to buy.\n"+
       "2. My sales goal: how many sales it takes at my price, a button to add a sale, and a bar that fills as I go.\n"+
       "3. A dated launch plan from today to my last day to buy, for the places I tell people about it: the announcement, posts spread through the days between, one email a week if I have an email list, a reminder two days before the last day, and a last call on the last day. Pace it to the days I have.\n"+
