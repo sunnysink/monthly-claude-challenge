@@ -391,11 +391,11 @@
     </div>
     <div class="osheet" id="osheet" style="margin-top:14px"></div>
     <div class="acts">
-      <button class="btn line" data-p="file" type="button">Copy my New Offer file</button>
+      <button class="btn line" data-p="file" type="button">Copy my offer file</button>
       <button class="btn line" id="print" type="button">Print or save as PDF</button>
       <button class="btn ok" data-new type="button">+ Create a new offer</button>
     </div>
-    <p class="hint" style="margin-top:10px">This offer is saved on your offer shelf at the top of the page, in this browser. Bookmark the page to come back to it.</p>
+    <p class="hint" style="margin-top:10px">Save your offer file in an Offers folder in your Biz Brain, named for this offer, or keep it to paste. Every square on the Holiday Ready board reads it. This offer also stays on your offer shelf at the top of the page, in this browser. Bookmark the page to come back to it.</p>
   </section>
 
   <div class="acts stepnav" id="stepnav"></div>
@@ -652,8 +652,9 @@
   function FILE(){
     var ld=parse(state.lastDay);
     var L=[];
-    L.push('NEW OFFER');
+    L.push('MY OFFER');
     L.push('Working title: '+t(state.name));
+    L.push('Status: Not live yet');
     L.push('The idea:');
     L.push(has(state.idea)?state.idea.trim():(has(state.line)?state.line.trim():FILL));
     if(has(state.brand)) L.push('My brand look: '+state.brand.trim());
@@ -729,7 +730,7 @@
   }
   function promptSheet(kind){
     var text=kind==='name'?NAMEPROMPT():kind==='launch'?LAUNCHPROMPT():FILE();
-    var title=kind==='name'?'The naming prompt':kind==='launch'?'Your sales page + launch dashboard prompt':'Your New Offer file';
+    var title=kind==='name'?'The naming prompt':kind==='launch'?'Your sales page + launch dashboard prompt':'Your offer file';
     var btn=kind==='file'?'Copy the file':'Copy the prompt';
     var msg=kind==='file'?'Copied. Save it wherever you keep notes.':'Copied. Paste it into Claude.';
     openSheet(kind==='file'?'Plain text':'For Claude',title,'<div class="pbox" id="p-text"></div><div class="acts"><button class="btn copy" id="p-copy" type="button">'+btn+'</button></div>');
