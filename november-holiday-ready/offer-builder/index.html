@@ -220,6 +220,9 @@
   .restart{text-align:center;margin-top:26px}
   footer{margin-top:30px;text-align:center;font-family:var(--mono);font-size:10px;letter-spacing:.24em;color:var(--ink-dim);opacity:.7}
 
+  .nobonus{display:flex;align-items:center;gap:9px;font-size:14.5px;color:var(--ink);margin:2px 0 14px;cursor:pointer}
+  .nobonus input{width:18px;height:18px;accent-color:var(--copper)}
+  #bonus-fields.off{opacity:.4;pointer-events:none}
   .shelf{margin:22px 0 0}
   .shelf-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
   .shelf-top .lbl{margin:0}
@@ -342,7 +345,8 @@
     </div>
     <div class="panel">
       <span class="lbl">A bonus (optional)</span>
-      <div class="two">
+      <label class="nobonus" for="f-nobonus"><input type="checkbox" id="f-nobonus"> No bonus for this one</label>
+      <div class="two" id="bonus-fields">
         <div class="field"><label for="f-bonus">The bonus</label><input id="f-bonus" data-k="bonus" placeholder="A printable card of their spread" autocomplete="off"></div>
         <div class="field"><label for="f-bonusWho">Who gets it</label><input id="f-bonusWho" data-k="bonusWho" placeholder="The first five who buy" autocomplete="off"></div>
       </div>
@@ -462,7 +466,7 @@
 
   var $=function(id){return document.getElementById(id);};
 
-  function blank(){ return {step:1,done:{},what:'',who:'',hol:'',holName:'',custDate:'',lead:'',lastDay:'',line:'',name:'',subtitle:'',cur:'$',price:'',hours:'',goal:'',pieces:[],bonus:'',bonusWho:'',pay:'',payOther:'',after:[],buyLink:'',share:'',idea:'',brand:''}; }
+  function blank(){ return {step:1,done:{},what:'',who:'',hol:'',holName:'',custDate:'',lead:'',lastDay:'',line:'',name:'',subtitle:'',cur:'$',price:'',hours:'',goal:'',pieces:[],bonus:'',bonusWho:'',pay:'',payOther:'',after:[],buyLink:'',share:'',idea:'',brand:'',noBonus:false}; }
   function norm(o){
     var s=Object.assign(blank(),(o && typeof o==='object')?o:{});
     if(!Array.isArray(s.pieces)) s.pieces=[];
@@ -619,7 +623,7 @@
     var ld=parse(state.lastDay);
     var pieces=state.pieces.length?'<ul>'+state.pieces.map(function(x){ return '<li>'+h(x.piece)+(has(x.gives)?' <em>· '+esc(x.gives)+'</em>':'')+'</li>'; }).join('')+'</ul>':'<p>'+h('')+'</p>';
     var after=state.after.length?'<ol>'+state.after.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ol>':'<p>'+h('')+'</p>';
-    var bonus=has(state.bonus)?'<p>'+esc(state.bonus)+' <span style="color:var(--ink-dim)">· for '+h(state.bonusWho)+'</span></p>':'<p>None</p>';
+    var bonus=state.noBonus?'<p>None</p>':has(state.bonus)?'<p>'+esc(state.bonus)+' <span style="color:var(--ink-dim)">· for '+h(state.bonusWho)+'</span></p>':'<p>'+h('')+' <span style="color:var(--ink-dim)">· Claude suggests one, or tick No bonus</span></p>';
     $('osheet').innerHTML=
       '<div class="os-k">Offer sheet</div>'+
       '<h3>'+h(state.name)+'</h3>'+
@@ -640,6 +644,7 @@
   function fillInputs(){
     var els=document.querySelectorAll('[data-k]');
     for(var i=0;i<els.length;i++){ var k=els[i].getAttribute('data-k'); els[i].value=state[k]==null?'':state[k]; }
+    $('f-nobonus').checked=!!state.noBonus; $('bonus-fields').classList.toggle('off',!!state.noBonus);
   }
   function render(){ renderShelf(); renderSteps(); renderWhen(); renderMath(); renderLists(); renderPay(); renderSheet(); }
 
@@ -661,7 +666,7 @@
     L.push('What\'s inside:');
     if(state.pieces.length) state.pieces.forEach(function(x){ L.push('- '+t(x.piece)+(has(x.gives)?': '+x.gives.trim():'')); });
     else L.push('- '+FILL);
-    L.push('Bonus: '+(has(state.bonus)?state.bonus.trim()+' (for '+t(state.bonusWho)+')':'None'));
+    L.push('Bonus: '+(state.noBonus?'None. Leave the bonus section off the sales page.':has(state.bonus)?state.bonus.trim()+' (for '+t(state.bonusWho)+')':FILL));
     L.push('How they pay: '+payText());
     L.push('Payment link or where they message me: '+t(state.buyLink));
     L.push('Where I will tell people about it: '+t(state.share));
@@ -783,6 +788,7 @@
     renderSheet();
   });
   document.addEventListener('change',function(e){
+    if(e.target.id==='f-nobonus'){ state.noBonus=e.target.checked; save(); $('bonus-fields').classList.toggle('off',state.noBonus); renderSheet(); return; }
     if(e.target.name==='pay'){ state.pay=e.target.value; save(); renderPay(); renderSheet(); if(state.pay==='Other') $('f-payOther').focus(); }
   });
   $('print').addEventListener('click',function(){ renderSheet(); window.print(); });
