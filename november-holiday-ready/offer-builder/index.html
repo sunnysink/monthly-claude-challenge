@@ -277,6 +277,9 @@
         <div class="hint">It names this offer on your shelf and on your sales page. Change it any time.</div></div>
       <div class="field"><label for="f-idea">The idea you picked</label>
         <textarea id="f-idea" data-k="idea" style="min-height:150px" placeholder="What it is, who it's for, and why it's a good buy right now. Paste the whole idea from your One Offer chat if you have it."></textarea></div>
+      <div class="field"><label for="f-brand">Your brand look (optional)</label>
+        <input id="f-brand" data-k="brand" placeholder="Colours, fonts or a vibe: deep teal and rose gold, moody and celestial" autocomplete="off">
+        <div class="hint">Your sales page uses it. Leave it empty and Claude picks a look that fits the offer.</div></div>
       <div class="acts" style="margin-top:4px"><button class="btn line sm" data-p="name" type="button">Copy a naming prompt</button></div>
       <div class="hint">Want a better name? Paste this into Claude for 10 plain names built from your idea.</div>
     </div>
@@ -459,7 +462,7 @@
 
   var $=function(id){return document.getElementById(id);};
 
-  function blank(){ return {step:1,done:{},what:'',who:'',hol:'',holName:'',custDate:'',lead:'',lastDay:'',line:'',name:'',subtitle:'',cur:'$',price:'',hours:'',goal:'',pieces:[],bonus:'',bonusWho:'',pay:'',payOther:'',after:[],buyLink:'',share:'',idea:''}; }
+  function blank(){ return {step:1,done:{},what:'',who:'',hol:'',holName:'',custDate:'',lead:'',lastDay:'',line:'',name:'',subtitle:'',cur:'$',price:'',hours:'',goal:'',pieces:[],bonus:'',bonusWho:'',pay:'',payOther:'',after:[],buyLink:'',share:'',idea:'',brand:''}; }
   function norm(o){
     var s=Object.assign(blank(),(o && typeof o==='object')?o:{});
     if(!Array.isArray(s.pieces)) s.pieces=[];
@@ -648,6 +651,7 @@
     L.push('Working title: '+t(state.name));
     L.push('The idea:');
     L.push(has(state.idea)?state.idea.trim():(has(state.line)?state.line.trim():FILL));
+    if(has(state.brand)) L.push('My brand look: '+state.brand.trim());
     if(has(state.who)) L.push('Who it is for: '+state.who.trim());
     if(has(state.what)) L.push('What I already do that people ask for: '+state.what.trim());
     L.push('Holiday or date: '+whenText());
@@ -680,18 +684,22 @@
     return "Make my sales page and my launch dashboard for the offer on my offer sheet below. Today is "+nice(today())+". Work out who it's for, a subtitle and the change it makes from the idea on the sheet.\n\n"+FILE()+"\n\n"+
       "Make two separate artifacts, in this order, with no intro before them. The first is my sales page, a page I will publish and share with buyers. The second is my launch dashboard, which is only for me. Keep my sales goal, my sales count and my launch plan off the sales page completely.\n\n"+
       "ARTIFACT 1: MY SALES PAGE\n"+
+      "Design: make it look like a real launch page for this exact offer, never a template. Skip the default look (purple and gold, centred text, a stack of identical cards). Use my brand look if the sheet gives one; otherwise choose colours and type from the offer's own world. Open with a hero that shows the product: a mock-up drawn in the page (the planner open on a desk, the course on a laptop screen, the reading as a card, whatever fits), carrying its real name, beside the headline and a buy button.\n"+
       "1. Sections, in order: the name as the headline, the subtitle, who it's for and the moment in their life it meets, what's inside (each piece with what it gives them), the bonus and who gets it, the price, the last day to buy and the date it's timed for, how to buy and what happens after they pay, and one line that tells them exactly how to buy, using my payment link or where they message me.\n"+
       "2. Write about my buyer's life and the change they want. Leave out how-to for my own method, like how to read cards or lay out a spread.\n"+
-      "3. Use only what is on the sheet. Where the sheet says [FILL IN], or where a real testimonial or result would go, put a clearly marked [FILL IN: what goes here] instead. No made-up testimonials, results, numbers, guarantees or limited spots.\n"+
+      "3. Make every part specific to this offer: real piece names, what each one holds, real dates. Use only what is on the sheet. Where the sheet is too vague to be specific (like just \"workshops\"), or says [FILL IN], or where a real testimonial or result would go, put a clearly marked [FILL IN: exactly what's needed, like the workshop titles, how many and how long] instead of writing around it. No made-up testimonials, results, numbers, guarantees or limited spots.\n"+
       "4. Plain, warm language in short sentences, written to someone who can make this choice for themselves. No em dashes. No 'it's not X, it's Y' lines, including the short kind like 'Not a reading. A roadmap.'\n"+
       "5. A Copy button that copies the whole page as plain text, so I can paste it into a post, an email, a DM or a free page.\n\n"+
       "ARTIFACT 2: MY LAUNCH DASHBOARD (private, for me)\n"+
       "1. A countdown to my last day to buy.\n"+
       "2. My sales goal: how many sales it takes at my price, a button to add a sale, and a bar that fills as I go.\n"+
-      "3. A dated launch plan from today to my last day to buy, for the places I tell people about it: the announcement, posts spread through the days between, one email a week if I have an email list, a reminder two days before the last day, and a last call on the last day. Pace it to the days I have.\n"+
+      "3. A dated launch plan up to my last day to buy, for the places I tell people about it. Time it to the date:\n"+
+      "   - For Black Friday, Cyber Monday or another big shopping day: no reveal before it opens. About 7 to 10 days before, tease without naming the offer, what's in it or the price (something's coming, get on my list for first access). Reveal everything the day it opens, or the evening before for my email list. Then a reminder two days before the end and a last call on the last day.\n"+
+      "   - For any other date: announce it now, posts spread through the days between, one email a week if I have an email list, a reminder two days before the last day, and a last call on the last day.\n"+
       "4. Each item in the plan has a checkbox, its date, and the words ready to use. A post is a graphic hook of under ten words plus a caption that opens on its own hook line, written as one piece of text ready to paste, with a few hashtags at the end. An email is a subject line plus the body. Each gets its own Copy button.\n"+
-      "5. Keep my ticks and my sales count when I come back to the page, if this artifact can save them.\n"+
-      "6. The same buyer-first voice and the same rules as the sales page.";
+      "5. Give every post its own job and shape: a teaser, a story, a question, what's inside, a reminder. No line repeats from post to post, so no shared sign-off, \"save this\" line or tip on every one.\n"+
+      "6. Keep my ticks and my sales count when I come back to the page, if this artifact can save them.\n"+
+      "7. The same buyer-first voice and the same rules as the sales page.";
   }
 
   /* toast, copy, sheet */
