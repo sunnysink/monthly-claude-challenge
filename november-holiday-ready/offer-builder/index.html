@@ -234,8 +234,8 @@
   @media print{
     @page{margin:14mm}
     html,body{background:#fff !important;background-image:none !important;color:#1b1b1b;padding:0;min-height:0}
-    header,.shelf,.steps,.bar,.stepnav,.restart,.joinsff,footer,.view:not(#v-7),#v-7 > :not(#osheet){display:none !important}
-    #v-7{display:block !important}
+    header,.shelf,.steps,.bar,.stepnav,.restart,.joinsff,footer,.view:not(#v-6),#v-6 > :not(#osheet){display:none !important}
+    #v-6{display:block !important}
     .wrap{max-width:none}
     #osheet{background:#fff !important;border:1px solid #c9a35c;border-radius:10px;padding:26px 28px;box-shadow:none;break-inside:avoid}
     #osheet::before{background:#c9a35c}
@@ -258,7 +258,7 @@
     <div class="kicker">Soul-Forged Founders · A Free Spark</div>
     <h1>The Offer Builder</h1>
     <div class="sub">One offer, ready to sell before the day.</div>
-    <p class="lede">Seven short steps take one offer from an idea to the prompt that makes your <b>sales page and launch dashboard</b> in Claude. Pick the date you're selling toward, then the name, the price with its math, and how people pay. Every offer stays on your shelf, so the next one starts in a click. A DM and a payment link are enough to start.</p>
+    <p class="lede">Bring the offer idea you picked. Five short steps take it to the prompt that makes your <b>sales page and launch dashboard</b> in Claude: the dates, the price with its math, what's inside, and how people buy. Every offer stays on your shelf, so the next one starts in a click. No idea yet? The One Offer, the centre square of the Holiday Ready board, gives you six.</p>
   </header>
 
   <section class="panel shelf" id="shelf" aria-label="Your offer shelf"></section>
@@ -268,23 +268,23 @@
 
   <!-- STEP 1 -->
   <section class="view" id="v-1">
-    <div class="section-label">Step 1 of 7</div>
-    <h2>What you do and who it's for</h2>
-    <p class="steplede">Start with what people already ask you for. That is the easiest thing to sell, because the asking has already happened.</p>
+    <div class="section-label">Step 1 of 6</div>
+    <h2>Your offer</h2>
+    <p class="steplede">Paste the idea you picked, straight from your One Offer chat, or say it in your own words. Claude reads everything from here, so nothing gets typed twice.</p>
     <div class="panel">
-      <div class="field"><label for="f-name1">A working title for this offer</label>
-        <input id="f-name1" data-k="name" placeholder="Holiday gift card" autocomplete="off">
-        <div class="hint">It names this offer on your shelf. You'll get help with the final name in step 3.</div></div>
-      <div class="field"><label for="f-what">What you already do that people ask for</label>
-        <textarea id="f-what" data-k="what" placeholder="Three-card readings for a big decision"></textarea></div>
-      <div class="field"><label for="f-who">Who would buy it, in one line</label>
-        <input id="f-who" data-k="who" placeholder="People who want a gift that feels personal" autocomplete="off"></div>
+      <div class="field"><label for="f-name1">A working title</label>
+        <input id="f-name1" data-k="name" placeholder="The 2027 Tarot Planner Bundle" autocomplete="off">
+        <div class="hint">It names this offer on your shelf and on your sales page. Change it any time.</div></div>
+      <div class="field"><label for="f-idea">The idea you picked</label>
+        <textarea id="f-idea" data-k="idea" style="min-height:150px" placeholder="What it is, who it's for, and why it's a good buy right now. Paste the whole idea from your One Offer chat if you have it."></textarea></div>
+      <div class="acts" style="margin-top:4px"><button class="btn line sm" data-p="name" type="button">Copy a naming prompt</button></div>
+      <div class="hint">Want a better name? Paste this into Claude for 10 plain names built from your idea.</div>
     </div>
   </section>
 
   <!-- STEP 2 -->
   <section class="view" id="v-2">
-    <div class="section-label">Step 2 of 7</div>
+    <div class="section-label">Step 2 of 6</div>
     <h2>When</h2>
     <p class="steplede">Pick the holiday or date you're selling toward. Each one shows its next date from today.</p>
     <div class="panel">
@@ -310,24 +310,7 @@
 
   <!-- STEP 3 -->
   <section class="view" id="v-3">
-    <div class="section-label">Step 3 of 7</div>
-    <h2>The offer</h2>
-    <p class="steplede">Say it plain. The name tells people what it is, and the subtitle tells them what they get.</p>
-    <div class="panel">
-      <div class="field"><label for="f-line">What it is, in one sentence</label>
-        <textarea id="f-line" data-k="line" placeholder="A three-card reading for the year ahead, written up and sent as a keepsake card"></textarea></div>
-      <div class="field"><label for="f-name">The name</label>
-        <input id="f-name" data-k="name" placeholder="The New Year Reading" autocomplete="off">
-        <div class="acts" style="margin-top:10px"><button class="btn line sm" data-p="name" type="button">Copy a naming prompt</button></div>
-        <div class="hint">Paste it into Claude for 10 plain names built from what you've typed so far.</div></div>
-      <div class="field"><label for="f-subtitle">A subtitle</label>
-        <input id="f-subtitle" data-k="subtitle" placeholder="Three cards, one clear direction for the year" autocomplete="off"></div>
-    </div>
-  </section>
-
-  <!-- STEP 4 -->
-  <section class="view" id="v-4">
-    <div class="section-label">Step 4 of 7</div>
+    <div class="section-label">Step 3 of 6</div>
     <h2>The price</h2>
     <p class="steplede">Set your price, then see what it takes to reach your goal.</p>
     <div class="panel">
@@ -341,9 +324,9 @@
     </div>
   </section>
 
-  <!-- STEP 5 -->
-  <section class="view" id="v-5">
-    <div class="section-label">Step 5 of 7</div>
+  <!-- STEP 4 -->
+  <section class="view" id="v-4">
+    <div class="section-label">Step 4 of 6</div>
     <h2>What's inside</h2>
     <p class="steplede">Add the pieces one at a time. Each one gets a line: the piece, and what it gives them.</p>
     <div class="panel">
@@ -363,11 +346,11 @@
     </div>
   </section>
 
-  <!-- STEP 6 -->
-  <section class="view" id="v-6">
-    <div class="section-label">Step 6 of 7</div>
-    <h2>Delivery</h2>
-    <p class="steplede">How they pay, and what happens after. No website or checkout needed: a DM and a payment link work.</p>
+  <!-- STEP 5 -->
+  <section class="view" id="v-5">
+    <div class="section-label">Step 5 of 6</div>
+    <h2>How they buy</h2>
+    <p class="steplede">How they pay, what happens after, and where you'll tell people. No website or checkout needed: a DM and a payment link work.</p>
     <div class="panel">
       <span class="lbl">How they pay</span>
       <div class="seg" id="pay-seg"></div>
@@ -389,9 +372,9 @@
     </div>
   </section>
 
-  <!-- STEP 7 -->
-  <section class="view" id="v-7">
-    <div class="section-label">Step 7 of 7</div>
+  <!-- STEP 6 -->
+  <section class="view" id="v-6">
+    <div class="section-label">Step 6 of 6</div>
     <h2>Your sheet and your prompt</h2>
     <p class="steplede">Your whole offer on one page, and the prompt that turns it into your sales page and launch dashboard. Anything marked [FILL IN] is still open: go back to that step, or Claude leaves a marked gap for you to fill.</p>
     <div class="panel">
@@ -435,7 +418,7 @@
 (function(){
   var KEY='spark-2026-11-offer-builder';
   var SHELF='spark-2026-11-offer-shelf';
-  var STEPS=['What and who','When','The offer','The price',"What's inside",'Delivery','Your sheet'];
+  var STEPS=['Your offer','When','The price',"What's inside",'How they buy','Your prompt'];
   var LAST=STEPS.length;
   var FILL='[FILL IN]';
   var PAYS=['DM me and I send a payment link','PayPal','Stripe','Etsy','Square','Other'];
@@ -476,7 +459,7 @@
 
   var $=function(id){return document.getElementById(id);};
 
-  function blank(){ return {step:1,done:{},what:'',who:'',hol:'',holName:'',custDate:'',lead:'',lastDay:'',line:'',name:'',subtitle:'',cur:'$',price:'',hours:'',goal:'',pieces:[],bonus:'',bonusWho:'',pay:'',payOther:'',after:[],buyLink:'',share:''}; }
+  function blank(){ return {step:1,done:{},what:'',who:'',hol:'',holName:'',custDate:'',lead:'',lastDay:'',line:'',name:'',subtitle:'',cur:'$',price:'',hours:'',goal:'',pieces:[],bonus:'',bonusWho:'',pay:'',payOther:'',after:[],buyLink:'',share:'',idea:''}; }
   function norm(o){
     var s=Object.assign(blank(),(o && typeof o==='object')?o:{});
     if(!Array.isArray(s.pieces)) s.pieces=[];
@@ -486,7 +469,7 @@
     return s;
   }
   function newId(){ return 'o'+Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
-  function isEmpty(o){ return !has(o.name)&&!has(o.line)&&!has(o.what)&&!has(o.who)&&!has(o.price)&&!o.pieces.length&&!o.after.length&&!o.hol; }
+  function isEmpty(o){ return !has(o.idea)&&!has(o.name)&&!has(o.line)&&!has(o.what)&&!has(o.who)&&!has(o.price)&&!o.pieces.length&&!o.after.length&&!o.hol; }
 
   /* the shelf: every offer this browser has made, one of them open */
   var shelf={cur:'',order:[],offers:{}};
@@ -527,7 +510,7 @@
     return state.pay;
   }
 
-  function offerTitle(o){ var l=has(o.line)?o.line.trim():''; return has(o.name)?o.name.trim():l?(l.length>48?l.slice(0,46)+'…':l):'Untitled offer'; }
+  function offerTitle(o){ var l=has(o.idea)?o.idea.trim().split('\n')[0]:has(o.line)?o.line.trim():''; return has(o.name)?o.name.trim():l?(l.length>48?l.slice(0,46)+'…':l):'Untitled offer'; }
   function offerWhen(o){ if(o.hol==='custom') return has(o.holName)?o.holName.trim():''; var hh=findHol(o.hol); return hh?hh.n:''; }
   function renderShelf(){
     var n=shelf.order.length;
@@ -637,14 +620,13 @@
     $('osheet').innerHTML=
       '<div class="os-k">Offer sheet</div>'+
       '<h3>'+h(state.name)+'</h3>'+
-      '<div class="os-sub">'+h(state.subtitle)+'</div>'+
-      '<p class="os-line">'+h(state.line)+'</p>'+
+      '<p class="os-line" style="white-space:pre-line">'+(has(state.idea)?esc(state.idea.trim()):has(state.line)?esc(state.line.trim()):'<span class="fill">'+FILL+'</span>')+'</p>'+
       '<div class="os-grid">'+
         '<div class="os-cell"><span class="k">Price</span><b>'+h(priceText()===FILL?'':priceText())+'</b></div>'+
         '<div class="os-cell"><span class="k">Timed for</span><b>'+(has(eventName())?esc(eventName()):'<span class="fill">'+FILL+'</span>')+'</b><span>'+(eventDate()?esc(nice(eventDate())):FILL)+'</span></div>'+
         '<div class="os-cell"><span class="k">Last day to buy</span><b>'+(ld?esc(nice(ld)):'<span class="fill">'+FILL+'</span>')+'</b></div>'+
       '</div>'+
-      '<div class="os-sec"><span class="k">Who it\'s for</span><p>'+h(state.who)+'</p></div>'+
+
       '<div class="os-sec"><span class="k">What\'s inside</span>'+pieces+'</div>'+
       '<div class="os-sec"><span class="k">Bonus</span>'+bonus+'</div>'+
       '<div class="os-sec"><span class="k">How to pay</span><p>'+(payText()===FILL?h(''):esc(payText()))+(has(state.buyLink)?' · '+esc(state.buyLink.trim()):'')+'</p></div>'+
@@ -663,11 +645,11 @@
     var ld=parse(state.lastDay);
     var L=[];
     L.push('NEW OFFER');
-    L.push('Offer: '+t(state.line));
-    L.push('Name: '+t(state.name));
-    L.push('Subtitle: '+t(state.subtitle));
-    L.push('Who it is for: '+t(state.who));
-    L.push('What I already do that people ask for: '+t(state.what));
+    L.push('Working title: '+t(state.name));
+    L.push('The idea:');
+    L.push(has(state.idea)?state.idea.trim():(has(state.line)?state.line.trim():FILL));
+    if(has(state.who)) L.push('Who it is for: '+state.who.trim());
+    if(has(state.what)) L.push('What I already do that people ask for: '+state.what.trim());
     L.push('Holiday or date: '+whenText());
     L.push('Last day to buy: '+(ld?nice(ld):FILL));
     L.push('Price: '+priceText());
@@ -686,17 +668,16 @@
   }
   function NAMEPROMPT(){
     return "Help me name an offer I'm selling before a holiday or date.\n\n"+
-      "What I already do that people ask for: "+t(state.what)+"\n"+
-      "Who would buy it: "+t(state.who)+"\n"+
-      "What it is, in one sentence: "+t(state.line)+"\n"+
+      "The idea:\n"+(has(state.idea)?state.idea.trim():FILL)+"\n"+
       "Timed for: "+whenText()+"\n\n"+
-      "1. If anything above says [FILL IN], work from the rest. Don't invent facts about me or the offer.\n"+
+      "1. Work from the idea. Don't invent facts about me or the offer.\n"+
       "2. Give me 10 plain names. Each one says what the thing is, reads easily out loud, and makes sense to someone who has never heard of me. Name it for what my buyer gets, and keep my own method's terms out of it, like card or spread names.\n"+
       "3. Put each name on its own line, with a few words on why it fits.\n"+
       "4. Then tell me the three you would pick, in one line each.";
   }
+
   function LAUNCHPROMPT(){
-    return "Make my sales page and my launch dashboard for the offer on my offer sheet below. Today is "+nice(today())+".\n\n"+FILE()+"\n\n"+
+    return "Make my sales page and my launch dashboard for the offer on my offer sheet below. Today is "+nice(today())+". Work out who it's for, a subtitle and the change it makes from the idea on the sheet.\n\n"+FILE()+"\n\n"+
       "Make one artifact (an interactive page) with two tabs: Sales page and Launch dashboard. Only these two tabs, in this order, with no intro before them.\n\n"+
       "SALES PAGE TAB\n"+
       "1. Sections, in order: the name as the headline, the subtitle, who it's for and the moment in their life it meets, what's inside (each piece with what it gives them), the bonus and who gets it, the price, the last day to buy and the date it's timed for, how to buy and what happens after they pay, and one line that tells them exactly how to buy, using my payment link or where they message me.\n"+
@@ -787,7 +768,7 @@
     var k=e.target.getAttribute && e.target.getAttribute('data-k'); if(!k) return;
     state[k]=e.target.value; save();
     var twins=document.querySelectorAll('[data-k="'+k+'"]'); for(var ti=0;ti<twins.length;ti++) if(twins[ti]!==e.target) twins[ti].value=e.target.value;
-    if(k==='name'||k==='line'||k==='holName') renderShelf();
+    if(k==='name'||k==='idea'||k==='holName') renderShelf();
     if(k==='lead'||k==='custDate'||k==='holName'||k==='lastDay') renderWhen();
     if(k==='price'||k==='hours'||k==='goal'||k==='cur') renderMath();
     renderSheet();
