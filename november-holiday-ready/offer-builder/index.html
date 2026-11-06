@@ -272,6 +272,9 @@
     <h2>What you do and who it's for</h2>
     <p class="steplede">Start with what people already ask you for. That is the easiest thing to sell, because the asking has already happened.</p>
     <div class="panel">
+      <div class="field"><label for="f-name1">A working title for this offer</label>
+        <input id="f-name1" data-k="name" placeholder="Holiday gift card" autocomplete="off">
+        <div class="hint">It names this offer on your shelf. You'll get help with the final name in step 3.</div></div>
       <div class="field"><label for="f-what">What you already do that people ask for</label>
         <textarea id="f-what" data-k="what" placeholder="Three-card readings for a big decision"></textarea></div>
       <div class="field"><label for="f-who">Who would buy it, in one line</label>
@@ -535,9 +538,11 @@
         (cur?'<span class="here">Working on this ↓</span>':'<button class="rm" data-open="'+id+'" type="button">Open</button>')+
         (n>1?'<button class="rm" data-del="'+id+'" type="button" aria-label="Remove '+esc(offerTitle(o))+'">Remove</button>':'')+'</span></li>';
     }).join('');
-    $('shelf').innerHTML='<div class="shelf-top"><span class="lbl">Your offer shelf · '+n+' offer'+(n===1?'':'s')+'</span><button class="btn copy sm" data-new type="button">+ Create a new offer</button></div><p class="how">The highlighted offer is the one you are working on, and its steps are below. When it is done, <b>+ Create a new offer</b> starts the next one, and this one stays here to open again.</p><ul class="list">'+rows+'</ul>';
+    $('shelf').innerHTML='<div class="shelf-top"><span class="lbl">Your offer shelf · '+n+' offer'+(n===1?'':'s')+'</span><button class="btn copy sm" data-new type="button">+ Create a new offer</button></div><p class="how">The highlighted offer is the one you are working on, and its steps are below. Everything saves as you type. To step away from it, click <b>Save for later</b> under any step, or <b>+ Create a new offer</b>. It stays here, and <b>Open</b> brings it back right where you left it.</p><ul class="list">'+rows+'</ul>';
   }
   function switchTo(id,msg){
+    var was=shelf.cur;
+    if(was!==id && isEmpty(state) && shelf.order.length>1){ delete shelf.offers[was]; shelf.order=shelf.order.filter(function(x){ return x!==was; }); }
     shelf.cur=id; state=norm(shelf.offers[id]); save(); fillInputs(); render();
     window.scrollTo({top:Math.max(0,$('shelf').offsetTop-20),behavior:'smooth'});
     if(msg) toast(msg);
@@ -546,6 +551,11 @@
     if(isEmpty(state)){ go(1); toast('This one is fresh. Start on step 1.'); return; }
     var id=newId(); shelf.offers[id]=blank(); shelf.order.push(id);
     switchTo(id,'New offer started. Your last one is on your shelf.');
+  }
+  function saveForLater(){
+    if(isEmpty(state)){ toast('Nothing to save yet. Fill in a step first.'); return; }
+    save(); var id=newId(); shelf.offers[id]=blank(); shelf.order.push(id);
+    switchTo(id,'Saved on your shelf. Here is a fresh offer.');
   }
   function removeOffer(id){
     var o=norm(shelf.offers[id]);
@@ -567,6 +577,7 @@
     $('bar').style.width=Math.round((state.step===LAST?LAST:Math.max(dn,state.step-1))/LAST*100)+'%';
     var nav='';
     nav+=state.step>1?'<button class="btn line" data-go="'+(state.step-1)+'" type="button">← Back</button>':'<span></span>';
+    nav+='<button class="btn line" data-later type="button">Save for later</button>';
     if(state.step<LAST) nav+='<button class="btn ok" id="done-next" type="button">'+(state.step===LAST-1?'Done, show my sheet and prompt →':'Done, next step →')+'</button>';
     $('stepnav').innerHTML=nav;
   }
@@ -768,12 +779,14 @@
     var ra=e.target.closest('[data-rm-after]'); if(ra){ state.after.splice(+ra.getAttribute('data-rm-after'),1); save(); renderLists(); renderSheet(); return; }
     var p=e.target.closest('[data-p]'); if(p){ promptSheet(p.getAttribute('data-p')); return; }
     if(e.target.closest('[data-new]')){ newOffer(); return; }
+    if(e.target.closest('[data-later]')){ saveForLater(); return; }
     var op=e.target.closest('[data-open]'); if(op){ var oid=op.getAttribute('data-open'); switchTo(oid,'Opened '+offerTitle(norm(shelf.offers[oid]))); return; }
     var de=e.target.closest('[data-del]'); if(de){ removeOffer(de.getAttribute('data-del')); return; }
   });
   document.addEventListener('input',function(e){
     var k=e.target.getAttribute && e.target.getAttribute('data-k'); if(!k) return;
     state[k]=e.target.value; save();
+    var twins=document.querySelectorAll('[data-k="'+k+'"]'); for(var ti=0;ti<twins.length;ti++) if(twins[ti]!==e.target) twins[ti].value=e.target.value;
     if(k==='name'||k==='line'||k==='holName') renderShelf();
     if(k==='lead'||k==='custDate'||k==='holName'||k==='lastDay') renderWhen();
     if(k==='price'||k==='hours'||k==='goal'||k==='cur') renderMath();
