@@ -4,17 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Offer Builder</title>
-<meta name="description" content="Build one offer you can sell before a holiday or a date that matters, one step at a time, and leave with a one-page offer sheet. A free Spark from Soul-Forged Founders.">
+<meta name="description" content="Take one holiday offer from an idea to the prompt that makes your sales page and launch dashboard in Claude, one step at a time. Every offer saves to your shelf. A free Spark from Soul-Forged Founders.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="The Offer Builder">
-<meta property="og:description" content="Build one offer you can sell before a holiday or a date that matters, one step at a time, and leave with a one-page offer sheet. A free Spark from Soul-Forged Founders.">
+<meta property="og:description" content="Take one holiday offer from an idea to the prompt that makes your sales page and launch dashboard in Claude, one step at a time. Every offer saves to your shelf. A free Spark from Soul-Forged Founders.">
 <meta property="og:url" content="https://sunnysink.github.io/monthly-claude-challenge/november-holiday-ready/offer-builder/">
 <meta property="og:image" content="https://sunnysink.github.io/monthly-claude-challenge/november-holiday-ready/offer-builder/preview.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="The Offer Builder">
-<meta name="twitter:description" content="Build one offer you can sell before a holiday or a date that matters, one step at a time, and leave with a one-page offer sheet. A free Spark from Soul-Forged Founders.">
+<meta name="twitter:description" content="Take one holiday offer from an idea to the prompt that makes your sales page and launch dashboard in Claude, one step at a time. Every offer saves to your shelf. A free Spark from Soul-Forged Founders.">
 <meta name="twitter:image" content="https://sunnysink.github.io/monthly-claude-challenge/november-holiday-ready/offer-builder/preview.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -220,10 +220,19 @@
   .restart{text-align:center;margin-top:26px}
   footer{margin-top:30px;text-align:center;font-family:var(--mono);font-size:10px;letter-spacing:.24em;color:var(--ink-dim);opacity:.7}
 
+  .shelf{margin:22px 0 0}
+  .shelf-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .shelf-top .lbl{margin:0}
+  .shelf .list{margin-top:8px}
+  .shelf .list li{align-items:center}
+  .shelf .meta{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--ink-dim);margin-top:2px}
+  .shelf .row-acts{display:flex;gap:6px;flex:none}
+  .shelf .here{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--copper-lt);padding:3px 4px}
+  .shelf li.cur b{color:var(--heading)}
   @media print{
     @page{margin:14mm}
     html,body{background:#fff !important;background-image:none !important;color:#1b1b1b;padding:0;min-height:0}
-    header,.steps,.bar,.stepnav,.restart,.joinsff,footer,.view:not(#v-7),#v-7 > :not(#osheet){display:none !important}
+    header,.shelf,.steps,.bar,.stepnav,.restart,.joinsff,footer,.view:not(#v-7),#v-7 > :not(#osheet){display:none !important}
     #v-7{display:block !important}
     .wrap{max-width:none}
     #osheet{background:#fff !important;border:1px solid #c9a35c;border-radius:10px;padding:26px 28px;box-shadow:none;break-inside:avoid}
@@ -247,8 +256,10 @@
     <div class="kicker">Soul-Forged Founders · A Free Spark</div>
     <h1>The Offer Builder</h1>
     <div class="sub">One offer, ready to sell before the day.</div>
-    <p class="lede">Pick a holiday or a date that matters to your people, then build one offer to sell before it, a step at a time. You leave with a one-page offer sheet to print, save, or hand to Claude. A DM and a payment link are enough to start.</p>
+    <p class="lede">Seven short steps take one offer from an idea to the prompt that makes your <b>sales page and launch dashboard</b> in Claude. Pick the date you're selling toward, then the name, the price with its math, and how people pay. Every offer stays on your shelf, so the next one starts in a click. A DM and a payment link are enough to start.</p>
   </header>
+
+  <section class="panel shelf" id="shelf" aria-label="Your offer shelf"></section>
 
   <nav class="steps" id="steps" aria-label="Steps"></nav>
   <div class="bar" aria-hidden="true"><i id="bar"></i></div>
@@ -365,25 +376,36 @@
       <div class="acts" style="margin-top:0"><button class="btn copy sm" id="add-after" type="button">+ Add this step</button></div>
       <ol class="list" id="after"></ol>
     </div>
+    <div class="panel">
+      <span class="lbl">Where people buy it and hear about it</span>
+      <div class="field"><label for="f-buyLink">Your payment link, or where they message you to buy</label><input id="f-buyLink" data-k="buyLink" placeholder="paypal.me/yourname, or DM me on Instagram @yourname" autocomplete="off"></div>
+      <div class="field"><label for="f-share">Where you'll tell people about it</label><input id="f-share" data-k="share" placeholder="Instagram, my email list, my Facebook group" autocomplete="off">
+        <div class="hint">Your launch dashboard plans its posts and emails for these places.</div></div>
+    </div>
   </section>
 
   <!-- STEP 7 -->
   <section class="view" id="v-7">
     <div class="section-label">Step 7 of 7</div>
-    <h2>Your offer sheet</h2>
-    <p class="steplede">Everything you built, on one page. Anything marked [FILL IN] is still open: go back to that step, or fill it in with Claude.</p>
-    <div class="osheet" id="osheet"></div>
-    <div class="acts">
-      <button class="btn copy" data-p="file" type="button">Copy my New Offer file</button>
-      <button class="btn line" data-p="sales" type="button">Copy a sales page prompt</button>
-      <button class="btn line" id="print" type="button">Print or save as PDF</button>
+    <h2>Your sheet and your prompt</h2>
+    <p class="steplede">Your whole offer on one page, and the prompt that turns it into your sales page and launch dashboard. Anything marked [FILL IN] is still open: go back to that step, or Claude leaves a marked gap for you to fill.</p>
+    <div class="panel">
+      <span class="lbl">Your next step</span>
+      <p>Copy this prompt and paste it into Claude. You get <b>your sales page</b>, ready to paste into a post, an email or a DM, and <b>your launch dashboard</b>: a countdown to your last day to buy, your sales goal with a tally, and a dated plan of every post and email until doors close, with the words written.</p>
+      <div class="acts"><button class="btn copy" data-p="launch" type="button">Copy my sales page + launch dashboard prompt</button></div>
     </div>
-    <p class="hint" style="margin-top:10px">Your work saves in this browser. Bookmark the page to come back to it.</p>
+    <div class="osheet" id="osheet" style="margin-top:14px"></div>
+    <div class="acts">
+      <button class="btn line" data-p="file" type="button">Copy my New Offer file</button>
+      <button class="btn line" id="print" type="button">Print or save as PDF</button>
+      <button class="btn ok" data-new type="button">+ Create a new offer</button>
+    </div>
+    <p class="hint" style="margin-top:10px">This offer is saved on your offer shelf at the top of the page, in this browser. Bookmark the page to come back to it.</p>
   </section>
 
   <div class="acts stepnav" id="stepnav"></div>
 
-  <div class="restart"><button class="tool danger" id="restart" type="button">Start over</button></div>
+  <div class="restart"><button class="tool danger" id="restart" type="button">Clear this offer</button></div>
 
   <div class="joinsff">
     <p>Built inside Soul-Forged Founders, where tarot readers, coaches, and healers create tools like these with Claude.</p>
@@ -407,6 +429,7 @@
 <script>
 (function(){
   var KEY='spark-2026-11-offer-builder';
+  var SHELF='spark-2026-11-offer-shelf';
   var STEPS=['What and who','When','The offer','The price',"What's inside",'Delivery','Your sheet'];
   var LAST=STEPS.length;
   var FILL='[FILL IN]';
@@ -448,14 +471,29 @@
 
   var $=function(id){return document.getElementById(id);};
 
-  function blank(){ return {step:1,done:{},what:'',who:'',hol:'',holName:'',custDate:'',lead:'',lastDay:'',line:'',name:'',subtitle:'',cur:'$',price:'',hours:'',goal:'',pieces:[],bonus:'',bonusWho:'',pay:'',payOther:'',after:[]}; }
-  var state=blank();
-  try{ var got=JSON.parse(localStorage.getItem(KEY)); if(got && typeof got==='object') state=Object.assign(blank(),got); }catch(e){}
-  if(!Array.isArray(state.pieces)) state.pieces=[];
-  if(!Array.isArray(state.after)) state.after=[];
-  if(!state.done || typeof state.done!=='object') state.done={};
-  state.step=Math.max(1,Math.min(LAST,+state.step||1));
-  function save(){ try{ localStorage.setItem(KEY,JSON.stringify(state)); }catch(e){} }
+  function blank(){ return {step:1,done:{},what:'',who:'',hol:'',holName:'',custDate:'',lead:'',lastDay:'',line:'',name:'',subtitle:'',cur:'$',price:'',hours:'',goal:'',pieces:[],bonus:'',bonusWho:'',pay:'',payOther:'',after:[],buyLink:'',share:''}; }
+  function norm(o){
+    var s=Object.assign(blank(),(o && typeof o==='object')?o:{});
+    if(!Array.isArray(s.pieces)) s.pieces=[];
+    if(!Array.isArray(s.after)) s.after=[];
+    if(!s.done || typeof s.done!=='object') s.done={};
+    s.step=Math.max(1,Math.min(LAST,+s.step||1));
+    return s;
+  }
+  function newId(){ return 'o'+Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
+  function isEmpty(o){ return !has(o.name)&&!has(o.line)&&!has(o.what)&&!has(o.who)&&!has(o.price)&&!o.pieces.length&&!o.after.length&&!o.hol; }
+
+  /* the shelf: every offer this browser has made, one of them open */
+  var shelf={cur:'',order:[],offers:{}};
+  try{ var sh=JSON.parse(localStorage.getItem(SHELF)); if(sh && Array.isArray(sh.order) && sh.offers && typeof sh.offers==='object') shelf=sh; }catch(e){}
+  shelf.order=shelf.order.filter(function(id){ return shelf.offers[id]; });
+  if(!shelf.order.length){
+    var old=null; try{ old=JSON.parse(localStorage.getItem(KEY)); }catch(e){}
+    var first=newId(); shelf.order=[first]; shelf.offers[first]=norm(old); shelf.cur=first;
+  }
+  if(!shelf.offers[shelf.cur]) shelf.cur=shelf.order[shelf.order.length-1];
+  var state=norm(shelf.offers[shelf.cur]);
+  function save(){ shelf.offers[shelf.cur]=state; try{ localStorage.setItem(SHELF,JSON.stringify(shelf)); }catch(e){} }
 
   /* derived */
   function eventDate(){
@@ -484,6 +522,38 @@
     return state.pay;
   }
 
+  function offerTitle(o){ var l=has(o.line)?o.line.trim():''; return has(o.name)?o.name.trim():l?(l.length>48?l.slice(0,46)+'…':l):'Untitled offer'; }
+  function offerWhen(o){ if(o.hol==='custom') return has(o.holName)?o.holName.trim():''; var hh=findHol(o.hol); return hh?hh.n:''; }
+  function renderShelf(){
+    var n=shelf.order.length;
+    var rows=shelf.order.slice().reverse().map(function(id){
+      var o=norm(shelf.offers[id]), cur=id===shelf.cur;
+      var meta=[offerWhen(o), o.step===LAST?'Prompt ready':'Step '+o.step+' of '+LAST].filter(Boolean).join(' · ');
+      return '<li class="'+(cur?'cur':'')+'"><span><b>'+esc(offerTitle(o))+'</b><span class="meta">'+esc(meta)+'</span></span><span class="row-acts">'+
+        (cur?'<span class="here">Open now</span>':'<button class="rm" data-open="'+id+'" type="button">Open</button>')+
+        (n>1?'<button class="rm" data-del="'+id+'" type="button" aria-label="Remove '+esc(offerTitle(o))+'">Remove</button>':'')+'</span></li>';
+    }).join('');
+    $('shelf').innerHTML='<div class="shelf-top"><span class="lbl">Your offer shelf · '+n+' offer'+(n===1?'':'s')+'</span><button class="btn copy sm" data-new type="button">+ Create a new offer</button></div><ul class="list">'+rows+'</ul>';
+  }
+  function switchTo(id,msg){
+    shelf.cur=id; state=norm(shelf.offers[id]); save(); fillInputs(); render();
+    window.scrollTo({top:Math.max(0,$('shelf').offsetTop-20),behavior:'smooth'});
+    if(msg) toast(msg);
+  }
+  function newOffer(){
+    if(isEmpty(state)){ go(1); toast('This one is fresh. Start on step 1.'); return; }
+    var id=newId(); shelf.offers[id]=blank(); shelf.order.push(id);
+    switchTo(id,'New offer started. Your last one is on your shelf.');
+  }
+  function removeOffer(id){
+    var o=norm(shelf.offers[id]);
+    if(!confirm('Remove "'+offerTitle(o)+'" from your shelf? This clears it from this browser.')) return;
+    delete shelf.offers[id]; shelf.order=shelf.order.filter(function(x){ return x!==id; });
+    if(!shelf.order.length){ var f=newId(); shelf.offers[f]=blank(); shelf.order=[f]; }
+    if(id===shelf.cur) switchTo(shelf.order[shelf.order.length-1],'Removed.');
+    else { save(); renderShelf(); toast('Removed.'); }
+  }
+
   /* render */
   function renderSteps(){
     $('steps').innerHTML=STEPS.map(function(s,i){
@@ -495,7 +565,7 @@
     $('bar').style.width=Math.round((state.step===LAST?LAST:Math.max(dn,state.step-1))/LAST*100)+'%';
     var nav='';
     nav+=state.step>1?'<button class="btn line" data-go="'+(state.step-1)+'" type="button">← Back</button>':'<span></span>';
-    if(state.step<LAST) nav+='<button class="btn ok" id="done-next" type="button">'+(state.step===LAST-1?'Done, build my sheet →':'Done, next step →')+'</button>';
+    if(state.step<LAST) nav+='<button class="btn ok" id="done-next" type="button">'+(state.step===LAST-1?'Done, show my sheet and prompt →':'Done, next step →')+'</button>';
     $('stepnav').innerHTML=nav;
   }
   function renderWhen(){
@@ -564,7 +634,8 @@
       '<div class="os-sec"><span class="k">Who it\'s for</span><p>'+h(state.who)+'</p></div>'+
       '<div class="os-sec"><span class="k">What\'s inside</span>'+pieces+'</div>'+
       '<div class="os-sec"><span class="k">Bonus</span>'+bonus+'</div>'+
-      '<div class="os-sec"><span class="k">How to pay</span><p>'+(payText()===FILL?h(''):esc(payText()))+'</p></div>'+
+      '<div class="os-sec"><span class="k">How to pay</span><p>'+(payText()===FILL?h(''):esc(payText()))+(has(state.buyLink)?' · '+esc(state.buyLink.trim()):'')+'</p></div>'+
+      '<div class="os-sec"><span class="k">Where you\'ll share it</span><p>'+h(state.share)+'</p></div>'+
       '<div class="os-sec"><span class="k">After you pay</span>'+after+'</div>'+
       '<div class="os-foot">Built with The Offer Builder · A free Spark from Soul-Forged Founders</div>';
   }
@@ -572,7 +643,7 @@
     var els=document.querySelectorAll('[data-k]');
     for(var i=0;i<els.length;i++){ var k=els[i].getAttribute('data-k'); els[i].value=state[k]==null?'':state[k]; }
   }
-  function render(){ renderSteps(); renderWhen(); renderMath(); renderLists(); renderPay(); renderSheet(); }
+  function render(){ renderShelf(); renderSteps(); renderWhen(); renderMath(); renderLists(); renderPay(); renderSheet(); }
 
   /* text outputs */
   function FILE(){
@@ -587,11 +658,14 @@
     L.push('Holiday or date: '+whenText());
     L.push('Last day to buy: '+(ld?nice(ld):FILL));
     L.push('Price: '+priceText());
+    var gp=num(state.price), gg=num(state.goal); L.push('Sales goal: '+(isNaN(gg)||gg<=0?FILL:money(gg)+(isNaN(gp)||gp<=0?'':' ('+Math.ceil(gg/gp)+' sales at this price)')));
     L.push('What\'s inside:');
     if(state.pieces.length) state.pieces.forEach(function(x){ L.push('- '+t(x.piece)+(has(x.gives)?': '+x.gives.trim():'')); });
     else L.push('- '+FILL);
     L.push('Bonus: '+(has(state.bonus)?state.bonus.trim()+' (for '+t(state.bonusWho)+')':'None'));
-    L.push('Delivery: '+payText());
+    L.push('How they pay: '+payText());
+    L.push('Payment link or where they message me: '+t(state.buyLink));
+    L.push('Where I will tell people about it: '+t(state.share));
     L.push('After they pay:');
     if(state.after.length) state.after.forEach(function(x,i){ L.push((i+1)+'. '+x); });
     else L.push('1. '+FILL);
@@ -603,18 +677,27 @@
       "Who would buy it: "+t(state.who)+"\n"+
       "What it is, in one sentence: "+t(state.line)+"\n"+
       "Timed for: "+whenText()+"\n\n"+
-      "1. If anything above says [FILL IN], ask me about it first and wait for my answer. Ask before inventing anything about me or the offer.\n"+
-      "2. Give me 10 plain names. Each one says what the thing is, reads easily out loud, and makes sense to someone who has never heard of me.\n"+
+      "1. If anything above says [FILL IN], work from the rest. Don't invent facts about me or the offer.\n"+
+      "2. Give me 10 plain names. Each one says what the thing is, reads easily out loud, and makes sense to someone who has never heard of me. Name it for what my buyer gets, and keep my own method's terms out of it, like card or spread names.\n"+
       "3. Put each name on its own line, with a few words on why it fits.\n"+
       "4. Then tell me the three you would pick, in one line each.";
   }
-  function SALESPROMPT(){
-    return "Write a one-page sales page for my offer, built from my offer sheet below.\n\n"+FILE()+"\n\n"+
-      "1. Anything marked [FILL IN] is missing. Before you write, ask me for each one and wait for my answers. If I tell you to skip one, leave [FILL IN] in the page where it goes.\n"+
-      "2. Use only what is on the sheet and what I tell you. Ask before inventing anything: no made-up testimonials, results, numbers, guarantees or limited spots.\n"+
-      "3. Sections, in order: the name as the headline, the subtitle, who it's for, what's inside (each piece with what it gives them), the bonus and who gets it, the price, the last day to buy and the date it's timed for, how to pay and what happens after, and one clear call to action.\n"+
-      "4. Plain, warm language in short sentences. No em dashes.\n"+
-      "5. Make it work with no website: something I can paste into a post, a DM, or a free page.";
+  function LAUNCHPROMPT(){
+    return "Make my sales page and my launch dashboard for the offer on my offer sheet below. Today is "+nice(today())+".\n\n"+FILE()+"\n\n"+
+      "Make one artifact (an interactive page) with two tabs: Sales page and Launch dashboard. Only these two tabs, in this order, with no intro before them.\n\n"+
+      "SALES PAGE TAB\n"+
+      "1. Sections, in order: the name as the headline, the subtitle, who it's for and the moment in their life it meets, what's inside (each piece with what it gives them), the bonus and who gets it, the price, the last day to buy and the date it's timed for, how to buy and what happens after they pay, and one line that tells them exactly how to buy, using my payment link or where they message me.\n"+
+      "2. Write about my buyer's life and the change they want. Leave out how-to for my own method, like how to read cards or lay out a spread.\n"+
+      "3. Use only what is on the sheet. Where the sheet says [FILL IN], or where a real testimonial or result would go, put a clearly marked [FILL IN: what goes here] instead. No made-up testimonials, results, numbers, guarantees or limited spots.\n"+
+      "4. Plain, warm language in short sentences, written to someone who can make this choice for themselves. No em dashes. No 'it's not X, it's Y' lines, including the short kind like 'Not a reading. A roadmap.'\n"+
+      "5. A Copy button that copies the whole page as plain text, so I can paste it into a post, an email, a DM or a free page.\n\n"+
+      "LAUNCH DASHBOARD TAB\n"+
+      "1. A countdown to my last day to buy.\n"+
+      "2. My sales goal: how many sales it takes at my price, a button to add a sale, and a bar that fills as I go.\n"+
+      "3. A dated launch plan from today to my last day to buy, for the places I tell people about it: the announcement, posts spread through the days between, one email a week if I have an email list, a reminder two days before the last day, and a last call on the last day. Pace it to the days I have.\n"+
+      "4. Each item in the plan has a checkbox, its date, and the words ready to use. A post is a graphic hook of under ten words plus a caption that opens on its own hook line, written as one piece of text ready to paste, with a few hashtags at the end. An email is a subject line plus the body. Each gets its own Copy button.\n"+
+      "5. Keep my ticks and my sales count when I come back to the page, if this artifact can save them.\n"+
+      "6. The same buyer-first voice and the same rules as the sales page.";
   }
 
   /* toast, copy, sheet */
@@ -637,8 +720,8 @@
     $('p-text').textContent=text;
   }
   function promptSheet(kind){
-    var text=kind==='name'?NAMEPROMPT():kind==='sales'?SALESPROMPT():FILE();
-    var title=kind==='name'?'The naming prompt':kind==='sales'?'The sales page prompt':'Your New Offer file';
+    var text=kind==='name'?NAMEPROMPT():kind==='launch'?LAUNCHPROMPT():FILE();
+    var title=kind==='name'?'The naming prompt':kind==='launch'?'Your sales page + launch dashboard prompt':'Your New Offer file';
     var btn=kind==='file'?'Copy the file':'Copy the prompt';
     var msg=kind==='file'?'Copied. Save it wherever you keep notes.':'Copied. Paste it into Claude.';
     openSheet(kind==='file'?'Plain text':'For Claude',title,'<div class="pbox" id="p-text"></div><div class="acts"><button class="btn copy" id="p-copy" type="button">'+btn+'</button></div>');
@@ -651,7 +734,7 @@
   document.addEventListener('keydown',function(e){ if(e.key==='Escape' && $('veil').classList.contains('on')) closeSheet(); });
 
   function go(n){
-    n=Math.max(1,Math.min(LAST,n)); state.step=n; save(); renderSteps(); if(n===LAST) renderSheet();
+    n=Math.max(1,Math.min(LAST,n)); state.step=n; save(); renderShelf(); renderSteps(); if(n===LAST) renderSheet();
     window.scrollTo({top:Math.max(0,$('steps').offsetTop-20),behavior:'smooth'});
   }
 
@@ -677,15 +760,19 @@
     if(e.target.closest('#done-next')){ state.done[state.step]=true; go(state.step+1); return; }
     var g=e.target.closest('[data-go]'); if(g){ go(+g.getAttribute('data-go')); return; }
     var hc=e.target.closest('[data-hol]');
-    if(hc){ var k=hc.getAttribute('data-hol'); state.hol=state.hol===k?'':k; save(); renderWhen(); renderSheet(); if(state.hol==='custom') $('f-holName').focus(); return; }
+    if(hc){ var k=hc.getAttribute('data-hol'); state.hol=state.hol===k?'':k; save(); renderShelf(); renderWhen(); renderSheet(); if(state.hol==='custom') $('f-holName').focus(); return; }
     if(e.target.closest('#use-last')){ var s=suggestLast(); if(s){ state.lastDay=iso(s); $('f-lastDay').value=state.lastDay; save(); renderWhen(); renderSheet(); toast('Last day to buy set'); } return; }
     var rp=e.target.closest('[data-rm-piece]'); if(rp){ state.pieces.splice(+rp.getAttribute('data-rm-piece'),1); save(); renderLists(); renderSheet(); return; }
     var ra=e.target.closest('[data-rm-after]'); if(ra){ state.after.splice(+ra.getAttribute('data-rm-after'),1); save(); renderLists(); renderSheet(); return; }
     var p=e.target.closest('[data-p]'); if(p){ promptSheet(p.getAttribute('data-p')); return; }
+    if(e.target.closest('[data-new]')){ newOffer(); return; }
+    var op=e.target.closest('[data-open]'); if(op){ var oid=op.getAttribute('data-open'); switchTo(oid,'Opened '+offerTitle(norm(shelf.offers[oid]))); return; }
+    var de=e.target.closest('[data-del]'); if(de){ removeOffer(de.getAttribute('data-del')); return; }
   });
   document.addEventListener('input',function(e){
     var k=e.target.getAttribute && e.target.getAttribute('data-k'); if(!k) return;
     state[k]=e.target.value; save();
+    if(k==='name'||k==='line'||k==='holName') renderShelf();
     if(k==='lead'||k==='custDate'||k==='holName'||k==='lastDay') renderWhen();
     if(k==='price'||k==='hours'||k==='goal'||k==='cur') renderMath();
     renderSheet();
@@ -695,7 +782,7 @@
   });
   $('print').addEventListener('click',function(){ renderSheet(); window.print(); });
   $('restart').addEventListener('click',function(){
-    if(!confirm('Start over? This clears every step of your offer from this browser.')) return;
+    if(!confirm('Clear this offer? Every step of it empties. The other offers on your shelf stay.')) return;
     state=blank(); save(); fillInputs(); render(); window.scrollTo(0,0); toast('Cleared. Fresh start.');
   });
 
