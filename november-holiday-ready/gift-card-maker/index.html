@@ -4,22 +4,22 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Gift Card Maker</title>
-<meta name="description" content="Make a gift card for your readings or sessions that someone can buy and give, then download it, print it, and announce it with a ready post and caption prompt. A free Spark from Soul-Forged Founders.">
+<meta name="description" content="Make a gift card, bundle or prepaid bundle for your readings or sessions, with your price front and center, then download it, print it, and announce it with a ready post and caption prompt. A free Spark from Soul-Forged Founders.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="The Gift Card Maker">
-<meta property="og:description" content="Make a gift card for your readings or sessions that someone can buy and give, then download it, print it, and announce it with a ready post and caption prompt. A free Spark from Soul-Forged Founders.">
+<meta property="og:description" content="Make a gift card, bundle or prepaid bundle for your readings or sessions, with your price front and center, then download it, print it, and announce it with a ready post and caption prompt. A free Spark from Soul-Forged Founders.">
 <meta property="og:url" content="https://sunnysink.github.io/monthly-claude-challenge/november-holiday-ready/gift-card-maker/">
 <meta property="og:image" content="https://sunnysink.github.io/monthly-claude-challenge/november-holiday-ready/gift-card-maker/preview.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="The Gift Card Maker">
-<meta name="twitter:description" content="Make a gift card for your readings or sessions that someone can buy and give, then download it, print it, and announce it with a ready post and caption prompt. A free Spark from Soul-Forged Founders.">
+<meta name="twitter:description" content="Make a gift card, bundle or prepaid bundle for your readings or sessions, with your price front and center, then download it, print it, and announce it with a ready post and caption prompt. A free Spark from Soul-Forged Founders.">
 <meta name="twitter:image" content="https://sunnysink.github.io/monthly-claude-challenge/november-holiday-ready/gift-card-maker/preview.jpg">
 <link rel="canonical" href="https://sunnysink.github.io/monthly-claude-challenge/november-holiday-ready/gift-card-maker/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Cinzel:wght@600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,500&family=Montserrat:ital,wght@0,600;0,700;1,500&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   /* The November "hearth and frost" skin, token for token from the Holiday Ready board. */
   :root{
@@ -113,6 +113,9 @@
 
   .seg{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
   .seg.four{grid-template-columns:repeat(4,1fr)}
+  .seg.three{grid-template-columns:repeat(3,1fr)}
+  @media(max-width:520px){.seg.three{grid-template-columns:1fr}}
+  .seg span small{display:block;font-weight:500;font-size:11.5px;opacity:.8;margin-top:2px}
   @media(max-width:620px){.seg.four{grid-template-columns:repeat(2,1fr)}}
   .seg label{margin:0;cursor:pointer;position:relative}
   .seg input{position:absolute;opacity:0;width:0;height:0}
@@ -136,7 +139,10 @@
   .dz small{font-size:12.5px;color:var(--ink-dim)}
   .dz input:checked + .sw{border-color:rgba(var(--ember-rgb),.8);background:linear-gradient(150deg,rgba(var(--ember-rgb),.18),rgba(var(--card-rgb),.88))}
   .dz input:focus-visible + .sw{outline:2px solid var(--heading);outline-offset:2px}
-  .colours{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
+  .colours{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:10px}
+  @media(max-width:520px){.colours{grid-template-columns:1fr}}
+  .price-row{display:grid;grid-template-columns:120px 1fr;gap:10px}
+  .fontpick span{font-size:17px}
   .colours input[type=color]{height:46px;padding:4px;cursor:pointer}
   .logo-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
   .logo-row .hint{flex:1;min-width:200px}
@@ -219,8 +225,8 @@
   <header>
     <div class="kicker">Soul-Forged Founders · A Free Spark</div>
     <h1>The Gift Card Maker</h1>
-    <div class="sub">A gift card for your work, ready to sell and give.</div>
-    <p class="lede">Make a gift card someone can buy for a person they love. Download it, print it, and announce it with a ready post and a caption prompt for Claude.</p>
+    <div class="sub">A gift card, bundle or prepaid bundle for your work, ready to sell and give.</div>
+    <p class="lede">Make a card someone can buy for a person they love, or for themselves. Your price sits front and center, your logo and colours make it yours. Download it, print it, and announce it with a ready post and a caption prompt for Claude.</p>
   </header>
 
   <nav class="steps" id="steps" aria-label="Steps"></nav>
@@ -230,11 +236,25 @@
   <!-- STEP 1 -->
   <section class="view" id="v-1">
     <div class="section-label">Step 1 · What it's for</div>
-    <p class="steplede">Name the thing the card buys. One clear session or reading is the easiest gift to choose.</p>
+    <p class="steplede">Pick what you're selling, then name it and price it. One clear offer is the easiest gift to choose.</p>
     <div class="panel">
+      <div class="field"><span class="lbl">What you're selling</span>
+        <div class="seg three" role="radiogroup" aria-label="Card type">
+          <label><input type="radio" name="ctype" value="gift"><span>Gift card<small>One session or an amount</small></span></label>
+          <label><input type="radio" name="ctype" value="bundle"><span>Bundle<small>Several things, one price</small></span></label>
+          <label><input type="radio" name="ctype" value="prepaid"><span>Prepaid bundle<small>Sessions paid upfront</small></span></label>
+        </div>
+      </div>
       <div class="field"><label for="f-biz">Your business name</label><input id="f-biz" data-k="biz" placeholder="Moon and Thread Tarot" autocomplete="organization"></div>
-      <div class="field"><label for="f-for">What the card is for</label><input id="f-for" data-k="forWhat" placeholder="A 3-card reading" autocomplete="off"></div>
-      <div class="field"><label for="f-val">Value or price on the card</label><input id="f-val" data-k="value" placeholder="$45" autocomplete="off"><div class="hint">Optional. Leave it empty to keep the price off the card.</div></div>
+      <div class="field"><label for="f-for" id="for-label">What the card is for</label><input id="f-for" data-k="forWhat" placeholder="A 3-card reading" autocomplete="off"></div>
+      <div class="field" id="items-field"><label for="f-items">What's in it, one per line</label><textarea id="f-items" data-k="items" placeholder="A 3-card reading&#10;A full moon ritual guide&#10;A follow-up voice note"></textarea><div class="hint">Up to five lines show on the card.</div></div>
+      <div class="field" id="sessions-field"><label for="f-sessions">How many sessions</label><input id="f-sessions" data-k="sessions" type="number" min="2" max="12" inputmode="numeric"><div class="hint">Between 2 and 12. Each one gets a circle on the card to tick off when it's used.</div></div>
+      <div class="field"><label for="f-amt" id="price-label">Price or value</label>
+        <div class="price-row">
+          <select id="f-cur" data-k="cur" aria-label="Currency"><option value="$">$ USD</option><option value="£">£ GBP</option><option value="€">€ EUR</option><option value="CA$">CA$</option><option value="AU$">AU$</option><option value="NZ$">NZ$</option></select>
+          <input id="f-amt" data-k="amount" placeholder="45" inputmode="decimal" autocomplete="off">
+        </div>
+        <div class="hint">It shows big on the card with your currency sign. Leave it empty to keep the price off.</div></div>
     </div>
     <div class="acts stepnav"><button class="btn ok" data-done="1" type="button">Done, next: how to redeem →</button></div>
   </section>
@@ -269,24 +289,46 @@
   <!-- STEP 3 -->
   <section class="view" id="v-3">
     <div class="section-label">Step 3 · The look</div>
-    <p class="steplede">Pick a design. Add your own brand colours or a small logo if you have them.</p>
+    <p class="steplede">Pick a design and a font, then make it yours with your logo, brand colours or a background image.</p>
     <div class="designs" role="radiogroup" aria-label="Design">
       <label class="dz"><input type="radio" name="design" value="hearth"><span class="sw"><span class="chipcard" style="--a:#E9C77A;background:linear-gradient(135deg,#1F2638,#10141C)"></span><b>Hearth</b><small>Midnight and gold</small></span></label>
       <label class="dz"><input type="radio" name="design" value="cranberry"><span class="sw"><span class="chipcard" style="--a:#F0D58C;background:linear-gradient(135deg,#7A2434,#3A0F19)"></span><b>Cranberry</b><small>Deep red and gold</small></span></label>
       <label class="dz"><input type="radio" name="design" value="frost"><span class="sw"><span class="chipcard" style="--a:#2F4A7A;background:linear-gradient(135deg,#F2F5FA,#C9D5E8)"></span><b>Frost</b><small>Pale blue and ink</small></span></label>
     </div>
     <div class="panel" style="margin-top:14px">
-      <label class="check"><input type="checkbox" id="f-brand"> Use my own brand colours</label>
-      <div class="colours" id="colours">
-        <div class="field"><label for="f-c1">Background</label><input type="color" id="f-c1" data-k="c1"></div>
-        <div class="field"><label for="f-c2">Accent</label><input type="color" id="f-c2" data-k="c2"></div>
+      <div class="field"><span class="lbl">Heading font</span>
+        <div class="seg four fontpick" role="radiogroup" aria-label="Heading font">
+          <label><input type="radio" name="font" value="cormorant"><span style="font-family:'Cormorant Garamond',serif">Elegant</span></label>
+          <label><input type="radio" name="font" value="cinzel"><span style="font-family:'Cinzel',serif">Carved</span></label>
+          <label><input type="radio" name="font" value="playfair"><span style="font-family:'Playfair Display',serif">Classic</span></label>
+          <label><input type="radio" name="font" value="montserrat"><span style="font-family:'Montserrat',sans-serif">Modern</span></label>
+        </div>
       </div>
-      <div class="field" style="margin-top:12px;margin-bottom:0"><span class="lbl">Your logo (optional)</span>
+      <div class="field"><span class="lbl">Your logo</span>
         <div class="logo-row">
           <button class="btn line" id="logoBtn" type="button">Add a logo</button>
           <button class="tool" id="logoClear" type="button" style="display:none">Remove logo</button>
           <input type="file" id="logoFile" accept="image/png,image/jpeg,image/webp,image/svg+xml" style="display:none">
-          <span class="hint" id="logo-hint">A small PNG with a clear background looks best. It stays on this page only while it's open, so add it again next time.</span>
+          <span class="hint" id="logo-hint">A PNG with a clear background looks best. It stays on this page only while it's open, so add it again next time.</span>
+        </div>
+        <div class="seg" role="radiogroup" aria-label="Logo placement" id="logomode" style="margin-top:10px">
+          <label><input type="radio" name="logoMode" value="beside"><span>Logo beside my name</span></label>
+          <label><input type="radio" name="logoMode" value="only"><span>Logo instead of my name</span></label>
+        </div>
+        <label class="check" id="badge-row"><input type="checkbox" id="f-badge"> Put my logo on a badge (use this if your logo disappears into the background)</label>
+      </div>
+      <label class="check"><input type="checkbox" id="f-brand"> Use my own brand colours</label>
+      <div class="colours" id="colours">
+        <div class="field"><label for="f-c1">Background</label><input type="color" id="f-c1" data-k="c1"></div>
+        <div class="field"><label for="f-c2">Accent and price</label><input type="color" id="f-c2" data-k="c2"></div>
+        <div class="field"><label for="f-c3">Text</label><input type="color" id="f-c3" data-k="c3"></div>
+      </div>
+      <div class="field" style="margin-top:12px;margin-bottom:0"><span class="lbl">Background image (optional)</span>
+        <div class="logo-row">
+          <button class="btn line" id="bgBtn" type="button">Add a background image</button>
+          <button class="tool" id="bgClear" type="button" style="display:none">Remove it</button>
+          <input type="file" id="bgFile" accept="image/png,image/jpeg,image/webp" style="display:none">
+          <span class="hint" id="bg-hint">A texture or photo from your brand. The card tints it so the words stay easy to read.</span>
         </div>
       </div>
     </div>
@@ -329,7 +371,7 @@
     <div class="outs">
       <div class="pcard">
         <div class="u">For your feed</div>
-        <h4>A "gift cards are open" post</h4>
+        <h4 id="post-h">A "gift cards are open" post</h4>
         <div class="field"><label for="f-get">How someone gets one</label><input id="f-get" data-k="getOne" autocomplete="off"><div class="hint">This goes on the post. Clear it to go back to the suggestion.</div></div>
         <canvas id="cvPost" class="postprev" width="1080" height="1350" style="width:100%;max-width:280px;height:auto;border-radius:10px" aria-label="Announcement post preview"></canvas>
         <button class="btn copy" id="dlPost" type="button">Download the post (PNG)</button>
@@ -344,8 +386,8 @@
       <div class="pcard">
         <div class="u">For you</div>
         <h4>Keep a list</h4>
-        <p class="grow">Sell it however you take payment now. A DM and a payment link works. A gift card is paid upfront, so keep a list of who bought one and who it's for.</p>
-        <button class="btn copy" id="copyTrack" type="button">Copy a gift card tracker</button>
+        <p class="grow">Sell it however you take payment now. A DM and a payment link works. It's paid upfront, so keep a list of who bought one, who it's for, and what's been used.</p>
+        <button class="btn copy" id="copyTrack" type="button">Copy a sales tracker</button>
         <p style="font-size:12.5px">Paste it into a note or the first row of a spreadsheet. Each heading lands in its own column.</p>
       </div>
     </div>
@@ -354,7 +396,7 @@
 
   <div class="joinsff">
     <p>Built inside Soul-Forged Founders, where tarot readers, coaches, and healers create tools like these with Claude.</p>
-    <a href="https://www.skool.com/soul-forged-founders" target="_blank" rel="noopener">Come build with us →</a>
+    <a href="https://www.skool.com/soul-forged-founders" target="_blank" rel="noopener">Come create with us →</a>
   </div>
 
   <footer>THE GIFT CARD MAKER · A FREE SPARK INSIDE SOUL-FORGED FOUNDERS</footer>
@@ -378,18 +420,20 @@
   var KEY='spark-2026-11-gift-card-maker';
   var STEPS=["What it's for",'How to redeem','The look','The words','Your card'];
   var N=STEPS.length;
-  var DEF={step:1,done:0,biz:'',forWhat:'',value:'',rtype:'dm',handle:'',custom:'',xmode:'none',useBy:'',
-    design:'hearth',brand:false,c1:'#1E2B3A',c2:'#E9C77A',to:'',toBlank:true,from:'',fromBlank:true,msg:'',code:'',getOne:'',occasion:''};
+  var DEF={step:1,done:0,ctype:'gift',biz:'',forWhat:'',items:'',sessions:'5',cur:'$',amount:'',rtype:'dm',handle:'',custom:'',xmode:'none',useBy:'',
+    design:'hearth',font:'cormorant',logoMode:'beside',logoBadge:false,brand:false,c1:'#1E2B3A',c2:'#E9C77A',c3:'#F6F2EC',to:'',toBlank:true,from:'',fromBlank:true,msg:'',code:'',getOne:'',occasion:''};
   var $=function(id){return document.getElementById(id);};
   var MON=['January','February','March','April','May','June','July','August','September','October','November','December'];
 
   var state;
   try{ state=JSON.parse(localStorage.getItem(KEY)); }catch(e){ state=null; }
   if(!state || typeof state!=='object') state={};
+  /* an older save kept the price as one free-text field */
+  if(state.value && !state.amount){ var ov=String(state.value); var om=ov.match(/(CA\$|AU\$|NZ\$|[$£€])/); if(om) state.cur=om[1]; state.amount=ov.replace(/[^\d.,]/g,''); delete state.value; }
   state=Object.assign({},DEF,state);
   function save(){ try{ localStorage.setItem(KEY,JSON.stringify(state)); }catch(e){} }
 
-  var logoImg=null; /* memory only, never stored */
+  var logoImg=null, bgImg=null; /* memory only, never stored */
 
   /* ---------- text helpers ---------- */
   function clean(s){ return String(s==null?'':s).trim(); }
@@ -411,12 +455,25 @@
     return 'Send me a message to get one';
   }
   function getOneText(){ return clean(state.getOne)||suggestGet(); }
+  function amountClean(){ return clean(state.amount).replace(/[^\d.,]/g,''); }
+  function priceText(){ var a=amountClean(); return a?(state.cur||'$')+a:''; }
+  function itemList(){ return String(state.items||'').split(/\n/).map(clean).filter(Boolean).slice(0,5); }
+  function sessionsN(){ var n=parseInt(state.sessions,10); return isNaN(n)?5:Math.max(2,Math.min(12,n)); }
+  var TYPE={
+    gift:{label:'GIFT CARD',forLbl:'What the card is for',forPh:'A 3-card reading',priceLbl:'Price or value',priceCap:'VALUE',head:['Gift cards','are open'],thing:'gift card',things:'gift cards'},
+    bundle:{label:'BUNDLE',forLbl:'Name of the bundle',forPh:'The New Year Reset',priceLbl:'Bundle price',priceCap:'BUNDLE PRICE',head:['A new bundle','is here'],thing:'bundle',things:'bundles'},
+    prepaid:{label:'PREPAID BUNDLE',forLbl:'What each session is',forPh:'A 60-minute reading',priceLbl:'Price for all the sessions',priceCap:'PREPAID',head:['Prepaid bundles','are open'],thing:'prepaid bundle',things:'prepaid bundles'}
+  };
+  function T(){ return TYPE[state.ctype]||TYPE.gift; }
+  var FONTS={cormorant:'"Cormorant Garamond", Georgia, serif',cinzel:'"Cinzel", Georgia, serif',playfair:'"Playfair Display", Georgia, serif',montserrat:'"Montserrat", Arial, sans-serif'};
+  function HF(){ return FONTS[state.font]||FONTS.cormorant; }
 
   /* ---------- palettes ---------- */
   function hexRgb(h){ h=String(h||'').replace('#',''); if(h.length===3) h=h.replace(/./g,function(c){return c+c;}); var n=parseInt(h,16); if(isNaN(n)) n=0; return [n>>16&255,n>>8&255,n&255]; }
   function rgbHex(r){ return '#'+r.map(function(v){ v=Math.max(0,Math.min(255,Math.round(v))); return (v<16?'0':'')+v.toString(16); }).join(''); }
   function lum(h){ var c=hexRgb(h).map(function(v){ v/=255; return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4); }); return .2126*c[0]+.7152*c[1]+.0722*c[2]; }
   function shade(h,amt){ var c=hexRgb(h); return rgbHex(c.map(function(v){ return amt<0?v*(1+amt):v+(255-v)*amt; })); }
+  function mix(a,b,t){ var x=hexRgb(a), y=hexRgb(b); return rgbHex([0,1,2].map(function(i){ return x[i]+(y[i]-x[i])*t; })); }
   function rgba(h,a){ var c=hexRgb(h); return 'rgba('+c[0]+','+c[1]+','+c[2]+','+a+')'; }
   var DESIGNS={
     hearth:{bg1:'#1F2638',bg2:'#10141C',glow:'#CF5B67',glowA:.22,accent:'#E9C77A',ink:'#F3EEE6',dim:'#B3ADA6'},
@@ -426,8 +483,9 @@
   function palette(){
     if(state.brand){
       var bg=state.c1||'#1E2B3A', light=lum(bg)>.4;
+      var ink=state.c3||(light?'#151820':'#F6F2EC');
       return {bg1:shade(bg,light?.08:.12),bg2:shade(bg,light?-.12:-.35),glow:state.c2||'#E9C77A',glowA:.18,
-        accent:state.c2||'#E9C77A',ink:light?'#151820':'#F6F2EC',dim:light?'#3E4350':'#D3CEC8'};
+        accent:state.c2||'#E9C77A',ink:ink,dim:mix(ink,bg,.3)};
     }
     return DESIGNS[state.design]||DESIGNS.hearth;
   }
@@ -469,6 +527,12 @@
   function background(ctx,W,H,P){
     var g=ctx.createLinearGradient(0,0,W,H); g.addColorStop(0,P.bg1); g.addColorStop(1,P.bg2);
     ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+    if(bgImg){
+      var sc=Math.max(W/bgImg.width,H/bgImg.height), iw=bgImg.width*sc, ih=bgImg.height*sc;
+      ctx.drawImage(bgImg,(W-iw)/2,(H-ih)/2,iw,ih);
+      var tint=ctx.createLinearGradient(0,0,W,H); tint.addColorStop(0,rgba(P.bg1,.62)); tint.addColorStop(1,rgba(P.bg2,.74));
+      ctx.fillStyle=tint; ctx.fillRect(0,0,W,H);
+    }
     var r=ctx.createRadialGradient(W*.85,H*.1,0,W*.85,H*.1,Math.max(W,H)*.7);
     r.addColorStop(0,rgba(P.glow,P.glowA)); r.addColorStop(1,rgba(P.glow,0));
     ctx.fillStyle=r; ctx.fillRect(0,0,W,H);
@@ -482,38 +546,83 @@
     ctx.fillStyle=P.accent; [[o,o],[W-o,o],[o,H-o],[W-o,H-o]].forEach(function(p){ diamond(ctx,p[0],p[1],10); });
   }
 
+  function badge(ctx,x,y,w,h,P){
+    var pad=16, r=14, bx=x-pad, by=y-pad, bw=w+pad*2, bh=h+pad*2;
+    ctx.save(); ctx.fillStyle=lum(P.bg1)>.4?'#1A1D26':'#FBF8F3'; ctx.beginPath();
+    ctx.moveTo(bx+r,by); ctx.arcTo(bx+bw,by,bx+bw,by+bh,r); ctx.arcTo(bx+bw,by+bh,bx,by+bh,r); ctx.arcTo(bx,by+bh,bx,by,r); ctx.arcTo(bx,by,bx+bw,by,r); ctx.closePath(); ctx.fill(); ctx.restore();
+  }
   /* ---------- the card, 1500 x 900 ---------- */
   function drawCard(cv){
-    var W=1500,H=900, ctx=cv.getContext('2d'), P=palette(), L=110, R=W-110;
+    var W=1500,H=900, ctx=cv.getContext('2d'), P=palette(), L=110, R=W-110, F=HF(), t=T();
     ctx.save(); ctx.clearRect(0,0,W,H); ctx.textBaseline='alphabetic'; ctx.textAlign='left';
     background(ctx,W,H,P); frame(ctx,W,H,P,36);
 
     /* top row */
-    ctx.fillStyle=P.accent; ctx.font='600 24px '+MONO; spaced(ctx,'GIFT CARD',L,138,7);
+    ctx.fillStyle=P.accent; ctx.font='600 24px '+MONO; spaced(ctx,t.label,L,128,7);
     var code=clean(state.code);
-    if(code){ ctx.fillStyle=P.dim; ctx.font='500 22px '+MONO; ctx.textAlign='right'; ctx.fillText('No. '+code,R,138); ctx.textAlign='left'; }
-    var logoW=0;
-    if(logoImg){
-      var box=150, sc=Math.min(box/logoImg.width,box/logoImg.height), lw=logoImg.width*sc, lh=logoImg.height*sc;
-      var ly=code?165:100; ctx.drawImage(logoImg,R-lw,ly+(box-lh)/2,lw,lh); logoW=box+30;
-    }
-    var biz=clean(state.biz)||'Your business name';
-    var b=fit(ctx,biz,'600 %px '+SERIF,56,38,R-L-logoW,1);
-    ctx.fillStyle=clean(state.biz)?P.ink:rgba(P.ink,.45); ctx.font='600 '+b.size+'px '+SERIF; ctx.fillText(b.lines[0],L,205);
+    if(code){ ctx.fillStyle=P.dim; ctx.font='500 22px '+MONO; ctx.textAlign='right'; ctx.fillText('No. '+code,R,128); ctx.textAlign='left'; }
 
-    /* middle block */
-    var fw=clean(state.forWhat)||'What the card is for';
-    var f=fit(ctx,fw,'600 %px '+SERIF,104,58,R-L,2);
-    var val=clean(state.value), msg=clean(state.msg);
-    var lhF=f.size*1.02, blockH=f.lines.length*lhF;
-    var m=null; if(msg){ m=fit(ctx,msg,'italic 500 %px '+SERIF,40,30,R-L,2); blockH+=18+m.lines.length*m.size*1.2; }
-    if(val) blockH+=20+76;
-    var top=250, bottom=640, y=top+Math.max(0,(bottom-top-blockH)/2)+f.size*.82;
-    ctx.fillStyle=clean(state.forWhat)?P.ink:rgba(P.ink,.45); ctx.font='600 '+f.size+'px '+SERIF;
+    /* brand row: logo big, name beside it or none */
+    var biz=clean(state.biz)||'Your business name', headBottom;
+    if(logoImg && state.logoMode==='only'){
+      var bw=620, bh=150, s1=Math.min(bw/logoImg.width,bh/logoImg.height), lw=logoImg.width*s1, lh=logoImg.height*s1;
+      if(state.logoBadge) badge(ctx,L,172+(bh-lh)/2,lw,lh,P);
+      ctx.drawImage(logoImg,L,172+(bh-lh)/2,lw,lh); headBottom=340;
+    } else {
+      var nx=L;
+      if(logoImg){
+        var bxw=300, box=130, s2=Math.min(bxw/logoImg.width,box/logoImg.height), w2=logoImg.width*s2, h2=logoImg.height*s2;
+        if(state.logoBadge) badge(ctx,L,172+(box-h2)/2,w2,h2,P);
+        ctx.drawImage(logoImg,L,172+(box-h2)/2,w2,h2); nx=L+w2+(state.logoBadge?54:34);
+      }
+      var b=fit(ctx,biz,'600 %px '+F,64,36,R-nx,1);
+      ctx.fillStyle=clean(state.biz)?P.ink:rgba(P.ink,.45); ctx.font='600 '+b.size+'px '+F;
+      ctx.fillText(b.lines[0],nx,logoImg?258:222); headBottom=logoImg?320:268;
+    }
+
+    /* price block on the right, the hero */
+    var price=priceText(), colR=R;
+    var top=headBottom+34, bottom=640;
+    if(price){
+      var pw=470;
+      var pf=fit(ctx,price,'700 %px '+F,170,72,pw,1);
+      var capTxt=state.ctype==='prepaid'?sessionsN()+' SESSIONS · PREPAID':t.priceCap;
+      var pBlock=34+pf.size*.86, py=top+Math.max(0,(bottom-top-pBlock)/2);
+      ctx.fillStyle=P.dim; ctx.font='600 20px '+MONO; spaced(ctx,capTxt,R,py+20,5,'right');
+      ctx.fillStyle=P.accent; ctx.font='700 '+pf.size+'px '+F; ctx.textAlign='right';
+      ctx.fillText(pf.lines[0],R,py+34+pf.size*.82); ctx.textAlign='left';
+      colR=R-pw-70;
+      ctx.fillStyle=rgba(P.accent,.35); ctx.fillRect(colR+35,top,2,bottom-top-10);
+    }
+    var cw=colR-L;
+
+    /* left column: what it is */
+    var fw=clean(state.forWhat)||t.forLbl;
+    var items=state.ctype==='bundle'?itemList():[];
+    var msg=clean(state.msg);
+    var maxT=(items.length>2||state.ctype==='prepaid')?1:2;
+    var f=fit(ctx,fw,'600 %px '+F,price?88:100,44,cw,maxT);
+    var lhF=f.size*1.05, blockH=f.lines.length*lhF;
+    var itS=items.length>3?26:30, itLH=itS*1.4; if(items.length) blockH+=16+items.length*itLH;
+    var dot=46, gap=16, perRow=Math.max(1,Math.floor((cw+gap)/(dot+gap))), n=sessionsN(), rows=Math.ceil(n/perRow);
+    if(state.ctype==='prepaid') blockH+=26+rows*(dot+gap);
+    var m=null; if(msg){ m=fit(ctx,msg,'italic 500 %px '+F,36,26,cw,items.length?1:2); blockH+=30+m.lines.length*m.size*1.25; }
+    var y=top+Math.max(0,(bottom-top-blockH)/2)+f.size*.82;
+    ctx.fillStyle=clean(state.forWhat)?P.ink:rgba(P.ink,.45); ctx.font='600 '+f.size+'px '+F;
     f.lines.forEach(function(l,i){ ctx.fillText(l,L,y+i*lhF); });
     y+=(f.lines.length-1)*lhF;
-    if(val){ y+=20+64; ctx.fillStyle=P.accent; var v=fit(ctx,val,'700 %px '+SERIF,72,44,R-L,1); ctx.font='700 '+v.size+'px '+SERIF; ctx.fillText(v.lines[0],L,y); }
-    if(m){ y+=18+m.size*1.05; ctx.fillStyle=P.dim; ctx.font='italic 500 '+m.size+'px '+SERIF; m.lines.forEach(function(l,i){ ctx.fillText(l,L,y+i*m.size*1.2); }); }
+    if(items.length){
+      y+=16; ctx.font='500 '+itS+'px '+SANS;
+      items.forEach(function(it){ y+=itLH; ctx.fillStyle=P.accent; ctx.fillText('✦',L,y); ctx.fillStyle=P.ink;
+        var one=fit(ctx,it,'500 %px '+SANS,itS,18,cw-40,1); ctx.font='500 '+one.size+'px '+SANS; ctx.fillText(one.lines[0],L+40,y); ctx.font='500 '+itS+'px '+SANS; });
+    }
+    if(state.ctype==='prepaid'){
+      y+=26; ctx.strokeStyle=P.accent; ctx.lineWidth=2.5;
+      for(var k=0;k<n;k++){ var cx=L+dot/2+(k%perRow)*(dot+gap), cy=y+dot/2+Math.floor(k/perRow)*(dot+gap);
+        ctx.beginPath(); ctx.arc(cx,cy,dot/2-2,0,Math.PI*2); ctx.stroke(); }
+      y+=rows*(dot+gap)-gap;
+    }
+    if(m){ y+=30+m.size*1.05; ctx.fillStyle=P.dim; ctx.font='italic 500 '+m.size+'px '+F; m.lines.forEach(function(l,i){ ctx.fillText(l,L,y+i*m.size*1.25); }); }
 
     /* divider */
     var dy=668; var dg=ctx.createLinearGradient(L,0,R,0); dg.addColorStop(0,rgba(P.accent,.7)); dg.addColorStop(1,rgba(P.accent,.08));
@@ -523,7 +632,7 @@
     function who(label,val,blank,x){
       ctx.fillStyle=P.accent; ctx.font='600 19px '+MONO; spaced(ctx,label,x,722,5);
       if(blank || !clean(val)){ ctx.fillStyle=rgba(P.ink,.55); ctx.fillRect(x,790,320,2); }
-      else { var t=fit(ctx,clean(val),'600 %px '+SERIF,44,28,330,1); ctx.fillStyle=P.ink; ctx.font='600 '+t.size+'px '+SERIF; ctx.fillText(t.lines[0],x,780); }
+      else { var tw=fit(ctx,clean(val),'600 %px '+F,44,28,330,1); ctx.fillStyle=P.ink; ctx.font='600 '+tw.size+'px '+F; ctx.fillText(tw.lines[0],x,780); }
     }
     who('TO',state.to,state.toBlank,L);
     who('FROM',state.from,state.fromBlank,L+370);
@@ -541,14 +650,15 @@
   /* ---------- the announcement post, 1080 x 1350 ---------- */
   var cardBuf=document.createElement('canvas'); cardBuf.width=1500; cardBuf.height=900;
   function drawPost(cv){
-    var W=1080,H=1350, ctx=cv.getContext('2d'), P=palette(), L=96, R=W-96;
+    var W=1080,H=1350, ctx=cv.getContext('2d'), P=palette(), L=96, R=W-96, F=HF(), t=T();
     ctx.save(); ctx.clearRect(0,0,W,H); ctx.textAlign='center'; ctx.textBaseline='alphabetic';
     background(ctx,W,H,P); frame(ctx,W,H,P,34);
     ctx.fillStyle=P.accent; ctx.font='600 26px '+MONO; spaced(ctx,'NOW OPEN',W/2,140,9,'center');
-    ctx.fillStyle=P.ink; ctx.font='600 112px '+SERIF; ctx.fillText('Gift cards',W/2,262); ctx.fillText('are open',W/2,368);
+    var h1=fit(ctx,t.head[0],'600 %px '+F,112,64,R-L,1), h2=fit(ctx,t.head[1],'600 %px '+F,112,64,R-L,1), hs=Math.min(h1.size,h2.size);
+    ctx.fillStyle=P.ink; ctx.font='600 '+hs+'px '+F; ctx.fillText(t.head[0],W/2,262); ctx.fillText(t.head[1],W/2,368);
     var biz=clean(state.biz)||'Your business name';
-    var b=fit(ctx,biz,'italic 600 %px '+SERIF,52,34,R-L,1);
-    ctx.fillStyle=P.accent; ctx.font='italic 600 '+b.size+'px '+SERIF; ctx.fillText(b.lines[0],W/2,440);
+    var b=fit(ctx,biz,'italic 600 %px '+F,52,34,R-L,1);
+    ctx.fillStyle=P.accent; ctx.font='italic 600 '+b.size+'px '+F; ctx.fillText(b.lines[0],W/2,440);
 
     /* the card itself, tilted a touch */
     drawCard(cardBuf);
@@ -558,7 +668,8 @@
     ctx.fillStyle=P.bg2; ctx.fillRect(-cw/2,-ch/2,cw,ch); ctx.shadowColor='transparent';
     ctx.drawImage(cardBuf,-cw/2,-ch/2,cw,ch); ctx.restore();
 
-    var fw=clean(state.forWhat)||'What the card is for', val=clean(state.value);
+    var fw=clean(state.forWhat)||t.forLbl, val=priceText();
+    if(state.ctype==='prepaid') fw=sessionsN()+' × '+fw;
     var line=val?fw+' · '+val:fw;
     var t=fit(ctx,line,'600 %px '+SANS,40,28,R-L,2);
     ctx.fillStyle=P.ink; ctx.font='600 '+t.size+'px '+SANS;
@@ -582,10 +693,14 @@
   /* ---------- prompts ---------- */
   function FI(s){ return clean(s)||'[FILL IN]'; }
   function CAPTION(){
-    return "Write an Instagram caption announcing that I'm selling gift cards for my work. It goes with an image I already made that says \"Gift cards are open\" with my business name and a picture of the card.\n\n"+
+    var t=T();
+    var what=state.ctype==='bundle'?"What's in the bundle: "+FI(state.forWhat)+(itemList().length?' ('+itemList().join('; ')+')':'')+"\n":
+      state.ctype==='prepaid'?"What it is: "+sessionsN()+" sessions of "+FI(state.forWhat)+", paid upfront\n":
+      "What the gift card is for: "+FI(state.forWhat)+"\n";
+    return "Write an Instagram caption announcing that I'm selling "+t.things+" for my work. It goes with an image I already made that says \""+t.head.join(' ')+"\" with my business name and a picture of the card.\n\n"+
       "My business: "+FI(state.biz)+"\n"+
-      "What the gift card is for: "+FI(state.forWhat)+"\n"+
-      "Price or value: "+(clean(state.value)||'[FILL IN]')+"\n"+
+      what+
+      "Price: "+(priceText()||'[FILL IN]')+"\n"+
       "How someone buys one: "+getOneText()+"\n"+
       "How the person receiving it redeems it: "+(redeemReady()?redeemText():'[FILL IN]')+"\n"+
       "Use by: "+(state.xmode==='date'&&state.useBy?niceDate(state.useBy):'No expiry')+"\n"+
@@ -597,7 +712,8 @@
       "5. End with one clear call to action that matches how someone buys one.\n"+
       "6. Only use what I gave you. Do not invent prices, dates, results, reviews or anything about my work. If you need a fact you do not have, ask me.";
   }
-  var TRACK=['Date bought','Bought by','Their contact','Gift card for (name)','Card code','What it is for','Amount paid','Paid how','Use by','Redeemed on'].join('\t');
+  function TRACK(){ var c=['Date bought','Bought by','Their contact','For (name)','Card code','What it is for','Amount paid','Paid how','Use by'];
+    c.push(state.ctype==='prepaid'?'Sessions used':'Redeemed on'); return c.join('\t'); }
 
   /* ---------- toast, copy, download ---------- */
   var toastT;
@@ -646,6 +762,7 @@
     document.querySelectorAll('input[name=rtype]').forEach(function(r){ r.checked=r.value===state.rtype; });
     document.querySelectorAll('input[name=xmode]').forEach(function(r){ r.checked=r.value===state.xmode; });
     document.querySelectorAll('input[name=design]').forEach(function(r){ r.checked=r.value===state.design; });
+    ['ctype','font','logoMode'].forEach(function(nm){ document.querySelectorAll('input[name='+nm+']').forEach(function(r){ r.checked=r.value===state[nm]; }); });
     $('f-brand').checked=!!state.brand; $('f-toBlank').checked=!!state.toBlank; $('f-fromBlank').checked=!!state.fromBlank;
     $('f-get').placeholder=suggestGet();
     renderBits();
@@ -659,6 +776,12 @@
     $('redeem-read').textContent=redeemText()+' · '+expiryText();
     $('date-field').style.display=state.xmode==='date'?'':'none';
     $('colours').style.display=state.brand?'':'none';
+    var t=T(); $('for-label').textContent=t.forLbl; $('f-for').placeholder=t.forPh; $('price-label').textContent=t.priceLbl;
+    $('items-field').style.display=state.ctype==='bundle'?'':'none';
+    $('sessions-field').style.display=state.ctype==='prepaid'?'':'none';
+    $('post-h').textContent='A "'+t.head.join(' ').toLowerCase()+'" post';
+    $('logomode').style.display=logoImg?'':'none'; $('badge-row').style.display=logoImg?'':'none'; $('f-badge').checked=!!state.logoBadge;
+    $('bgClear').style.display=bgImg?'':'none'; $('bgBtn').textContent=bgImg?'Change the image':'Add a background image';
     $('f-to').disabled=!!state.toBlank; $('f-from').disabled=!!state.fromBlank;
     $('msg-ct').textContent=clean(state.msg).length?clean(state.msg).length+' of 160 characters.':'Optional. Up to 160 characters.';
     $('logoClear').style.display=logoImg?'':'none';
@@ -673,7 +796,8 @@
   }
   function need(n){
     if(n===1){ if(!clean(state.biz)){ $('f-biz').focus(); toast('Add your business name first'); return false; }
-      if(!clean(state.forWhat)){ $('f-for').focus(); toast('Say what the card is for'); return false; } }
+      if(!clean(state.forWhat)){ $('f-for').focus(); toast(state.ctype==='bundle'?'Name the bundle':'Say what the card is for'); return false; }
+      if(state.ctype==='bundle' && !itemList().length){ $('f-items').focus(); toast("Add what's in the bundle"); return false; } }
     if(n===2){ if(!redeemReady()){ (state.rtype==='custom'?$('f-custom'):$('f-handle')).focus(); toast('Add how they claim it'); return false; }
       if(state.xmode==='date' && !state.useBy){ $('f-useby').focus(); toast('Pick the use by date, or choose No expiry'); return false; } }
     return true;
@@ -691,7 +815,9 @@
   });
   document.addEventListener('change',function(e){
     var t=e.target;
+    if(t.name==='ctype'||t.name==='font'||t.name==='logoMode'){ state[t.name]=t.value; save(); syncForm(); redraw(); return; }
     if(t.name==='rtype'||t.name==='xmode'||t.name==='design'){ state[t.name]=t.value; if(t.name==='design') state.brand=false; save(); syncForm(); redraw(); return; }
+    if(t.id==='f-badge'){ state.logoBadge=t.checked; save(); redraw(); return; }
     if(t.id==='f-brand'){ state.brand=t.checked; save(); renderBits(); redraw(); return; }
     if(t.id==='f-toBlank'){ state.toBlank=t.checked; save(); renderBits(); redraw(); return; }
     if(t.id==='f-fromBlank'){ state.fromBlank=t.checked; save(); renderBits(); redraw(); return; }
@@ -703,6 +829,19 @@
     state.code='GC-'+s; $('f-code').value=state.code; save(); redraw(); toast('Code made. Change it any time.');
   });
 
+  /* cut away empty transparent edges so the logo fills its space */
+  function trim(im){
+    try{
+      var c=document.createElement('canvas'); c.width=im.naturalWidth||im.width; c.height=im.naturalHeight||im.height;
+      var x=c.getContext('2d'); x.drawImage(im,0,0);
+      var d=x.getImageData(0,0,c.width,c.height).data, minX=c.width, minY=c.height, maxX=-1, maxY=-1;
+      for(var yy=0;yy<c.height;yy++) for(var xx=0;xx<c.width;xx++){ if(d[(yy*c.width+xx)*4+3]>12){ if(xx<minX)minX=xx; if(xx>maxX)maxX=xx; if(yy<minY)minY=yy; if(yy>maxY)maxY=yy; } }
+      if(maxX<0) return im;
+      var o=document.createElement('canvas'); o.width=maxX-minX+1; o.height=maxY-minY+1;
+      o.getContext('2d').drawImage(c,minX,minY,o.width,o.height,0,0,o.width,o.height);
+      return o;
+    }catch(e){ return im; }
+  }
   $('logoBtn').addEventListener('click',function(){ $('logoFile').click(); });
   $('logoClear').addEventListener('click',function(){ logoImg=null; $('logo-hint').textContent='Logo removed.'; renderBits(); redraw(); });
   $('logoFile').addEventListener('change',function(e){
@@ -711,10 +850,21 @@
     var r=new FileReader();
     r.onload=function(){
       var im=new Image();
-      im.onload=function(){ logoImg=im; $('logo-hint').textContent='Logo added. It stays only while this page is open.'; renderBits(); redraw(); };
+      im.onload=function(){ logoImg=trim(im); $('logo-hint').textContent='Logo added. It stays only while this page is open.'; renderBits(); redraw(); };
       im.onerror=function(){ toast('That image would not open. Try a PNG or JPG.'); };
       im.src=r.result;
     };
+    r.readAsDataURL(f);
+  });
+
+  $('bgBtn').addEventListener('click',function(){ $('bgFile').click(); });
+  $('bgClear').addEventListener('click',function(){ bgImg=null; $('bg-hint').textContent='Background image removed.'; renderBits(); redraw(); });
+  $('bgFile').addEventListener('change',function(e){
+    var f=e.target.files[0]; e.target.value=''; if(!f) return;
+    if(f.size>8*1024*1024){ toast('That file is over 8 MB. Try a smaller one.'); return; }
+    var r=new FileReader();
+    r.onload=function(){ var im=new Image(); im.onload=function(){ bgImg=im; $('bg-hint').textContent='Image added. It stays only while this page is open.'; renderBits(); redraw(); };
+      im.onerror=function(){ toast('That image would not open. Try a PNG or JPG.'); }; im.src=r.result; };
     r.readAsDataURL(f);
   });
 
@@ -732,11 +882,11 @@
     $('p-text').textContent=t;
     $('p-copy').addEventListener('click',function(){ copy(t,'Copied. Paste it into Claude.'); });
   });
-  $('copyTrack').addEventListener('click',function(){ copy(TRACK,'Tracker copied. Paste it into a note or spreadsheet.'); });
+  $('copyTrack').addEventListener('click',function(){ copy(TRACK(),'Tracker copied. Paste it into a note or spreadsheet.'); });
 
   $('startOver').addEventListener('click',function(){
     if(!confirm('Start over? This clears everything you filled in here.')) return;
-    state=Object.assign({},DEF); logoImg=null; save(); render(); window.scrollTo(0,0);
+    state=Object.assign({},DEF); logoImg=null; bgImg=null; save(); render(); window.scrollTo(0,0);
   });
 
   /* ---------- fonts first, then draw ---------- */
@@ -745,7 +895,7 @@
     if(fontsReady){ redraw(); return; }
     redraw();
     if(!document.fonts || !document.fonts.load){ fontsReady=true; return; }
-    var loads=['600 40px "Cormorant Garamond"','700 40px "Cormorant Garamond"','italic 500 40px "Cormorant Garamond"','italic 600 40px "Cormorant Garamond"',
+    var loads=['600 40px "Cinzel"','700 40px "Cinzel"','600 40px "Playfair Display"','700 40px "Playfair Display"','italic 500 40px "Playfair Display"','600 40px "Montserrat"','700 40px "Montserrat"','italic 500 40px "Montserrat"','600 40px "Cormorant Garamond"','700 40px "Cormorant Garamond"','italic 500 40px "Cormorant Garamond"','italic 600 40px "Cormorant Garamond"',
       '500 20px "Hanken Grotesk"','600 20px "Hanken Grotesk"','500 20px "JetBrains Mono"','600 20px "JetBrains Mono"'].map(function(f){ return document.fonts.load(f).catch(function(){}); });
     var done=function(){ fontsReady=true; redraw(); };
     Promise.all(loads).then(function(){ return document.fonts.ready; }).then(done,done);
@@ -765,6 +915,7 @@
     }
   })();
 
+  document.querySelectorAll('input:not([type]),input[type=text],input[type=email],textarea').forEach(function(el){ el.spellcheck=true; el.setAttribute('lang','en'); });
   render();
 })();
 </script>
