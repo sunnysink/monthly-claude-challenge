@@ -387,8 +387,8 @@
         <div class="u">For you</div>
         <h4>Keep a list</h4>
         <p class="grow">Sell it however you take payment now. A DM and a payment link works. It's paid upfront, so keep a list of who bought one, who it's for, and what's been used.</p>
-        <button class="btn copy" id="copyTrack" type="button">Copy a sales tracker</button>
-        <p style="font-size:12.5px">Paste it into a note or the first row of a spreadsheet. Each heading lands in its own column.</p>
+        <a class="btn copy" id="openTrack" href="https://docs.google.com/spreadsheets/d/1H8fZnDhcYimHLGxjNFfbuzsXPr0eOndg9VLLjztzhvs/copy" target="_blank" rel="noopener" style="text-decoration:none;align-self:flex-start">Get the tracker sheet</a>
+        <p style="font-size:12.5px">It opens in Google Sheets and asks to make your own copy. Dropdowns for the type and how they paid, a count of prepaid sessions left, and a Totals tab that adds it all up.</p>
       </div>
     </div>
     <div class="acts stepnav"><button class="btn line" data-go="4" type="button">← Back</button></div>
@@ -883,7 +883,7 @@
     $('p-text').textContent=t;
     $('p-copy').addEventListener('click',function(){ copy(t,'Copied. Paste it into Claude.'); });
   });
-  $('copyTrack').addEventListener('click',function(){ copy(TRACK(),'Tracker copied. Paste it into a note or spreadsheet.'); });
+
 
   $('startOver').addEventListener('click',function(){
     if(!confirm('Start over? This clears everything you filled in here.')) return;
