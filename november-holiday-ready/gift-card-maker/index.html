@@ -269,11 +269,11 @@
           <label><input type="radio" name="rtype" value="dm"><span>Instagram DM</span></label>
           <label><input type="radio" name="rtype" value="email"><span>Email</span></label>
           <label><input type="radio" name="rtype" value="link"><span>Booking link</span></label>
-          <label><input type="radio" name="rtype" value="custom"><span>My own words</span></label>
+          <label><input type="radio" name="rtype" value="custom"><span>Write how to redeem</span></label>
         </div>
       </div>
       <div class="field" id="handle-field"><label for="f-handle" id="handle-label">Your Instagram handle</label><input id="f-handle" data-k="handle" autocomplete="off"></div>
-      <div class="field" id="custom-field"><label for="f-custom">How to redeem, in your words</label><input id="f-custom" data-k="custom" placeholder="Text me at 555 0100 to book your time" autocomplete="off"></div>
+      <div class="field" id="custom-field"><label for="f-custom">How to redeem</label><input id="f-custom" data-k="custom" placeholder="Text me at 555 0100 to book your time" autocomplete="off"></div>
       <div class="field"><span class="lbl">On the card it reads</span><div class="hint" id="redeem-read" style="font-size:14.5px;opacity:1;color:var(--ink)"></div></div>
       <div class="field"><span class="lbl">Use by</span>
         <div class="seg" role="radiogroup" aria-label="Use by">
@@ -333,12 +333,12 @@
       </div>
     </div>
     <div class="preview"><div class="cap">Live preview</div><canvas id="cv3" width="1500" height="900" aria-label="Gift card preview"></canvas></div>
-    <div class="acts stepnav"><button class="btn line" data-go="2" type="button">← Back</button><button class="btn ok" data-done="3" type="button">Done, next: the words →</button></div>
+    <div class="acts stepnav"><button class="btn line" data-go="2" type="button">← Back</button><button class="btn ok" data-done="3" type="button">Done, next: fill it in →</button></div>
   </section>
 
   <!-- STEP 4 -->
   <section class="view" id="v-4">
-    <div class="section-label">Step 4 · The words</div>
+    <div class="section-label">Step 4 · Fill it in</div>
     <p class="steplede">Fill in who it's for and who it's from, or leave the lines blank so the buyer can write them in by hand.</p>
     <div class="panel">
       <div class="two">
@@ -418,7 +418,7 @@
 <script>
 (function(){
   var KEY='spark-2026-11-gift-card-maker';
-  var STEPS=["What it's for",'How to redeem','The look','The words','Your card'];
+  var STEPS=["What it's for",'How to redeem','The look','Fill it in','Your card'];
   var N=STEPS.length;
   var DEF={step:1,done:0,ctype:'gift',biz:'',forWhat:'',items:'',sessions:'5',cur:'$',amount:'',rtype:'dm',handle:'',custom:'',xmode:'none',useBy:'',
     design:'hearth',font:'cormorant',logoMode:'beside',logoBadge:false,brand:false,c1:'#1E2B3A',c2:'#E9C77A',c3:'#F6F2EC',to:'',toBlank:true,from:'',fromBlank:true,msg:'',code:'',getOne:'',occasion:''};
