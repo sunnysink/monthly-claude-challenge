@@ -458,6 +458,7 @@
   function amountClean(){ return clean(state.amount).replace(/[^\d.,]/g,''); }
   function priceText(){ var a=amountClean(); return a?(state.cur||'$')+a:''; }
   function itemList(){ return String(state.items||'').split(/\n/).map(clean).filter(Boolean).slice(0,5); }
+  function bare(x){ return clean(x).replace(/^(an?|one)\s+/i,''); }
   function sessionsN(){ var n=parseInt(state.sessions,10); return isNaN(n)?5:Math.max(2,Math.min(12,n)); }
   var TYPE={
     gift:{label:'GIFT CARD',forLbl:'What the card is for',forPh:'A 3-card reading',priceLbl:'Price or value',priceCap:'VALUE',head:['Gift cards','are open'],thing:'gift card',things:'gift cards'},
@@ -669,7 +670,7 @@
     ctx.drawImage(cardBuf,-cw/2,-ch/2,cw,ch); ctx.restore();
 
     var fw=clean(state.forWhat)||t.forLbl, val=priceText();
-    if(state.ctype==='prepaid') fw=sessionsN()+' × '+fw;
+    if(state.ctype==='prepaid') fw=sessionsN()+' × '+(bare(state.forWhat)||'session');
     var line=val?fw+' · '+val:fw;
     var t=fit(ctx,line,'600 %px '+SANS,40,28,R-L,2);
     ctx.fillStyle=P.ink; ctx.font='600 '+t.size+'px '+SANS;
@@ -695,7 +696,7 @@
   function CAPTION(){
     var t=T();
     var what=state.ctype==='bundle'?"What's in the bundle: "+FI(state.forWhat)+(itemList().length?' ('+itemList().join('; ')+')':'')+"\n":
-      state.ctype==='prepaid'?"What it is: "+sessionsN()+" sessions of "+FI(state.forWhat)+", paid upfront\n":
+      state.ctype==='prepaid'?"What it is: "+sessionsN()+" sessions, each one "+FI(state.forWhat)+", paid upfront\n":
       "What the gift card is for: "+FI(state.forWhat)+"\n";
     return "Write an Instagram caption announcing that I'm selling "+t.things+" for my work. It goes with an image I already made that says \""+t.head.join(' ')+"\" with my business name and a picture of the card.\n\n"+
       "My business: "+FI(state.biz)+"\n"+
