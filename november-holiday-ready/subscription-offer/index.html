@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Your Subscription Offer</title>
+<meta name="description" content="Set up a monthly subscription for your readings, sessions or healing work in five short steps, then get a one-page offer sheet and an AI prompt that writes your sales page and first-month announcement post. A free Spark from Soul-Forged Founders.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Create Your Subscription Offer">
+<meta property="og:description" content="Set up a monthly subscription for your readings, sessions or healing work in five short steps, then get a one-page offer sheet and an AI prompt that writes your sales page and first-month announcement post. A free Spark from Soul-Forged Founders.">
+<meta property="og:url" content="https://sunnysink.github.io/monthly-claude-challenge/november-holiday-ready/subscription-offer/">
+<meta property="og:image" content="https://sunnysink.github.io/monthly-claude-challenge/november-holiday-ready/subscription-offer/preview.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Create Your Subscription Offer">
+<meta name="twitter:description" content="Set up a monthly subscription for your readings, sessions or healing work in five short steps, then get a one-page offer sheet and an AI prompt that writes your sales page and first-month announcement post. A free Spark from Soul-Forged Founders.">
+<meta name="twitter:image" content="https://sunnysink.github.io/monthly-claude-challenge/november-holiday-ready/subscription-offer/preview.jpg">
+<link rel="canonical" href="https://sunnysink.github.io/monthly-claude-challenge/november-holiday-ready/subscription-offer/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* The November "hearth and frost" skin, token for token from the Holiday Ready board. */
+  :root{
+    color-scheme:dark;
+    --bg:#10141C; --bg2:#1A2030; --ink:#F3EEE6; --ink-dim:#B3ADA6;
+    --copper:#C9A35C; --copper-lt:#EBD9AE; --ember:#CF5B67; --ember-glow:#E8A2A8;
+    --forest:#3E7A62; --mauve:#8E9BC0; --gold:#F0D58C;
+    --green:#6FAF8F;
+    --heading:#E9C77A;
+    --copper-rgb:201,163,92;    --copper-lt-rgb:235,217,174;
+    --ember-rgb:207,91,103;     --ember-glow-rgb:232,162,168;
+    --gold-rgb:240,213,140;     --mauve-rgb:142,155,192;
+    --forest-rgb:62,122,98;     --green-rgb:111,175,143;
+    --card-rgb:30,36,52;
+    --bg-rgb:16,20,28;    --bg2-rgb:26,32,48;
+    --veil-rgb:7,9,13;       --well-rgb:18,22,32;   --sheet-rgb:32,38,56;
+    --serif:'Cormorant Garamond','Hoefler Text',Georgia,serif;
+    --sans:'Hanken Grotesk',system-ui,-apple-system,'Segoe UI',Arial,sans-serif;
+    --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+    --card:rgba(var(--card-rgb),0.70); --cardborder:rgba(var(--copper-rgb),0.24);
+    --glow-a:rgba(var(--ember-rgb),0.16);
+    --glow-b:rgba(var(--forest-rgb),0.14);
+    --glow-c:rgba(var(--copper-rgb),0.12);
+    --on-accent:#10141C; --well-ink:#EEE9E2;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:var(--sans);color:var(--ink);background:var(--bg);
+    background-image:
+      radial-gradient(900px 520px at 10% -10%, var(--glow-a), transparent 60%),
+      radial-gradient(820px 500px at 100% 0%, var(--glow-b), transparent 55%),
+      radial-gradient(760px 620px at 55% 120%, var(--glow-c), transparent 60%);
+    min-height:100vh;padding:44px 16px 80px;position:relative;overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;line-height:1.65;
+  }
+  .embers{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+  .ember{position:absolute;bottom:-12px;width:3px;height:3px;border-radius:50%;
+    background:var(--ember-glow);box-shadow:0 0 6px 1px rgba(var(--ember-glow-rgb),0.6);
+    opacity:0;animation:rise linear infinite}
+  @keyframes rise{0%{transform:translateY(0) translateX(0);opacity:0}
+    12%{opacity:.7}100%{transform:translateY(-104vh) translateX(26px);opacity:0}}
+  @media(prefers-reduced-motion:reduce){.ember{display:none}}
+  .wrap{max-width:1080px;margin:0 auto;position:relative;z-index:1}
+
+  header{text-align:center;margin-bottom:28px}
+  .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.34em;text-transform:uppercase;
+    color:var(--copper);opacity:.9;margin-bottom:12px}
+  h1{font-family:var(--serif);font-weight:600;font-size:clamp(40px,7.4vw,78px);line-height:.98;
+    background:linear-gradient(92deg,var(--copper-lt),var(--ember-glow) 38%,var(--gold) 70%,var(--copper));
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:.5px}
+  .sub{font-family:var(--serif);font-style:italic;font-size:clamp(19px,2.4vw,25px);color:var(--ink-dim);margin-top:10px}
+  .lede{font-size:15.5px;color:var(--ink-dim);margin:16px auto 0;max-width:660px}
+
+  .section-label{font-family:var(--mono);font-size:11px;letter-spacing:.28em;text-transform:uppercase;
+    color:var(--ink-dim);margin:30px 0 16px;display:flex;align-items:center;gap:12px}
+  .section-label::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,rgba(var(--copper-rgb),0.35),transparent)}
+
+  .acts{display:flex;gap:11px;margin-top:18px;flex-wrap:wrap}
+  .btn{border:none;border-radius:30px;padding:12px 22px;font-family:var(--sans);font-size:14px;
+    font-weight:700;cursor:pointer;transition:transform .18s,box-shadow .18s}
+  .btn.copy{background:linear-gradient(135deg,var(--copper),var(--ember));color:var(--on-accent)}
+  .btn.ok{background:linear-gradient(135deg,var(--forest),var(--green));color:var(--on-accent)}
+  .btn.line{background:transparent;color:var(--copper-lt);border:1.5px solid rgba(var(--copper-rgb),.5)}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 8px 22px -8px rgba(var(--ember-rgb),.6)}
+  .btn:focus-visible,.tool:focus-visible{outline:2px solid var(--heading);outline-offset:2px}
+
+  .tool{background:none;border:1px solid rgba(var(--copper-rgb),.34);border-radius:30px;
+    padding:8px 17px;font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;
+    text-transform:uppercase;color:var(--ink-dim);cursor:pointer;transition:color .18s,border-color .18s,background .18s}
+  .tool:hover{color:var(--ember-glow);border-color:rgba(var(--ember-rgb),.6);background:rgba(var(--ember-rgb),.07)}
+  .tool.danger:hover{color:var(--mauve);border-color:rgba(var(--mauve-rgb),.6);background:rgba(var(--mauve-rgb),.07)}
+
+  .panel{background:var(--card);border:1px solid var(--cardborder);border-radius:16px;padding:22px 24px;backdrop-filter:blur(14px)}
+  .panel + .panel{margin-top:14px}
+  .panel p{font-size:15px;color:var(--ink-dim);margin-bottom:10px}
+  .panel p:last-child{margin-bottom:0}
+  .panel b{color:var(--ink)}
+  .panel h3{font-family:var(--serif);font-size:24px;font-weight:600;color:var(--heading);line-height:1.15;margin-bottom:12px}
+  @media(max-width:520px){.panel{padding:18px 16px}}
+
+  .field{margin-bottom:15px}
+  .field:last-child{margin-bottom:0}
+  .field label,.field .lbl{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:7px}
+  .field input,.field select,.field textarea{width:100%;background:rgba(var(--well-rgb),.5);
+    border:1px solid rgba(var(--copper-rgb),.28);border-radius:10px;padding:11px 14px;
+    font-family:var(--sans);font-size:14.5px;color:var(--ink);outline:none;transition:border-color .18s}
+  .field textarea{min-height:80px;resize:vertical;line-height:1.5}
+  .field input:focus,.field select:focus,.field textarea:focus{border-color:rgba(var(--ember-rgb),.65)}
+  .field input::placeholder,.field textarea::placeholder{color:var(--ink-dim);opacity:.55}
+  .field .hint{font-size:12px;color:var(--ink-dim);margin-top:6px;opacity:.85}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:520px){.two{grid-template-columns:1fr}}
+
+  .seg{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+  .seg.four{grid-template-columns:repeat(4,1fr)}
+  .seg.three{grid-template-columns:repeat(3,1fr)}
+  @media(max-width:620px){.seg.four{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:520px){.seg.three{grid-template-columns:1fr}}
+  .seg span small{display:block;font-weight:500;font-size:11.5px;opacity:.8;margin-top:2px}
+  .seg label{margin:0;cursor:pointer;position:relative;display:block}
+  .seg input{position:absolute;opacity:0;width:0;height:0}
+  .seg span{display:block;height:100%;text-align:center;padding:10px 6px;border-radius:10px;border:1px solid rgba(var(--copper-rgb),.3);
+    font-family:var(--sans);font-size:13.5px;font-weight:600;letter-spacing:0;text-transform:none;color:var(--ink-dim);transition:all .18s}
+  .seg input:checked + span{background:linear-gradient(135deg,var(--forest),var(--green));color:var(--on-accent);border-color:transparent}
+  .seg input:focus-visible + span{outline:2px solid var(--heading);outline-offset:2px}
+
+  /* pick-and-describe rows */
+  .picks{display:grid;gap:9px}
+  .pick{border:1px solid rgba(var(--copper-rgb),.26);border-radius:12px;padding:11px 14px;background:rgba(var(--well-rgb),.32);transition:border-color .18s,background .18s}
+  .pick.on{border-color:rgba(var(--green-rgb),.6);background:rgba(var(--forest-rgb),.12)}
+  .pick .check{margin:0}
+  .pick .more{margin-top:10px;display:none}
+  .pick.on .more{display:block}
+  .pick .more input{width:100%;background:rgba(var(--well-rgb),.5);border:1px solid rgba(var(--copper-rgb),.28);border-radius:10px;padding:10px 13px;font-family:var(--sans);font-size:14px;color:var(--ink);outline:none}
+  .pick .more input:focus{border-color:rgba(var(--ember-rgb),.65)}
+  .pick .more input::placeholder{color:var(--ink-dim);opacity:.55}
+  .check{display:flex;align-items:center;gap:10px;font-size:14.5px;color:var(--ink);cursor:pointer;font-weight:600}
+  .check input{width:18px;height:18px;accent-color:var(--green);flex:none}
+  .check small{font-weight:500;color:var(--ink-dim);font-size:12.5px}
+  .custom-row{display:flex;gap:8px;margin-top:9px}
+  .custom-row input{flex:1}
+  .rm{background:none;border:1px solid rgba(var(--copper-rgb),.34);color:var(--ink-dim);border-radius:10px;padding:0 13px;cursor:pointer;font-size:18px;line-height:1}
+  .rm:hover{color:var(--ember-glow);border-color:rgba(var(--ember-rgb),.6)}
+
+  /* the math */
+  .mathbox{display:grid;grid-template-columns:1.1fr 1fr;gap:14px;align-items:stretch}
+  @media(max-width:700px){.mathbox{grid-template-columns:1fr}}
+  .bignum{border-radius:16px;padding:22px 22px 20px;text-align:center;
+    background:linear-gradient(150deg,rgba(var(--ember-rgb),.18),rgba(var(--card-rgb),.88));border:1px solid rgba(var(--copper-rgb),.36)}
+  .bignum .u{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--copper)}
+  .bignum .n{font-family:var(--serif);font-size:clamp(64px,10vw,96px);font-weight:600;line-height:1;color:var(--heading);margin:8px 0 4px;font-variant-numeric:lining-nums}
+  .bignum .w{font-size:15px;color:var(--ink)}
+  .bignum .s{font-size:12.5px;color:var(--ink-dim);margin-top:8px}
+  .ladder{width:100%;border-collapse:collapse;font-size:14px;margin-top:4px}
+  .ladder td{padding:7px 4px;border-bottom:1px solid rgba(var(--copper-rgb),.16);color:var(--ink-dim)}
+  .ladder td:last-child{text-align:right;color:var(--ink);font-weight:600}
+  .ladder tr.hit td{color:var(--heading)}
+
+  .explain{margin-top:14px;padding:14px 16px;border-radius:12px;border:1px dashed rgba(var(--gold-rgb),.4);background:rgba(var(--gold-rgb),.05);font-size:14.5px;color:var(--ink-dim)}
+  .explain b{color:var(--ink)}
+
+  /* steps */
+  .steps{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:26px 0 0;padding:5px;border-radius:40px;
+    background:rgba(var(--card-rgb),.7);border:1px solid var(--cardborder);backdrop-filter:blur(12px)}
+  .stp{display:flex;align-items:center;justify-content:center;gap:8px;background:none;border:none;border-radius:30px;padding:10px 6px;cursor:pointer;
+    font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-dim);min-width:0}
+  .stp .sn{flex:none;display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;border:1px solid rgba(var(--copper-rgb),.5);font-size:10px}
+  .stp .sl{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .stp.done{color:var(--copper-lt)} .stp.done .sn{background:rgba(var(--ember-rgb),.25);border-color:transparent}
+  .stp.on{background:linear-gradient(135deg,var(--forest),var(--green));color:var(--on-accent);font-weight:700}
+  .stp.on .sn{border-color:var(--on-accent)}
+  .stp:focus-visible{outline:2px solid var(--heading);outline-offset:2px}
+  @media(max-width:760px){.stp .sl{display:none}.stp{padding:9px 4px}}
+  .bar{height:4px;border-radius:4px;background:rgba(var(--copper-rgb),.16);margin:10px 6px 0;overflow:hidden}
+  .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--copper),var(--ember),var(--gold));transition:width .3s}
+  .topline{display:flex;justify-content:flex-end;margin-top:12px}
+  .view{display:none}
+  .view.on{display:block}
+  .steplede{font-size:15px;color:var(--ink-dim);margin:-4px 0 16px}
+  .stepnav{margin-top:24px}
+
+  /* the offer sheet */
+  .osheet{background:linear-gradient(160deg,rgba(var(--sheet-rgb),.96),rgba(var(--bg-rgb),.98));border:1px solid rgba(var(--copper-rgb),.4);border-radius:18px;padding:30px 30px 26px;box-shadow:0 30px 80px -40px #000}
+  @media(max-width:520px){.osheet{padding:22px 18px}}
+  .osheet .ok-k{font-family:var(--mono);font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--copper)}
+  .osheet h2{font-family:var(--serif);font-size:clamp(30px,4.6vw,44px);font-weight:600;line-height:1.05;color:var(--heading);margin:6px 0 4px}
+  .osheet .by{font-size:14.5px;color:var(--ink-dim);margin-bottom:18px}
+  .osheet .price{font-variant-numeric:lining-nums;font-family:var(--serif);font-size:30px;font-weight:600;color:var(--ink);margin-bottom:16px}
+  .osheet .price small{font-family:var(--sans);font-size:14px;color:var(--ink-dim);font-weight:500}
+  .orows{display:grid;grid-template-columns:repeat(2,1fr);gap:12px 22px}
+  @media(max-width:620px){.orows{grid-template-columns:1fr}}
+  .orow .k{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--mauve);margin-bottom:4px}
+  .orow .v{font-size:14.5px;color:var(--ink);white-space:pre-line;overflow-wrap:anywhere}
+  .orow.wide{grid-column:1 / -1}
+  .orow ul{list-style:none}
+  .orow li{font-size:14.5px;color:var(--ink);padding-left:16px;position:relative}
+  .orow li::before{content:"✦";position:absolute;left:0;color:var(--copper);font-size:10px;top:4px}
+
+  .outs{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:13px;margin-top:18px}
+  .pcard{background:var(--card);border:1px solid var(--cardborder);border-radius:14px;padding:19px 18px;
+    backdrop-filter:blur(12px);display:flex;flex-direction:column;gap:8px}
+  .pcard .u{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mauve)}
+  .pcard h4{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--heading);line-height:1.15}
+  .pcard p{font-size:13.5px;color:var(--ink-dim);line-height:1.5}
+  .pcard .grow{flex:1}
+  .pcard .btn{align-self:flex-start;padding:10px 20px;font-size:13.5px}
+  .pcard .field{margin-bottom:6px}
+
+  .veil{position:fixed;inset:0;background:rgba(var(--veil-rgb),.82);backdrop-filter:blur(7px);
+    z-index:60;display:none;align-items:flex-start;justify-content:center;padding:34px 16px;overflow-y:auto}
+  .veil.on{display:flex}
+  .sheet{background:linear-gradient(150deg,rgba(var(--sheet-rgb),.97),rgba(var(--bg-rgb),.99));
+    border:1px solid rgba(var(--copper-rgb),.36);border-radius:18px;max-width:680px;width:100%;
+    padding:30px 30px 26px;position:relative;box-shadow:0 30px 90px -30px #000}
+  .sheet .num{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--copper)}
+  .sheet h3{font-family:var(--serif);font-size:31px;font-weight:600;line-height:1.12;margin:7px 0 18px;color:var(--heading)}
+  .close{position:absolute;top:15px;right:17px;background:none;border:none;color:var(--ink-dim);font-size:25px;cursor:pointer;line-height:1;padding:4px 8px}
+  .close:hover{color:var(--ember-glow)}
+  @media(max-width:520px){.sheet{padding:26px 18px 22px}}
+  .pbox{background:rgba(var(--well-rgb),.72);border:1px solid rgba(var(--copper-rgb),.2);border-radius:12px;
+    padding:17px 18px;font-family:var(--mono);font-size:12.5px;line-height:1.75;color:var(--well-ink);white-space:pre-wrap;max-height:52vh;overflow-y:auto;overflow-wrap:anywhere}
+
+  .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);opacity:0;
+    background:linear-gradient(135deg,var(--forest),var(--green));color:var(--on-accent);font-weight:700;font-size:14px;
+    padding:11px 22px;border-radius:30px;z-index:80;transition:opacity .25s,transform .25s;pointer-events:none;max-width:calc(100vw - 32px);text-align:center}
+  .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  .joinsff{margin:40px auto 0;text-align:center;background:linear-gradient(135deg,rgba(var(--ember-rgb),0.10),rgba(var(--card-rgb),0.82));border:1px solid rgba(var(--copper-rgb),0.30);border-radius:16px;padding:24px 24px}
+  .joinsff p{font-size:14.5px;color:var(--ink-dim);line-height:1.6;margin:0 auto 15px;max-width:480px}
+  .joinsff a{display:inline-block;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;background:var(--ember);color:var(--on-accent);text-decoration:none;padding:13px 30px;border-radius:30px;font-weight:600}
+  .joinsff a:hover{background:var(--copper)}
+  footer{margin-top:34px;text-align:center;font-family:var(--mono);font-size:10px;letter-spacing:.24em;color:var(--ink-dim);opacity:.7}
+
+  @media print{
+    @page{size:letter;margin:.6in}
+    html,body{background:#fff !important;background-image:none !important;padding:0;margin:0;min-height:0;color:#1A2030}
+    .embers,header,.steps,.bar,.topline,.section-label,.steplede,.outs,.stepnav,.joinsff,footer,.toast,.veil,.view:not(#v-5),#v-5 > :not(#sheetwrap){display:none !important}
+    #v-5{display:block !important}
+    .osheet{background:#fff !important;border:1.5px solid #C9A35C;box-shadow:none;color:#1A2030}
+    .osheet h2{color:#7A2434}
+    .osheet .by,.osheet .price small{color:#4A5468}
+    .osheet .price,.orow .v,.orow li{color:#1A2030}
+    .orow .k{color:#4A5468}
+    .orow li::before{color:#C9A35C}
+  }
+</style>
+</head>
+<body>
+<div class="embers" id="embers"></div>
+<div class="wrap">
+
+  <header>
+    <div class="kicker">Soul-Forged Founders · A Free Spark</div>
+    <h1>Create Your Subscription Offer</h1>
+    <div class="sub">One offer your clients join once and receive every month.</div>
+    <p class="lede">Set up a monthly subscription for your work in five short steps: what each month includes, the day it arrives, the price with its math, and how people pay and start. You finish with a one-page offer sheet and an AI prompt that writes your sales page and your first-month announcement post.</p>
+  </header>
+
+  <nav class="steps" id="steps" aria-label="Steps"></nav>
+  <div class="bar" aria-hidden="true"><i id="bar"></i></div>
+  <div class="topline"><button class="tool danger" id="startOver" type="button">Start over</button></div>
+
+  <!-- STEP 1 -->
+  <section class="view" id="v-1">
+    <div class="section-label">Step 1 · What each month includes</div>
+    <p class="steplede">Name your subscription and pick what lands with a subscriber every month. Add anything that's yours.</p>
+    <div class="panel">
+      <div class="field"><label for="f-biz">Your business name</label><input id="f-biz" data-k="biz" placeholder="Moon and Thread Tarot" autocomplete="organization"></div>
+      <div class="field"><label for="f-what">What you do and who you help</label><input id="f-what" data-k="what" placeholder="I'm a tarot reader for women going through a career change" autocomplete="off"><div class="hint">One sentence. Claude writes your sales page for the people you name here.</div></div>
+      <div class="field"><label for="f-want">What your subscribers want from their month</label><textarea id="f-want" data-k="want" placeholder="To feel sure of their next step at work, and have someone in their corner every month while they make the change"></textarea><div class="hint">Optional. Say it the way your clients would. Leave it empty and Claude works it out from the line above.</div></div>
+      <div class="field"><label for="f-name">Name of your subscription</label><input id="f-name" data-k="name" placeholder="The Monthly Crossroads" autocomplete="off"><div class="hint">Change it any time.</div></div>
+    </div>
+    <div class="panel">
+      <h3>Every month, a subscriber gets</h3>
+      <div class="picks" id="picks"></div>
+      <div id="customs"></div>
+      <div class="acts" style="margin-top:12px"><button class="tool" id="addCustom" type="button">+ Add your own</button></div>
+      <div class="field" style="margin-top:18px"><span class="lbl">What they get each month is</span>
+        <div class="seg" role="radiogroup" aria-label="Personal or the same for everyone">
+          <label><input type="radio" name="kind" value="personal"><span>Made for each subscriber<small>personal to them</small></span></label>
+          <label><input type="radio" name="kind" value="shared"><span>The same for everyone<small>one for the whole group</small></span></label>
+        </div>
+      </div>
+    </div>
+    <div class="acts stepnav"><button class="btn ok" data-done="1" type="button">Done, next: the rhythm →</button></div>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="view" id="v-2">
+    <div class="section-label">Step 2 · The rhythm</div>
+    <p class="steplede">Pick the day it arrives each month and how it reaches your subscribers.</p>
+    <div class="panel">
+      <div class="field"><span class="lbl">It arrives on</span>
+        <div class="seg four" role="radiogroup" aria-label="Which day it arrives">
+          <label><input type="radio" name="day" value="first"><span>The 1st<small>of every month</small></span></label>
+          <label><input type="radio" name="day" value="newmoon"><span>The new moon<small>each month</small></span></label>
+          <label><input type="radio" name="day" value="fullmoon"><span>The full moon<small>each month</small></span></label>
+          <label><input type="radio" name="day" value="custom"><span>A day I pick<small>write it in</small></span></label>
+        </div>
+      </div>
+      <div class="field" id="dayc-field"><label for="f-dayc">The day it arrives</label><input id="f-dayc" data-k="dayCustom" placeholder="The first Sunday of the month" autocomplete="off"></div>
+      <div class="field"><label for="f-start">The first month starts</label><input id="f-start" data-k="start" type="date"><div class="hint">Optional. Your announcement post uses it.</div></div>
+    </div>
+    <div class="panel">
+      <h3>It reaches them by</h3>
+      <div class="picks" id="dpicks"></div>
+      <div class="field" id="callwhen-field" style="margin-top:14px"><label for="f-callwhen">When the live call happens</label><input id="f-callwhen" data-k="callWhen" placeholder="The second Thursday, 6pm Eastern" autocomplete="off"><div class="hint">Shows because you picked a live call in step 1.</div></div>
+    </div>
+    <div class="acts stepnav"><button class="btn line" data-go="1" type="button">← Back</button><button class="btn ok" data-done="2" type="button">Done, next: the price →</button></div>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="view" id="v-3">
+    <div class="section-label">Step 3 · The price and the math</div>
+    <p class="steplede">Set your monthly price and what you want this subscription to bring in each month. The number of subscribers that takes updates as you type.</p>
+    <div class="mathbox">
+      <div class="panel" style="margin:0">
+        <div class="field"><label for="f-price">Monthly price</label>
+          <div class="two" style="grid-template-columns:120px 1fr">
+            <select id="f-cur" data-k="cur" aria-label="Currency"><option value="$">$ USD</option><option value="£">£ GBP</option><option value="€">€ EUR</option><option value="CA$">CA$</option><option value="AU$">AU$</option><option value="NZ$">NZ$</option></select>
+            <input id="f-price" data-k="price" placeholder="33" inputmode="decimal" autocomplete="off">
+          </div></div>
+        <div class="field"><label for="f-goal">Your monthly income goal from this subscription</label><input id="f-goal" data-k="goal" placeholder="1000" inputmode="decimal" autocomplete="off"></div>
+        <div class="field"><label for="f-mins">Minutes each subscriber takes you a month</label><input id="f-mins" data-k="mins" placeholder="30" inputmode="numeric" autocomplete="off"><div class="hint">Optional. Count everything you make and send them. It shows how many hours your goal takes.</div></div>
+      </div>
+      <div class="bignum" aria-live="polite">
+        <div class="u">Subscribers you need</div>
+        <div class="n" id="m-n">–</div>
+        <div class="w" id="m-w">Add a price and a goal.</div>
+        <div class="s" id="m-s"></div>
+        <table class="ladder" id="m-ladder" aria-label="Monthly income at different subscriber counts"></table>
+      </div>
+    </div>
+    <p class="hint" style="margin-top:12px;font-size:12.5px;color:var(--ink-dim)">These numbers are before payment fees and taxes.</p>
+    <div class="acts stepnav"><button class="btn line" data-go="2" type="button">← Back</button><button class="btn ok" data-done="3" type="button">Done, next: pay and start →</button></div>
+  </section>
+
+  <!-- STEP 4 -->
+  <section class="view" id="v-4">
+    <div class="section-label">Step 4 · How people pay and start</div>
+    <p class="steplede">Set up how people pay every month, what they hear the moment they join, and how cancelling works.</p>
+    <div class="panel">
+      <div class="field"><span class="lbl">They pay through</span>
+        <div class="seg four" role="radiogroup" aria-label="How people pay">
+          <label><input type="radio" name="pay" value="stripe"><span>Stripe<small>a subscription link</small></span></label>
+          <label><input type="radio" name="pay" value="skool"><span>Skool<small>a paid group</small></span></label>
+          <label><input type="radio" name="pay" value="circle"><span>Circle<small>a paid space</small></span></label>
+          <label><input type="radio" name="pay" value="other"><span>Something else<small>write it in</small></span></label>
+        </div>
+      </div>
+      <div class="field" id="payo-field"><label for="f-payo">What you use</label><input id="f-payo" data-k="payOther" placeholder="PayPal subscriptions" autocomplete="off"></div>
+      <div class="explain" id="pay-explain"></div>
+      <div class="field" style="margin-top:15px"><label for="f-link" id="link-label">Your payment link</label><input id="f-link" data-k="link" type="url" placeholder="https://buy.stripe.com/..." autocomplete="off"><div class="hint">Optional for now. Add it once you have it, and your sales page button points to it.</div></div>
+    </div>
+    <div class="panel">
+      <div class="field"><label for="f-welcome">What the welcome message says</label><textarea id="f-welcome" data-k="welcome" placeholder="Welcome in! Your first reading lands on the 1st. Before then, reply and tell me the one thing you most want clarity on this month."></textarea><div class="hint">The message a new subscriber gets the moment they join. Leave it empty and the AI prompt writes one for you.</div></div>
+      <div class="field"><label for="f-howcancel">How someone cancels</label><input id="f-howcancel" data-k="howCancel" placeholder="Email me any time and I cancel it for you" autocomplete="off"></div>
+      <div class="field"><span class="lbl">When someone cancels</span>
+        <div class="seg" role="radiogroup" aria-label="What happens when someone cancels">
+          <label><input type="radio" name="cancel" value="keep"><span>They keep the month they paid for<small>and no new charge comes</small></span></label>
+          <label><input type="radio" name="cancel" value="custom"><span>Write my own</span></label>
+        </div>
+      </div>
+      <div class="field" id="cancelc-field"><label for="f-cancelc">What happens when someone cancels</label><input id="f-cancelc" data-k="cancelCustom" placeholder="Their last reading still arrives, and the next charge stops" autocomplete="off"></div>
+    </div>
+    <div class="acts stepnav"><button class="btn line" data-go="3" type="button">← Back</button><button class="btn ok" data-done="4" type="button">Done, next: your offer →</button></div>
+  </section>
+
+  <!-- STEP 5 -->
+  <section class="view" id="v-5">
+    <div class="section-label">Step 5 · Your offer</div>
+    <p class="steplede">Your whole subscription on one page, and the AI prompt that turns it into your sales page and your first-month announcement post.</p>
+    <div id="sheetwrap"><div class="osheet" id="osheet"></div></div>
+    <div class="acts">
+      <button class="btn line" id="dlSheet" type="button">Download the sheet</button>
+      <button class="btn line" id="printSheet" type="button">Print or save as PDF</button>
+    </div>
+
+    <div class="section-label">For Claude</div>
+    <div class="outs">
+      <div class="pcard">
+        <div class="u">Your announcement</div>
+        <h4>Where you'll post it</h4>
+        <div class="field"><div class="seg" role="radiogroup" aria-label="Where you will post">
+          <label><input type="radio" name="where" value="Instagram"><span>Instagram</span></label>
+          <label><input type="radio" name="where" value="Facebook"><span>Facebook</span></label>
+          <label><input type="radio" name="where" value="TikTok"><span>TikTok</span></label>
+          <label><input type="radio" name="where" value="other"><span>Somewhere else</span></label>
+        </div></div>
+        <div class="field" id="whereo-field"><label for="f-whereo">Where</label><input id="f-whereo" data-k="whereOther" placeholder="My email list" autocomplete="off"></div>
+        <div class="field"><label for="f-voice">Something you've written, for your voice</label><textarea id="f-voice" data-k="voice" placeholder="Paste a caption or an email you liked writing"></textarea><div class="hint">Optional. Claude matches how you sound.</div></div>
+      </div>
+      <div class="pcard">
+        <div class="u">Your AI prompt</div>
+        <h4>Sales page + first-month post</h4>
+        <p class="grow">Copy it and paste it into Claude. You get your <b>sales page</b>, ready to publish, then your <b>announcement post</b>: a hook for the image and a caption that's ready to paste.<span id="welcome-note"> It also writes your welcome message.</span> Claude writes from everything on your sheet and lists anything it assumed so you can check it.</p>
+        <div class="acts" style="margin-top:4px"><button class="btn copy" id="copyP" type="button">Copy the prompt</button><button class="btn line" id="seeP" type="button">See it</button></div>
+      </div>
+    </div>
+    <div class="acts stepnav"><button class="btn line" data-go="4" type="button">← Back</button></div>
+  </section>
+
+  <div class="joinsff">
+    <p>Made inside Soul-Forged Founders, where tarot readers, coaches and healers create tools like these with Claude.</p>
+    <a href="https://www.skool.com/soul-forged-founders" target="_blank" rel="noopener">Come create with us →</a>
+  </div>
+
+  <footer>CREATE YOUR SUBSCRIPTION OFFER · A FREE SPARK INSIDE SOUL-FORGED FOUNDERS</footer>
+</div>
+
+<div class="veil" id="veil" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+  <div class="sheet">
+    <button class="close" id="close" type="button" aria-label="Close">×</button>
+    <div class="num" id="sheet-num">For Claude</div>
+    <h3 id="sheet-title">Your AI prompt</h3>
+    <div id="sheet-body"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+  var KEY='spark-2026-11-subscription-offer';
+  var STEPS=['What it includes','The rhythm','The price','Pay and start','Your offer'];
+  var N=STEPS.length;
+  var INCL=[
+    {id:'reading',label:'A reading or session',ph:'A 3-card reading for the month ahead'},
+    {id:'spread',label:'A spread to use themselves',ph:'A new moon spread with journal questions'},
+    {id:'recording',label:'A recording',ph:'A 15-minute audio walking through their reading'},
+    {id:'report',label:'A written report',ph:'A one-page PDF of what to focus on this month'},
+    {id:'call',label:'A live call',ph:'A 45-minute group call on Zoom'},
+    {id:'card',label:'A card of the month',ph:'One card with a journal question to sit with'}
+  ];
+  var DELIV=[
+    {id:'email',label:'Email'},
+    {id:'dm',label:'DM'},
+    {id:'rec',label:'A recording link',ph:'A private YouTube or Loom link'},
+    {id:'post',label:'A Skool or Circle post',ph:'A post in my private Skool group'},
+    {id:'zoom',label:'Zoom'}
+  ];
+  var DEF={step:1,done:0,biz:'',what:'',want:'',name:'',inc:{},incMore:{},customs:[],kind:'',day:'first',dayCustom:'',start:'',del:{},delMore:{},delOther:'',callWhen:'',
+    cur:'$',price:'',goal:'',mins:'',pay:'stripe',payOther:'',link:'',welcome:'',howCancel:'',cancel:'keep',cancelCustom:'',where:'Instagram',whereOther:'',voice:''};
+  var $=function(id){return document.getElementById(id);};
+  var MON=['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+  var state;
+  try{ state=JSON.parse(localStorage.getItem(KEY)); }catch(e){ state=null; }
+  if(!state || typeof state!=='object') state={};
+  state=Object.assign({},DEF,state);
+  ['inc','incMore','del','delMore'].forEach(function(k){ if(!state[k]||typeof state[k]!=='object') state[k]={}; });
+  if(!Array.isArray(state.customs)) state.customs=[];
+  function save(){ try{ localStorage.setItem(KEY,JSON.stringify(state)); }catch(e){} }
+
+  /* ---------- helpers ---------- */
+  function clean(s){ return String(s==null?'':s).trim(); }
+  function esc(s){ return String(s).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function num(s){ var v=parseFloat(String(s||'').replace(/[^\d.]/g,'')); return isNaN(v)?0:v; }
+  function money(v){ var r=Math.round(v*100)/100; return (state.cur||'$')+(r%1?r.toFixed(2):String(r)).replace(/\B(?=(\d{3})+(?!\d))/g,','); }
+  function niceDate(s){ if(!s) return ''; var p=s.split('-'); if(p.length<3) return s; return MON[+p[1]-1]+' '+(+p[2])+', '+p[0]; }
+  function lower1(s){ return s?s.charAt(0).toLowerCase()+s.slice(1):s; }
+
+  function includes(){
+    var out=[];
+    INCL.forEach(function(x){ if(state.inc[x.id]){ var m=clean(state.incMore[x.id]); out.push(m||x.label); } });
+    state.customs.forEach(function(c){ if(clean(c)) out.push(clean(c)); });
+    return out;
+  }
+  var KIND={personal:'Made for each subscriber, personal to them',shared:'The same for every subscriber'};
+  function kindText(){ return KIND[state.kind]||''; }
+  function hasCall(){ return !!state.inc.call; }
+  function dayText(){
+    if(state.day==='newmoon') return 'The new moon each month';
+    if(state.day==='fullmoon') return 'The full moon each month';
+    if(state.day==='custom') return clean(state.dayCustom);
+    return 'The 1st of every month';
+  }
+  function delivery(){
+    var out=[];
+    DELIV.forEach(function(x){ if(state.del[x.id]){ var m=clean(state.delMore[x.id]); out.push(m||x.label); } });
+    if(clean(state.delOther)) out.push(clean(state.delOther));
+    return out;
+  }
+  function priceN(){ return num(state.price); }
+  function goalN(){ return num(state.goal); }
+  function need(){ var p=priceN(), g=goalN(); return p>0&&g>0?Math.ceil(g/p):0; }
+  var PAYNAME={stripe:'A Stripe subscription payment link',skool:'A paid Skool group',circle:'A paid Circle space'};
+  function payText(){ return state.pay==='other'?clean(state.payOther):PAYNAME[state.pay]; }
+  function cancelText(){ return state.cancel==='custom'?clean(state.cancelCustom):'They keep everything for the month they paid for, and no new charge comes.'; }
+  function whereText(){ return state.where==='other'?(lower1(clean(state.whereOther))||'social media'):state.where; }
+  function social(){ return state.where!=='other'; }
+
+  var PAYX={
+    stripe:'<b>Stripe:</b> in your Stripe dashboard, create a product with a <b>recurring</b> monthly price, then create a payment link for that product. Each subscriber pays through the link once and Stripe charges them every month until they cancel. Turn on the customer portal in your Stripe settings if you want subscribers to cancel by themselves.',
+    skool:'<b>Skool:</b> make a separate Skool group for your subscribers and set its membership to paid with a monthly price in the group settings. People join through the group\'s page, Skool charges them every month, and you post each month\'s reading or recording inside the group.',
+    circle:'<b>Circle:</b> create a paywall with a monthly price in your Circle settings and attach it to the space your subscribers get. Joining through the paywall gives them the space, and Circle charges them every month.',
+    other:'<b>Any tool works</b> as long as it charges the same price every month without you sending an invoice. Look for the words "subscription" or "recurring" in its settings.'
+  };
+  var LINKLBL={stripe:['Your payment link','https://buy.stripe.com/...'],skool:["Your Skool group's link",'https://www.skool.com/your-group'],circle:['Your Circle paywall link','https://yourcommunity.circle.so/checkout/...'],other:['Your payment link','https://...']};
+
+  /* ---------- the prompt ---------- */
+  function SHEET_LINES(){
+    var L=[];
+    L.push('What I do: '+clean(state.what));
+    L.push('My business: '+clean(state.biz));
+    L.push('Subscription name: '+clean(state.name));
+    L.push('What my subscribers want from their month: '+(clean(state.want)||'Not written yet. Work it out from what I do.'));
+    L.push('Every month, a subscriber gets:');
+    includes().forEach(function(i){ L.push('- '+i); });
+    L.push('Personal or the same for everyone: '+kindText());
+    L.push('It arrives on: '+dayText());
+    L.push('It reaches them by: '+delivery().join('; '));
+    if(hasCall()) L.push('The live call happens: '+(clean(state.callWhen)||'Date and time to be announced each month'));
+    L.push('First month starts: '+(state.start?niceDate(state.start):'Not set. Leave the start date out.'));
+    L.push('Price: '+money(priceN())+' a month');
+    L.push('How people pay: '+payText());
+    L.push('Payment link: '+(clean(state.link)||'Not ready yet. Put the words [payment link] wherever it goes so I can paste it in.'));
+    L.push('Welcome message: '+(clean(state.welcome)||'Not written yet. Write it (part 3).'));
+    L.push('How someone cancels: '+(clean(state.howCancel)||'Not written yet. Draft the simplest way that fits how they pay.'));
+    L.push('When someone cancels: '+cancelText());
+    return L;
+  }
+  function PROMPT(){
+    var w=!clean(state.welcome);
+    var where=whereText();
+    var parts=w?'three':'two';
+    var P="Write the sales page and the first-month announcement post for my monthly subscription, from my offer sheet below.\n\n"+
+      "MY OFFER SHEET\n"+SHEET_LINES().join('\n')+"\n"+
+      (clean(state.voice)?"\nHow I write. Match how I sound, and keep these exact words out of everything you write:\n"+clean(state.voice)+"\n":"")+
+      "\nWrite only these "+parts+" parts, in this order, with no intro before them. Put each part's name on its own line above it, and keep the names out of the text itself.\n\n"+
+      "1. SALES PAGE. Make it as an artifact: one page I can publish and share. In this order: a headline about what my subscriber's month looks like with this; who it's for; everything that arrives each month, and the day it arrives; how it reaches them; the price; a join button that goes to my payment link; what happens right after they join; how cancelling works and what happens when they cancel; then 3 to 5 FAQ questions with answers. Make it easy to read on a phone.\n\n"+
+      "2. ANNOUNCEMENT POST for "+where+", announcing that my subscription is open"+(state.start?" and the first month starts "+niceDate(state.start):"")+". Two pieces, labelled:\n"+
+      "GRAPHIC HOOK: under ten words, for the image.\n"+
+      "CAPTION: one piece of text, ready to paste. It opens on its own hook line, different from the graphic hook. It says what a subscriber gets each month, the day it arrives, the price and how to join, and ends with one call to action that matches how people pay and points to my payment link."+(social()?" Put a few hashtags at the very end.":"")+"\n"+
+      (w?"\n3. WELCOME MESSAGE: the message a new subscriber gets the moment they join. It welcomes them, says when their first month arrives and how, and tells them the one thing to do before then. Keep it short enough to read on a phone.\n":"")+
+      "\nAfter the last part, add ASSUMPTIONS: a short list of anything you assumed, so I can check it.\n\n"+
+      "How to write it:\n"+
+      "- Keep it on my subscribers' lives and what each month gives them. Leave out how-to for my own method, like how to read cards, lay out a spread or run a session.\n"+
+      "- Write to the reader as someone who makes their own decisions, without telling them they are ready, capable or worthy.\n"+
+      "- Use only my sheet for prices, dates, links and what's included. Invent no testimonials, client stories, results or numbers, and leave out any section that would need one. Draft everything else, like the FAQ answers, from the most likely version and list it under ASSUMPTIONS.\n"+
+      "- Warm, plain and direct, in my voice. No em dashes. No lines that work by saying what something isn't, like \"It's more than a reading, it's a ritual\" or \"Less guessing. More knowing.\"";
+    return P;
+  }
+
+  function SHEET_TEXT(){
+    var L=[];
+    L.push(clean(state.name).toUpperCase());
+    L.push(clean(state.biz)+' · '+money(priceN())+' a month');
+    L.push('');
+    L.push('Who it is for: '+clean(state.what));
+    if(clean(state.want)) L.push('What they want from their month: '+clean(state.want));
+    L.push('');
+    L.push('Every month, a subscriber gets:');
+    includes().forEach(function(i){ L.push('  * '+i); });
+    L.push('  ('+kindText()+')');
+    L.push('');
+    L.push('It arrives: '+dayText());
+    L.push('It reaches them by: '+delivery().join('; '));
+    if(hasCall()&&clean(state.callWhen)) L.push('The live call: '+clean(state.callWhen));
+    if(state.start) L.push('First month starts: '+niceDate(state.start));
+    L.push('');
+    L.push('Price: '+money(priceN())+' a month');
+    if(goalN()) L.push('Monthly goal: '+money(goalN())+', which takes '+need()+' subscriber'+(need()===1?'':'s'));
+    var h=hoursText(); if(h) L.push('Time it takes: '+h);
+    L.push('');
+    L.push('How people pay: '+payText());
+    if(clean(state.link)) L.push('Payment link: '+clean(state.link));
+    if(clean(state.welcome)) L.push('Welcome message: '+clean(state.welcome));
+    if(clean(state.howCancel)) L.push('How someone cancels: '+clean(state.howCancel));
+    L.push('When someone cancels: '+cancelText());
+    return L.join('\n');
+  }
+  function hoursText(){ var m=num(state.mins), n=need(); if(!m||!n) return ''; var h=Math.round(m*n/6)/10; return 'about '+h+' hour'+(h===1?'':'s')+' a month at '+n+' subscribers'; }
+
+  /* ---------- toast, copy, download ---------- */
+  var toastT;
+  function toast(m){ var t=$('toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(function(){t.classList.remove('on');},2200); }
+  function copy(text,msg){
+    function fallback(){ var ta=document.createElement('textarea'); ta.value=text; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy');}catch(e){} document.body.removeChild(ta); toast(msg); }
+    if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(text).then(function(){toast(msg);},fallback); } else fallback();
+  }
+  function slug(s){ return clean(s).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,40)||'my'; }
+  function download(name,text){
+    var blob=new Blob([text],{type:'text/plain;charset=utf-8'}), url=URL.createObjectURL(blob);
+    var a=document.createElement('a'); a.href=url; a.download=name; document.body.appendChild(a); a.click();
+    document.body.removeChild(a); setTimeout(function(){ URL.revokeObjectURL(url); },1500);
+  }
+
+  /* ---------- prompt sheet ---------- */
+  var lastFocus=null;
+  function openSheet(text){
+    lastFocus=document.activeElement;
+    $('sheet-body').innerHTML='<div class="pbox" id="p-text"></div><div class="acts"><button class="btn copy" id="p-copy" type="button">Copy the prompt</button></div>';
+    $('p-text').textContent=text;
+    $('p-copy').addEventListener('click',function(){ copy(text,'Copied. Paste it into Claude.'); });
+    $('veil').classList.add('on'); $('p-copy').focus();
+  }
+  function closeSheet(){ $('veil').classList.remove('on'); if(lastFocus) try{lastFocus.focus();}catch(e){} }
+  $('close').addEventListener('click',closeSheet);
+  $('veil').addEventListener('click',function(e){ if(e.target===$('veil')) closeSheet(); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape' && $('veil').classList.contains('on')) closeSheet(); });
+
+  /* ---------- render ---------- */
+  function pickRow(group,x,on,more){
+    return '<div class="pick'+(on?' on':'')+'" data-row="'+group+':'+x.id+'"><label class="check"><input type="checkbox" data-pick="'+group+'" value="'+x.id+'"'+(on?' checked':'')+'> '+x.label+'</label>'+
+      (x.ph?'<div class="more"><input data-more="'+group+'" data-id="'+x.id+'" value="'+esc(more||'')+'" placeholder="'+esc(x.ph)+'" aria-label="Say what the '+esc(x.label.toLowerCase())+' is" autocomplete="off"></div>':'')+'</div>';
+  }
+  function renderPicks(){
+    $('picks').innerHTML=INCL.map(function(x){ return pickRow('inc',x,!!state.inc[x.id],state.incMore[x.id]); }).join('');
+    $('customs').innerHTML=state.customs.map(function(c,i){
+      return '<div class="field custom-row"><input data-custom="'+i+'" value="'+esc(c)+'" placeholder="Something else they get each month" aria-label="Something else they get" autocomplete="off"><button class="rm" data-rm="'+i+'" type="button" aria-label="Remove">×</button></div>';
+    }).join('');
+    $('dpicks').innerHTML=DELIV.map(function(x){ return pickRow('del',x,!!state.del[x.id],state.delMore[x.id]); }).join('')+
+      '<div class="field" style="margin-top:6px"><label for="f-delo">Another way</label><input id="f-delo" data-k="delOther" placeholder="A private podcast feed" autocomplete="off"></div>';
+  }
+  function renderSteps(){
+    $('steps').innerHTML=STEPS.map(function(s,i){
+      var n=i+1, cls=n===state.step?'on':(n<=state.done?'done':'');
+      return '<button class="stp '+cls+'" data-go="'+n+'" type="button" aria-label="Step '+n+': '+s+'"'+(n===state.step?' aria-current="step"':'')+'><span class="sn">'+(n<=state.done&&n!==state.step?'✓':n)+'</span><span class="sl">'+s+'</span></button>';
+    }).join('');
+    for(var n=1;n<=N;n++) $('v-'+n).classList.toggle('on',n===state.step);
+    $('bar').style.width=(Math.max(state.done,state.step-1)/(N-1)*100||0)+'%';
+  }
+  function syncForm(){
+    document.querySelectorAll('[data-k]').forEach(function(el){ var k=el.getAttribute('data-k'); if(el.value!==String(state[k]||'')) el.value=state[k]||''; });
+    ['kind','day','pay','cancel','where'].forEach(function(nm){ document.querySelectorAll('input[name='+nm+']').forEach(function(r){ r.checked=r.value===state[nm]; }); });
+    renderBits();
+  }
+  function renderMath(){
+    var p=priceN(), g=goalN(), n=need();
+    $('m-n').textContent=n?String(n):'–';
+    $('m-w').textContent=n?'subscriber'+(n===1?'':'s')+' at '+money(p)+' a month reach '+money(g)+'.':(p?'Add your monthly goal.':'Add a price and a goal.');
+    $('m-s').textContent=hoursText()?'That is '+hoursText().replace(/ at \d+ subscribers$/,'')+' of your time.':'';
+    if(p){
+      var rows=[5,10,25,50]; if(n && rows.indexOf(n)<0){ rows.push(n); rows.sort(function(a,b){return a-b;}); }
+      $('m-ladder').innerHTML=rows.map(function(r){ return '<tr'+(r===n?' class="hit"':'')+'><td>'+r+' subscribers</td><td>'+money(p*r)+' a month</td></tr>'; }).join('');
+    } else $('m-ladder').innerHTML='';
+  }
+  function renderSheet(){
+    var inc=includes(), del=delivery();
+    function row(k,v,wide){ return v?'<div class="orow'+(wide?' wide':'')+'"><div class="k">'+k+'</div><div class="v">'+esc(v)+'</div></div>':''; }
+    var h='<div class="ok-k">Monthly subscription · '+esc(clean(state.biz)||'Your business')+'</div>'+
+      '<h2>'+esc(clean(state.name)||'Your subscription')+'</h2>'+
+      '<div class="by">'+esc(clean(state.what))+'</div>'+
+      '<div class="price">'+(priceN()?esc(money(priceN())):'Price')+' <small>a month</small></div>'+
+      '<div class="orows">'+
+      (inc.length?'<div class="orow wide"><div class="k">Every month, a subscriber gets</div><ul>'+inc.map(function(i){return '<li>'+esc(i)+'</li>';}).join('')+'</ul><div class="v" style="margin-top:6px;color:var(--ink-dim)">'+esc(kindText())+'</div></div>':'')+
+      row('What they want from their month',clean(state.want),true)+
+      row('It arrives',dayText())+
+      row('It reaches them by',del.join('\n'))+
+      (hasCall()?row('The live call',clean(state.callWhen)):'')+
+      row('First month starts',state.start?niceDate(state.start):'')+
+      row('Your goal',goalN()&&need()?money(goalN())+' a month, which takes '+need()+' subscriber'+(need()===1?'':'s'):'')+
+      row('Your time',hoursText().replace(/^a/,'A'))+
+      row('How people pay',payText())+
+      row('Payment link',clean(state.link))+
+      row('How someone cancels',clean(state.howCancel))+
+      row('When someone cancels',cancelText())+
+      row('Welcome message',clean(state.welcome),true)+
+      '</div>';
+    $('osheet').innerHTML=h;
+    $('welcome-note').style.display=clean(state.welcome)?'none':'';
+  }
+  function renderBits(){
+    $('dayc-field').style.display=state.day==='custom'?'':'none';
+    $('callwhen-field').style.display=hasCall()?'':'none';
+    $('payo-field').style.display=state.pay==='other'?'':'none';
+    $('pay-explain').innerHTML=PAYX[state.pay]||PAYX.other;
+    var ll=LINKLBL[state.pay]||LINKLBL.other; $('link-label').textContent=ll[0]; $('f-link').placeholder=ll[1];
+    $('cancelc-field').style.display=state.cancel==='custom'?'':'none';
+    $('whereo-field').style.display=state.where==='other'?'':'none';
+    document.querySelectorAll('[data-row]').forEach(function(r){ var p=r.getAttribute('data-row').split(':'); r.classList.toggle('on',!!state[p[0]][p[1]]); });
+    renderMath(); renderSheet();
+  }
+  function render(){ renderPicks(); renderSteps(); syncForm(); }
+
+  function go(n){
+    n=Math.max(1,Math.min(N,n)); state.step=n; save(); renderSteps(); renderBits();
+    window.scrollTo({top:Math.max(0,$('steps').offsetTop-20),behavior:'smooth'});
+  }
+  function ready(n){
+    if(n===1){
+      if(!clean(state.biz)){ $('f-biz').focus(); toast('Add your business name first'); return false; }
+      if(!clean(state.what)){ $('f-what').focus(); toast('Say what you do and who you help'); return false; }
+      if(!clean(state.name)){ $('f-name').focus(); toast('Give your subscription a name'); return false; }
+      if(!includes().length){ toast('Pick at least one thing they get each month'); return false; }
+      if(!state.kind){ toast('Say if it is personal or the same for everyone'); return false; } }
+    if(n===2){
+      if(state.day==='custom' && !clean(state.dayCustom)){ $('f-dayc').focus(); toast('Write in the day it arrives'); return false; }
+      if(!delivery().length){ toast('Pick how it reaches them'); return false; } }
+    if(n===3){ if(!priceN()){ $('f-price').focus(); toast('Add your monthly price'); return false; } }
+    if(n===4){
+      if(state.pay==='other' && !clean(state.payOther)){ $('f-payo').focus(); toast('Say what you use to take payment'); return false; }
+      if(state.cancel==='custom' && !clean(state.cancelCustom)){ $('f-cancelc').focus(); toast('Say what happens when someone cancels'); return false; } }
+    return true;
+  }
+  function allReady(){ for(var n=1;n<=4;n++){ if(!ready(n)){ go(n); return false; } } return true; }
+
+  /* ---------- events ---------- */
+  document.addEventListener('click',function(e){
+    var d=e.target.closest('[data-done]');
+    if(d){ var n=+d.getAttribute('data-done'); if(!ready(n)) return; state.done=Math.max(state.done,n); go(n+1); return; }
+    var g=e.target.closest('[data-go]'); if(g){ go(+g.getAttribute('data-go')); return; }
+    var r=e.target.closest('[data-rm]'); if(r){ state.customs.splice(+r.getAttribute('data-rm'),1); save(); renderPicks(); syncForm(); return; }
+  });
+  document.addEventListener('input',function(e){
+    var t=e.target, k=t.getAttribute && t.getAttribute('data-k');
+    if(k){ state[k]=t.value; save(); renderBits(); return; }
+    var m=t.getAttribute && t.getAttribute('data-more');
+    if(m){ state[m+'More'][t.getAttribute('data-id')]=t.value; save(); renderBits(); return; }
+    var c=t.getAttribute && t.getAttribute('data-custom');
+    if(c!=null){ state.customs[+c]=t.value; save(); renderBits(); }
+  });
+  document.addEventListener('change',function(e){
+    var t=e.target;
+    if(['kind','day','pay','cancel','where'].indexOf(t.name)>=0){ state[t.name]=t.value; save(); renderBits(); return; }
+    var p=t.getAttribute && t.getAttribute('data-pick');
+    if(p){ state[p][t.value]=t.checked; save(); renderBits();
+      if(t.checked){ var row=t.closest('.pick'), inp=row&&row.querySelector('.more input'); if(inp) inp.focus(); } }
+  });
+  $('addCustom').addEventListener('click',function(){
+    state.customs.push(''); save(); renderPicks(); syncForm();
+    var all=document.querySelectorAll('[data-custom]'); if(all.length) all[all.length-1].focus();
+  });
+
+  $('copyP').addEventListener('click',function(){ if(!allReady()) return; copy(PROMPT(),'Copied. Paste it into Claude.'); });
+  $('seeP').addEventListener('click',function(){ if(!allReady()) return; openSheet(PROMPT()); });
+  $('dlSheet').addEventListener('click',function(){ if(!allReady()) return; download(slug(state.name)+'-offer-sheet.txt',SHEET_TEXT()); });
+  $('printSheet').addEventListener('click',function(){ if(!allReady()) return; renderSheet(); window.print(); });
+
+  $('startOver').addEventListener('click',function(){
+    if(!confirm('Start over? This clears everything you filled in here.')) return;
+    state=JSON.parse(JSON.stringify(DEF)); save(); render(); window.scrollTo(0,0);
+  });
+
+  /* rising embers, same as the board */
+  (function(){
+    var box=$('embers'), n=window.innerWidth<600?14:26;
+    for(var k=0;k<n;k++){
+      var e=document.createElement('span'); e.className='ember';
+      e.style.left=(Math.random()*100)+'%';
+      e.style.animationDuration=(9+Math.random()*12)+'s';
+      e.style.animationDelay=(-Math.random()*20)+'s';
+      e.style.opacity=(.3+Math.random()*.5);
+      box.appendChild(e);
+    }
+  })();
+
+  render();
+})();
+</script>
+</body>
+</html>
